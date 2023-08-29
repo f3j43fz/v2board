@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\CommissionLog;
+use App\Services\MailService;
 use Illuminate\Console\Command;
 use App\Models\Order;
 use App\Models\User;
@@ -100,6 +101,9 @@ class CheckCommission extends Command
             if (!$commissionBalance) continue;
             if ((int)config('v2board.withdraw_close_enable', 0)) {
                 $inviter->balance = $inviter->balance + $commissionBalance;
+                //发邮件给 inviter //blance是余额 commission_balance是佣金
+                $mailService = new MailService();
+                $mailService->remindCommissionGotten($inviter,$commissionBalance/100);
             } else {
                 $inviter->commission_balance = $inviter->commission_balance + $commissionBalance;
             }

@@ -71,4 +71,22 @@ class MailService
             ]
         ]);
     }
+
+    ////受邀用户购买套餐并达到指定时间后，发邮件给邀请用户，表示佣金到账了
+    public function remindCommissionGotten(User $user, $commission)
+    {
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('佣金已到账~', [
+                'app_name' =>  config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'remindCommissionGotten',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'rate' => config('v2board.invite_commission'),
+                'commission' => $commission
+            ]
+        ]);
+    }
 }
