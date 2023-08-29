@@ -55,4 +55,20 @@ class MailService
         if ($percentage >= 100) return false;
         return true;
     }
+
+    ////用户购买套餐后，发邮件提示更新订阅
+    public function remindUpdateSub(User $user)
+    {
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('您的服务已开通', [
+                'app_name' =>  config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'remindUpdateSub',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url')
+            ]
+        ]);
+    }
 }
