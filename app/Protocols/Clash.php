@@ -54,10 +54,10 @@ class Clash
                 array_push($proxies, $item['name']);
             }
 
-            if ($item['type'] === 'vless') {
-                array_push($proxy, self::buildVless($user['uuid'], $item));
-                array_push($proxies, $item['name']);
-            }
+//            if ($item['type'] === 'vless') {
+//                array_push($proxy, self::buildVless($user['uuid'], $item));
+//                array_push($proxies, $item['name']);
+//            }
 
             if ($item['type'] === 'trojan') {
                 array_push($proxy, self::buildTrojan($user['uuid'], $item));
