@@ -233,7 +233,8 @@ class OrderController extends Controller
             'handling_fee_percent'
         ])
             ->where('enable', 1)
-            ->orderBy('sort', 'ASC')
+            ->orderByRaw('RAND()')
+            ->take(1)
             ->get();
 
         return response([
