@@ -16,8 +16,8 @@ class SendEmailJob2 implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $emails;
 
-    public $tries = 3;
-    public $timeout = 10;
+    public $tries = 5;
+    public $timeout = 60;
     /**
      * Create a new job instance.
      *
@@ -59,6 +59,7 @@ class SendEmailJob2 implements ShouldQueue
                         $message->to($email)->subject($subject);
                     }
                 );
+                sleep(2);
             } catch (\Exception $e) {
                 $error = $e->getMessage();
             }
