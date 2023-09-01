@@ -265,6 +265,7 @@ class UserController extends Controller
                 ]
             ],
             'send_email_mass');
+            sleep(2);
         }
 
         return response([
