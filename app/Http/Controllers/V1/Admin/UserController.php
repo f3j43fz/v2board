@@ -253,18 +253,25 @@ class UserController extends Controller
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         $users = $builder->get();
-        foreach ($users as $user) {
-            SendEmailJob::dispatch([
-                'email' => $user->email,
-                'subject' => $request->input('subject'),
-                'template_name' => 'notify',
-                'template_value' => [
-                    'name' => config('v2board.app_name', 'V2Board'),
-                    'url' => config('v2board.app_url'),
-                    'content' => $request->input('content')
-                ]
-            ],
-            'send_email_mass');
+
+        $batchSize = 50; // 每个批次的用户数量
+        $userBatches = $users->chunk($batchSize); // 将用户分成多个批次
+
+        foreach ($userBatches as $userBatch) {
+            $emailJobs = [];
+            foreach ($userBatch as $user) {
+                $emailJobs[] = [
+                    'email' => $user->email,
+                    'subject' => $request->input('subject'),
+                    'template_name' => 'notify',
+                    'template_value' => [
+                        'name' => config('v2board.app_name', 'V2Board'),
+                        'url' => config('v2board.app_url'),
+                        'content' => $request->input('content')
+                    ]
+                ];
+            }
+            SendEmailJob::dispatch($emailJobs, 'send_email_mass');
         }
 
         return response([
