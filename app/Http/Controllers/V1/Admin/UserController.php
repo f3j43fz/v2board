@@ -271,7 +271,7 @@ class UserController extends Controller
                     ]
                 ];
             }
-            SendEmailJob::dispatch($emailJobs, 'send_email_mass');
+            SendEmailJob2::dispatch($emailJobs, 'send_email_mass');
         }
 
         return response([
