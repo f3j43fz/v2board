@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UserGenerate;
 use App\Http\Requests\Admin\UserSendMail;
 use App\Http\Requests\Admin\UserUpdate;
 use App\Jobs\SendEmailJob;
+use App\Jobs\SendEmailJob2;
 use App\Models\Plan;
 use App\Models\User;
 use App\Services\AuthService;
