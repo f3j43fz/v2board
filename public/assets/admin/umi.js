@@ -9932,9 +9932,9 @@
             onShow() {
                 if (this.setState({
                     visible: !this.state.visible
-                }), this.state.server.networkSettings && "object" === typeof this.state.server.networkSettings) {
+                }), this.state.server.network_settings && "object" === typeof this.state.server.network_settings) {
                     var e = this.state.server;
-                    e.networkSettings = JSON.stringify(e["networkSettings"], null, 2), this.setState({
+                    e.network_settings = JSON.stringify(e["network_settings"], null, 2), this.setState({
                         server: e
                     })
                 }
@@ -9942,7 +9942,7 @@
             save() {
                 try {
                     var e, t, n = this.state.server;
-                    n.networkSettings = n.networkSettings ? "string" === typeof n.networkSettings && JSON.parse(n.networkSettings) : null, (null === (e = n.dnsSettings) || void 0 === e ? void 0 : null === (t = e.servers) || void 0 === t ? void 0 : t.length) || (n.dnsSettings = null), console.log(n), this.props.dispatch({
+                    n.network_settings = n.network_settings ? "string" === typeof n.network_settings && JSON.parse(n.network_settings) : null, (null === (e = n.dnsSettings) || void 0 === e ? void 0 : null === (t = e.servers) || void 0 === t ? void 0 : t.length) || (n.dnsSettings = null), console.log(n), this.props.dispatch({
                         type: "serverVmess/save",
                         params: n,
                         callback: () => {
@@ -9974,12 +9974,12 @@
             }
             renderChildDrawer() {
                 var e = this.state.server,
-                    t = e.networkSettings,
+                    t = e.network_settings,
                     n = e.ruleSettings,
-                    r = e.tlsSettings,
+                    r = e.tls_settings,
                     i = e.dnsSettings;
                 switch (this.state.childDrawer.type) {
-                    case "networkSettings":
+                    case "network_settings":
                         var o = {
                             tcp: "",
                             ws: JSON.stringify({
@@ -10009,7 +10009,7 @@
                             showGutter: !0,
                             highlightActiveLine: !0,
                             value: t || "",
-                            onChange: e => this.formChange("networkSettings", e),
+                            onChange: e => this.formChange("network_settings", e),
                             setOptions: {
                                 enableBasicAutocompletion: !1,
                                 enableLiveAutocompletion: !1,
@@ -10024,10 +10024,10 @@
                             settings: n,
                             onChange: e => this.changeServer("ruleSettings", e)
                         });
-                    case "tlsSettings":
+                    case "tls_settings":
                         return d.a.createElement(b, {
                             settings: r,
-                            onChange: e => this.changeServer("tlsSettings", e)
+                            onChange: e => this.changeServer("tls_settings", e)
                         });
                     case "dnsSettings":
                         return d.a.createElement(g, {
@@ -10111,7 +10111,7 @@
                     className: "form-group col-md-4 col-xs-12"
                 }, d.a.createElement("label", null, "TLS ", d.a.createElement("a", {
                     href: "javascript:void(0);",
-                    onClick: () => this.showChildDrawer("\u7f16\u8f91TLS\u914d\u7f6e", "tlsSettings")
+                    onClick: () => this.showChildDrawer("\u7f16\u8f91TLS\u914d\u7f6e", "tls_settings")
                 }, "\u7f16\u8f91\u914d\u7f6e")), d.a.createElement(a["a"], {
                     value: parseInt(e.tls) ? 1 : 0,
                     placeholder: "\u662f\u5426\u652f\u6301TLS",
@@ -10147,7 +10147,7 @@
                     className: "form-group col-md-12 col-xs-12"
                 }, d.a.createElement("label", null, "\u4f20\u8f93\u534f\u8bae ", d.a.createElement("a", {
                     href: "javascript:void(0);",
-                    onClick: () => this.showChildDrawer("\u7f16\u8f91\u534f\u8bae\u914d\u7f6e", "networkSettings")
+                    onClick: () => this.showChildDrawer("\u7f16\u8f91\u534f\u8bae\u914d\u7f6e", "network_settings")
                 }, "\u7f16\u8f91\u914d\u7f6e")), d.a.createElement(a["a"], {
                     value: e.network,
                     placeholder: "\u9009\u62e9\u4f20\u8f93\u534f\u8bae",
