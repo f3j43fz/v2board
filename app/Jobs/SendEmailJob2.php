@@ -59,7 +59,6 @@ class SendEmailJob2 implements ShouldQueue
                         $message->to($email)->subject($subject);
                     }
                 );
-                sleep(2);
             } catch (\Exception $e) {
                 $error = $e->getMessage();
             }
