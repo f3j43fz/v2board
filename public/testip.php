@@ -1,6 +1,5 @@
 <?php
-require 'vendor/autoload.php';
-use Vendor\zoujingli\ip2region\Ip2Region;
+use Zoujingli\Component\Ip2region\Ip2Region;
 
 $ip = '1.2.3.4';
 $ip2region = new Ip2Region();
