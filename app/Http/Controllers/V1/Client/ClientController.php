@@ -22,8 +22,12 @@ class ClientController extends Controller
 
         $userIP = $request->ip();
         $info= IPTest::memorySearch($userIP);
-//        $pattern = '/^中国(.*)$/u';
-//        $new_info = preg_replace($pattern, '$1', $info);
+        // 使用 strpos 函数找到第三个 "|" 的位置
+        $pos = strpos($info, '|', strpos($info, '|', strpos($info, '|') + 1) + 1);
+        // 使用 substr 函数获取第三段之后的子串
+        $newInfo = substr($info, $pos + 1);
+
+
 
 
         // account not expired and is not banned.
@@ -31,7 +35,7 @@ class ClientController extends Controller
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user,$info);
+            $this->setSubscribeInfoToServers($servers, $user,$newInfo);
             if ($flag) {
                 foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                     $file = 'App\\Protocols\\' . basename($file, '.php');
