@@ -41,6 +41,9 @@ class Shadowrocket
             if ($item['type'] === 'trojan') {
                 $uri .= self::buildTrojan($user['uuid'], $item);
             }
+            if ($item['type'] === 'hysteria') {
+                $uri .= self::buildhysteria($user['uuid'], $item);
+            }
         }
         return base64_encode($uri);
     }
@@ -162,6 +165,29 @@ class Shadowrocket
         ]);
         $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}&tfo=1#{$name}";
         $uri .= "\r\n";
+        return $uri;
+    }
+
+    public static function buildHysteria($password, $server)
+    {
+        $uri = "hysteria://{$server['host']}:{$server['server_port']}";
+        $params = [];
+        $params[] = "protocol=udp";
+        $params[] = "fastopen=0";
+        $params[] = "auth={$password}";
+        if (isset($server['server_name'])) {
+            $params[] = "peer={$server['server_name']}";
+        }
+        if (isset($server['insecure'])) {
+            $params[] = "allowInsecure=" . ($server['insecure'] ? "1" : "0");
+        }
+        $params[] = "upmbps={$server['up_mbps']}";
+        $params[] = "downmbps={$server['down_mbps']}";
+        $obfs = Helper::getServerKey($server['created_at'], 16);
+        $params[] = "obfsParam={$obfs}";
+        $uri .= "?" . implode("&", $params);
+        $remarks = rawurlencode($server['name']);
+        $uri .= "#{$remarks}\r\n";
         return $uri;
     }
 }
