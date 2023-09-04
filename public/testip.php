@@ -1,5 +1,5 @@
 <?php
-use zoujingli\ip2region\Ip2Region;
+use Vendor\zoujingli\ip2region\Ip2Region;
 
 $ip = '1.2.3.4';
 $ip2region = new Ip2Region();
