@@ -1,11 +1,12 @@
 <?php
-use ip2region\XdbSearcher;
+use ip2region\Ip2Region;;
 
 $ip = '123.205.132.153';
-$ipPath = base_path() . '/resources/ipdata/ip2region.xdb';
-$xdb = $ipPath;
 try {
-    $region = XdbSearcher::newWithFileOnly($xdb)->search($ip);
+    $searcher = Ip2Region::newWithFileOnly();
+    $region = $searcher->search($ip);
+    // 或
+    $region = Ip2Region::search($ip);
     var_dump($region);
 } catch (\Exception $e) {
     var_dump($e->getMessage());
