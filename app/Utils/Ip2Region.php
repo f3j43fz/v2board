@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Utils;
+use App\Utils\XdbSearcher;
+
 /**
  * class Ip2Region
  * 为兼容老版本调度而创建

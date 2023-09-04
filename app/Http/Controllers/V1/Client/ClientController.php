@@ -7,6 +7,7 @@ use App\Protocols\General;
 use App\Services\ServerService;
 use App\Services\UserService;
 use App\Utils\Helper;
+use App\Utils\Ip2Region;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -18,26 +19,17 @@ class ClientController extends Controller
         $flag = strtolower($flag);
         $user = $request->user;
 
-        $ip = $request->ip();
-//        $ipPath = base_path() . '/resources/ipdata/ip2region.xdb';
-//        $database = new Database($ipPath);
-//        $ipInfo = $database->binarySearch($ip);
+        $userIP = $request->ip();
+        $info= (new \App\Utils\Ip2Region)->simple($userIP);
 
-        // 将查询结果存储在 $ipinfo 变量中
-//        $ipinfo = [
-//            'ip' => $ip,
-//            'country' => $ipInfo['country_name'],
-//            'region' => $ipInfo['region_name'],
-//            'city' => $ipInfo['city_name'],
-//            'isp' => $ipInfo['isp'],
-//        ];
+
 
         // account not expired and is not banned.
         $userService = new UserService();
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user,$ip);
+            $this->setSubscribeInfoToServers($servers, $user,$info);
             if ($flag) {
                 foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                     $file = 'App\\Protocols\\' . basename($file, '.php');
@@ -52,7 +44,7 @@ class ClientController extends Controller
         }
     }
 
-    private function setSubscribeInfoToServers(&$servers, $user,$ip)
+    private function setSubscribeInfoToServers(&$servers, $user,$info)
     {
         if (!isset($servers[0])) return;
         if (!(int)config('v2board.show_info_to_server_enable', 0)) return;
@@ -79,7 +71,9 @@ class ClientController extends Controller
             'name' => "剩余流量：{$remainingTraffic}",
         ]));
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "{$ip} ",
+            'name' => "{$info} ",
         ]));
     }
+
+
 }
