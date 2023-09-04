@@ -19,13 +19,23 @@ class ClientController extends Controller
         $user = $request->user;
 
         $ip = $request->ip();
+        $ipPath = base_path() . '/resources/ipdata/ip2region.xdb';
+        $reader = new Reader($ipPath);
+        $record = $reader->lookup($ip);
+        $ipinfo = [
+            'ip' => $ip,
+            'country' => $record->countryName,
+            'region' => $record->regionName,
+            'city' => $record->cityName,
+            'isp' => $record->isp,
+        ];
 
         // account not expired and is not banned.
         $userService = new UserService();
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user,$ip);
+            $this->setSubscribeInfoToServers($servers, $user,$ipinfo);
             if ($flag) {
                 foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                     $file = 'App\\Protocols\\' . basename($file, '.php');
@@ -40,7 +50,7 @@ class ClientController extends Controller
         }
     }
 
-    private function setSubscribeInfoToServers(&$servers, $user,$ip)
+    private function setSubscribeInfoToServers(&$servers, $user,$ipinfo)
     {
         if (!isset($servers[0])) return;
         if (!(int)config('v2board.show_info_to_server_enable', 0)) return;
@@ -50,6 +60,11 @@ class ClientController extends Controller
         $expiredDate = $user['expired_at'] ? date('Y-m-d', $user['expired_at']) : '长期有效';
         $userService = new UserService();
         $resetDay = $userService->getResetDay($user);
+
+        $ip= $ipinfo['ip'];
+        $city = $ipinfo['city'];
+        $isp = $ipinfo['isp'];
+
         array_unshift($servers, array_merge($servers[0], [
             'name' => "套餐到期：{$expiredDate}",
         ]));
@@ -62,7 +77,7 @@ class ClientController extends Controller
             'name' => "剩余流量：{$remainingTraffic}",
         ]));
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "本次请求ip：{$ip}",
+            'name' => "{$ip} {$city} {$isp}",
         ]));
     }
 }
