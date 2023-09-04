@@ -1,7 +1,7 @@
 <?php
-use ip2region\Ip2Region;;
+use Chinayin\ip2region\Ip2Region;
 
-$ip = '123.205.132.153';
+$ip = '1.2.3.4';
 try {
     $searcher = Ip2Region::newWithFileOnly();
     $region = $searcher->search($ip);
@@ -11,3 +11,4 @@ try {
 } catch (\Exception $e) {
     var_dump($e->getMessage());
 }
+
