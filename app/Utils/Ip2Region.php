@@ -11,76 +11,19 @@ use App\Utils\XdbSearcher;
  */
 class Ip2Region
 {
-    /**
-     * 查询实例对象
-     * @var XdbSearcher
-     */
-    private $searcher;
 
-    /**
-     * 初始化构造方法
-     * @throws Exception
-     */
-    public function __construct()
+    public static function memorySearch($ip)
     {
-        class_exists('XdbSearcher') or include __DIR__ . '/XdbSearcher.php';
-        $this->searcher = XdbSearcher::newWithFileOnly(base_path() . '/resources/ipdata/ip2region.xdb');
+        return ['city_id' => 0, 'region' => XdbSearcher::newWithFileOnly(base_path() . '/resources/ipdata/ip2region.xdb')->search($ip)];
     }
 
-    /**
-     * 兼容原 memorySearch 查询
-     * @param string $ip
-     * @return array
-     * @throws Exception
-     */
-    public function memorySearch($ip)
-    {
-        return ['city_id' => 0, 'region' => $this->searcher->search($ip)];
-    }
 
-    /**
-     * 兼容原 binarySearch 查询
-     * @param string $ip
-     * @return array
-     * @throws Exception
-     */
-    public function binarySearch($ip)
+    public static function simple($ip)
     {
-        return $this->memorySearch($ip);
-    }
-
-    /**
-     * 兼容原 btreeSearch 查询
-     * @param string $ip
-     * @return array
-     * @throws Exception
-     */
-    public function btreeSearch($ip)
-    {
-        return $this->memorySearch($ip);
-    }
-
-    /**
-     * 直接查询并返回名称
-     * @param string $ip
-     * @return string
-     * @throws \Exception
-     */
-    public function simple($ip)
-    {
-        $geo = $this->memorySearch($ip);
+        $geo = self::memorySearch($ip);
         $arr = explode('|', str_replace(['0|'], '|', isset($geo['region']) ? $geo['region'] : ''));
         if (($last = array_pop($arr)) === '内网IP') $last = '';
         return join('', $arr) . (empty($last) ? '' : "【{$last}】");
     }
 
-    /**
-     * destruct method
-     * resource destroy
-     */
-    public function __destruct()
-    {
-        $this->searcher->close();
-        unset($this->searcher);
-    }
 }
