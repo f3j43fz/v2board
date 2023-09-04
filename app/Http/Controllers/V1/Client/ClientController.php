@@ -20,14 +20,16 @@ class ClientController extends Controller
 
         $ip = $request->ip();
         $ipPath = base_path() . '/resources/ipdata/ip2region.xdb';
-        $reader = new Reader($ipPath);
-        $record = $reader->lookup($ip);
+        $database = new Database($ipPath);
+        $ipInfo = $database->binarySearch($ip);
+
+        // 将查询结果存储在 $ipinfo 变量中
         $ipinfo = [
             'ip' => $ip,
-            'country' => $record->countryName,
-            'region' => $record->regionName,
-            'city' => $record->cityName,
-            'isp' => $record->isp,
+            'country' => $ipInfo['country_name'],
+            'region' => $ipInfo['region_name'],
+            'city' => $ipInfo['city_name'],
+            'isp' => $ipInfo['isp'],
         ];
 
         // account not expired and is not banned.
