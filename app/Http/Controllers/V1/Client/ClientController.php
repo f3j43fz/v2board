@@ -17,12 +17,15 @@ class ClientController extends Controller
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
         $user = $request->user;
+
+        $ip = $request->ip();
+
         // account not expired and is not banned.
         $userService = new UserService();
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user);
+            $this->setSubscribeInfoToServers($servers, $user,$ip);
             if ($flag) {
                 foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                     $file = 'App\\Protocols\\' . basename($file, '.php');
@@ -37,7 +40,7 @@ class ClientController extends Controller
         }
     }
 
-    private function setSubscribeInfoToServers(&$servers, $user)
+    private function setSubscribeInfoToServers(&$servers, $user,$ip)
     {
         if (!isset($servers[0])) return;
         if (!(int)config('v2board.show_info_to_server_enable', 0)) return;
@@ -57,6 +60,9 @@ class ClientController extends Controller
         }
         array_unshift($servers, array_merge($servers[0], [
             'name' => "剩余流量：{$remainingTraffic}",
+        ]));
+        array_unshift($servers, array_merge($servers[0], [
+            'name' => "本次请求ip：{$ip}",
         ]));
     }
 }
