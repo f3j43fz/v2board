@@ -21,8 +21,8 @@ class ClientController extends Controller
 
         $userIP = $request->ip();
         $info= (new \App\Utils\Ip2Region)->simple($userIP);
-        $pattern = '/^中国(.*)$/u';
-        $new_info = preg_replace($pattern, '$1', $info);
+//        $pattern = '/^中国(.*)$/u';
+//        $new_info = preg_replace($pattern, '$1', $info);
 
 
         // account not expired and is not banned.
@@ -30,7 +30,7 @@ class ClientController extends Controller
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user,$new_info);
+            $this->setSubscribeInfoToServers($servers, $user,$info);
             if ($flag) {
                 foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                     $file = 'App\\Protocols\\' . basename($file, '.php');
