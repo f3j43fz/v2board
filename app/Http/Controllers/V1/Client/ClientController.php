@@ -63,7 +63,7 @@ class ClientController extends Controller
         $userService = new UserService();
         $resetDay = $userService->getResetDay($user);
 
-        $ip= $ipinfo['ip'];
+//        $ip= $ipinfo['ip'];
         $city = $ipinfo['city'];
         $isp = $ipinfo['isp'];
 
