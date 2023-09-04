@@ -20,7 +20,7 @@ class ClientController extends Controller
         $user = $request->user;
 
         $userIP = $request->ip();
-        $info= (new \App\Utils\Ip2Region)->simple($userIP);
+        $info= Ip2Region::simple($userIP);
 //        $pattern = '/^中国(.*)$/u';
 //        $new_info = preg_replace($pattern, '$1', $info);
 
