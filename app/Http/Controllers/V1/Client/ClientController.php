@@ -19,18 +19,18 @@ class ClientController extends Controller
         $user = $request->user;
 
         $ip = $request->ip();
-        $ipPath = base_path() . '/resources/ipdata/ip2region.xdb';
-        $database = new Database($ipPath);
-        $ipInfo = $database->binarySearch($ip);
+//        $ipPath = base_path() . '/resources/ipdata/ip2region.xdb';
+//        $database = new Database($ipPath);
+//        $ipInfo = $database->binarySearch($ip);
 
         // 将查询结果存储在 $ipinfo 变量中
-        $ipinfo = [
-            'ip' => $ip,
-            'country' => $ipInfo['country_name'],
-            'region' => $ipInfo['region_name'],
-            'city' => $ipInfo['city_name'],
-            'isp' => $ipInfo['isp'],
-        ];
+//        $ipinfo = [
+//            'ip' => $ip,
+//            'country' => $ipInfo['country_name'],
+//            'region' => $ipInfo['region_name'],
+//            'city' => $ipInfo['city_name'],
+//            'isp' => $ipInfo['isp'],
+//        ];
 
         // account not expired and is not banned.
         $userService = new UserService();
@@ -52,7 +52,7 @@ class ClientController extends Controller
         }
     }
 
-    private function setSubscribeInfoToServers(&$servers, $user,$ipinfo)
+    private function setSubscribeInfoToServers(&$servers, $user,$ip)
     {
         if (!isset($servers[0])) return;
         if (!(int)config('v2board.show_info_to_server_enable', 0)) return;
