@@ -65,7 +65,7 @@ class XdbSearcher
         } else {
             // 加载默认数据文件 by Anyon
             if (is_null($dbFile)) {
-                $dbFile = __DIR__ . DIRECTORY_SEPARATOR . 'ip2region.xdb';
+                $dbFile = base_path() . '/resources/ipdata/ip2region.xdb';
             }
             // open the xdb binary file
             $this->handle = fopen($dbFile, "r");
