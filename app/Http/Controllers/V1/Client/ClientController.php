@@ -64,8 +64,8 @@ class ClientController extends Controller
         $resetDay = $userService->getResetDay($user);
 
 //        $ip= $ipinfo['ip'];
-        $city = $ipinfo['city'];
-        $isp = $ipinfo['isp'];
+//        $city = $ipinfo['city'];
+//        $isp = $ipinfo['isp'];
 
         array_unshift($servers, array_merge($servers[0], [
             'name' => "套餐到期：{$expiredDate}",
