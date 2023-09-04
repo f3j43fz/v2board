@@ -1,12 +1,17 @@
 <?php
+// Copyright 2022 The Ip2Region Authors. All rights reserved.
+// Use of this source code is governed by a Apache2.0-style
+// license that can be found in the LICENSE file.
+//
+// @Author Lion <chenxin619315@gmail.com>
+// @Date   2022/06/21
 
-namespace App\Utils;
 class XdbSearcher
 {
     const HeaderInfoLength = 256;
-    const VectorIndexRows = 256;
-    const VectorIndexCols = 256;
-    const VectorIndexSize = 8;
+    const VectorIndexRows  = 256;
+    const VectorIndexCols  = 256;
+    const VectorIndexSize  = 8;
     const SegmentIndexSize = 14;
 
     // xdb file handle
@@ -29,24 +34,21 @@ class XdbSearcher
     /**
      * @throws Exception
      */
-    public static function newWithFileOnly($dbFile)
-    {
+    public static function newWithFileOnly($dbFile) {
         return new XdbSearcher($dbFile, null, null);
     }
 
     /**
      * @throws Exception
      */
-    public static function newWithVectorIndex($dbFile, $vIndex)
-    {
+    public static function newWithVectorIndex($dbFile, $vIndex) {
         return new XdbSearcher($dbFile, $vIndex);
     }
 
     /**
      * @throws Exception
      */
-    public static function newWithBuffer($cBuff)
-    {
+    public static function newWithBuffer($cBuff) {
         return new XdbSearcher(null, null, $cBuff);
     }
 
@@ -56,17 +58,12 @@ class XdbSearcher
      * initialize the xdb searcher
      * @throws Exception
      */
-    function __construct($dbFile = null, $vectorIndex = null, $cBuff = null)
-    {
+    function __construct($dbFile, $vectorIndex=null, $cBuff=null) {
         // check the content buffer first
         if ($cBuff != null) {
             $this->vectorIndex = null;
             $this->contentBuff = $cBuff;
         } else {
-            // 加载默认数据文件 by Anyon
-            if (is_null($dbFile)) {
-                $dbFile = base_path() . '/resources/ipdata/ip2region.xdb';
-            }
             // open the xdb binary file
             $this->handle = fopen($dbFile, "r");
             if ($this->handle === false) {
@@ -77,15 +74,13 @@ class XdbSearcher
         }
     }
 
-    function close()
-    {
+    function close() {
         if ($this->handle != null) {
             fclose($this->handle);
         }
     }
 
-    function getIOCount()
-    {
+    function getIOCount() {
         return $this->ioCount;
     }
 
@@ -93,8 +88,7 @@ class XdbSearcher
      * find the region info for the specified ip address
      * @throws Exception
      */
-    function search($ip)
-    {
+    function search($ip) {
         // check and convert the sting ip to a 4-bytes long
         if (is_string($ip)) {
             $t = self::ip2long($ip);
@@ -114,14 +108,14 @@ class XdbSearcher
         if ($this->vectorIndex != null) {
             $sPtr = self::getLong($this->vectorIndex, $idx);
             $ePtr = self::getLong($this->vectorIndex, $idx + 4);
-        } elseif ($this->contentBuff != null) {
+        } else if ($this->contentBuff != null) {
             $sPtr = self::getLong($this->contentBuff, self::HeaderInfoLength + $idx);
             $ePtr = self::getLong($this->contentBuff, self::HeaderInfoLength + $idx + 4);
         } else {
             // read the vector index block
             $buff = $this->read(self::HeaderInfoLength + $idx, 8);
             if ($buff === null) {
-                throw new Exception("failed to read vector index at {$idx}");
+                throw new Exception("failed to read vector index at ${idx}");
             }
 
             $sPtr = self::getLong($buff, 0);
@@ -142,7 +136,7 @@ class XdbSearcher
             // read the segment index
             $buff = $this->read($p, self::SegmentIndexSize);
             if ($buff == null) {
-                throw new Exception("failed to read segment index at {$p}");
+                throw new Exception("failed to read segment index at ${p}");
             }
 
             $sip = self::getLong($buff, 0);
@@ -177,8 +171,7 @@ class XdbSearcher
     }
 
     // read specified bytes from the specified index
-    private function read($offset, $len)
-    {
+    private function read($offset, $len) {
         // check the in-memory buffer first
         if ($this->contentBuff != null) {
             return substr($this->contentBuff, $offset, $len);
@@ -224,8 +217,8 @@ class XdbSearcher
     // read a 4bytes long from a byte buffer
     public static function getLong($b, $idx)
     {
-        $val = (ord($b[$idx])) | (ord($b[$idx + 1]) << 8)
-            | (ord($b[$idx + 2]) << 16) | (ord($b[$idx + 3]) << 24);
+        $val = (ord($b[$idx])) | (ord($b[$idx+1]) << 8)
+            | (ord($b[$idx+2]) << 16) | (ord($b[$idx+3]) << 24);
 
         // convert signed int to unsigned int if on 32 bit operating system
         if ($val < 0 && PHP_INT_SIZE == 4) {
@@ -238,12 +231,11 @@ class XdbSearcher
     // read a 2bytes short from a byte buffer
     public static function getShort($b, $idx)
     {
-        return ((ord($b[$idx])) | (ord($b[$idx + 1]) << 8));
+        return ((ord($b[$idx])) | (ord($b[$idx+1]) << 8));
     }
 
     // load header info from a specified file handle
-    public static function loadHeader($handle)
-    {
+    public static function loadHeader($handle) {
         if (fseek($handle, 0) == -1) {
             return null;
         }
@@ -259,18 +251,17 @@ class XdbSearcher
         }
 
         // return the decoded header info
-        return [
+        return array(
             'version'       => self::getShort($buff, 0),
             'indexPolicy'   => self::getShort($buff, 2),
             'createdAt'     => self::getLong($buff, 4),
             'startIndexPtr' => self::getLong($buff, 8),
             'endIndexPtr'   => self::getLong($buff, 12)
-        ];
+        );
     }
 
     // load header info from the specified xdb file path
-    public static function loadHeaderFromFile($dbFile)
-    {
+    public static function loadHeaderFromFile($dbFile) {
         $handle = fopen($dbFile, 'r');
         if ($handle === false) {
             return null;
@@ -282,8 +273,7 @@ class XdbSearcher
     }
 
     // load vector index from a file handle
-    public static function loadVectorIndex($handle)
-    {
+    public static function loadVectorIndex($handle) {
         if (fseek($handle, self::HeaderInfoLength) == -1) {
             return null;
         }
@@ -302,8 +292,7 @@ class XdbSearcher
     }
 
     // load vector index from a specified xdb file path
-    public static function loadVectorIndexFromFile($dbFile)
-    {
+    public static function loadVectorIndexFromFile($dbFile) {
         $handle = fopen($dbFile, 'r');
         if ($handle === false) {
             return null;
@@ -315,8 +304,7 @@ class XdbSearcher
     }
 
     // load the xdb content from a file handle
-    public static function loadContent($handle)
-    {
+    public static function loadContent($handle) {
         if (fseek($handle, 0, SEEK_END) == -1) {
             return null;
         }
@@ -345,8 +333,7 @@ class XdbSearcher
     }
 
     // load the xdb content from a file path
-    public static function loadContentFromFile($dbFile)
-    {
+    public static function loadContentFromFile($dbFile) {
         $str = file_get_contents($dbFile, false);
         if ($str === false) {
             return null;
@@ -355,8 +342,7 @@ class XdbSearcher
         }
     }
 
-    public static function now()
-    {
+    public static function now() {
         return (microtime(true) * 1000);
     }
 

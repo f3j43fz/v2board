@@ -8,6 +8,7 @@ use App\Services\ServerService;
 use App\Services\UserService;
 use App\Utils\Helper;
 use App\Utils\Ip2Region;
+use App\Utils\IPTest;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -20,7 +21,7 @@ class ClientController extends Controller
         $user = $request->user;
 
         $userIP = $request->ip();
-        $info= Ip2Region::simple($userIP);
+        $info= IPTest::memorySearch($userIP);
 //        $pattern = '/^中国(.*)$/u';
 //        $new_info = preg_replace($pattern, '$1', $info);
 
