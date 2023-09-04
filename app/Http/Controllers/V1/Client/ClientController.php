@@ -79,7 +79,7 @@ class ClientController extends Controller
             'name' => "剩余流量：{$remainingTraffic}",
         ]));
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "{$ip} {$city} {$isp}",
+            'name' => "{$ip} ",
         ]));
     }
 }
