@@ -7,9 +7,9 @@ use App\Protocols\General;
 use App\Services\ServerService;
 use App\Services\UserService;
 use App\Utils\Helper;
-use App\Utils\Ip2Region;
 use App\Utils\IPTest;
 use Illuminate\Http\Request;
+use Ip2Region;
 
 class ClientController extends Controller
 {
@@ -21,11 +21,15 @@ class ClientController extends Controller
         $user = $request->user;
 
         $userIP = $request->ip();
-        $info= IPTest::memorySearch($userIP);
-        // 使用 strpos 函数找到第三个 "|" 的位置
-        $pos = strpos($info, '|', strpos($info, '|', strpos($info, '|') + 1) + 1);
-        // 使用 substr 函数获取第三段之后的子串
-        $newInfo = substr($info, $pos + 1);
+
+        $ip2region = new \Ip2Region();
+        $result = $ip2region->simple('8.8.8.8');
+
+//        $info= IPTest::memorySearch($userIP);
+//        // 使用 strpos 函数找到第三个 "|" 的位置
+//        $pos = strpos($info, '|', strpos($info, '|', strpos($info, '|') + 1) + 1);
+//        // 使用 substr 函数获取第三段之后的子串
+//        $newInfo = substr($info, $pos + 1);
 
 
 
@@ -35,7 +39,7 @@ class ClientController extends Controller
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user,$newInfo);
+            $this->setSubscribeInfoToServers($servers, $user,$result);
             if ($flag) {
                 foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                     $file = 'App\\Protocols\\' . basename($file, '.php');
@@ -60,11 +64,6 @@ class ClientController extends Controller
         $expiredDate = $user['expired_at'] ? date('Y-m-d', $user['expired_at']) : '长期有效';
         $userService = new UserService();
         $resetDay = $userService->getResetDay($user);
-
-//        $ip= $ipinfo['ip'];
-//        $city = $ipinfo['city'];
-//        $isp = $ipinfo['isp'];
-
         array_unshift($servers, array_merge($servers[0], [
             'name' => "套餐到期：{$expiredDate}",
         ]));
