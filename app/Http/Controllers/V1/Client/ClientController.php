@@ -23,7 +23,7 @@ class ClientController extends Controller
         $userIP = $request->ip();
 
         $ip2region = new \Ip2Region();
-        $result = $ip2region->simple('8.8.8.8');
+        $result = $ip2region->simple($userIP);
 
 //        $info= IPTest::memorySearch($userIP);
 //        // 使用 strpos 函数找到第三个 "|" 的位置
