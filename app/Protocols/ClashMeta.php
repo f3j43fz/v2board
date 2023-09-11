@@ -198,6 +198,11 @@ class ClashMeta
                 }
             }
         }
+
+        if ($server['network'] === 'tcp') {
+            $array['network'] = 'tcp';
+        }
+
         return $array;
     }
 
