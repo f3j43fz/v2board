@@ -392,25 +392,25 @@ rules:
   #apple
   - 'RULE-SET,apple,DIRECT'
   #Youtube
-  - 'RULE-SET,YouTube,"🌎谷歌系"'
+  - 'RULE-SET,YouTube,🌎谷歌系'
   #Google 可直连服务
-  - 'RULE-SET,google,"🌎谷歌系"'
+  - 'RULE-SET,google,🌎谷歌系'
   #OpenAI
-  - 'RULE-SET,OpenAI,"🤖OpenAI"'
+  - 'RULE-SET,OpenAI,🤖OpenAI'
   #Twitch
-  - 'RULE-SET,Twitch,"🎮Twitch"'
+  - 'RULE-SET,Twitch,🎮Twitch'
   #巴哈姆特
-  - 'RULE-SET,Bahamut,"😻动画疯"'
+  - 'RULE-SET,Bahamut,😻动画疯'
   #ins
-  - 'RULE-SET,Instagram,"🎴Instagram"'
+  - 'RULE-SET,Instagram,🎴Instagram'
   #Netflix
-  - 'RULE-SET,Netflix,"🍿Netflix"'
+  - 'RULE-SET,Netflix,🍿Netflix'
   #Disney
-  - 'RULE-SET,Disney,"🍿Disney"'
+  - 'RULE-SET,Disney,🍿Disney'
   #Spotify
-  - 'RULE-SET,Spotify,"🎜Spotify"'
+  - 'RULE-SET,Spotify,🎜Spotify'
   #HBO
-  - 'RULE-SET,HBO,"🎞️HBO"'
+  - 'RULE-SET,HBO,🎞️HBO'
   #TG
   - 'RULE-SET,telegram,$app_name'
   #国外网站
