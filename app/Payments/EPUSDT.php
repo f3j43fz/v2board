@@ -2,8 +2,7 @@
 
 namespace App\Payments;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Redirect;
+use GuzzleHttp\Client;
 
 class EPUSDT {
 
@@ -46,13 +45,15 @@ class EPUSDT {
         ];
         $params['signature'] = $this->epusdtSign($params, $this->config['pid']);
 
-        $response = Http::withHeaders(['Content-Type' => 'application/json'])
-            ->post($this->config['url'], $params);
-        $body = $response->json();
+        $client = new Client([
+            'headers' => [ 'Content-Type' => 'application/json' ]
+        ]);
+        $response = $client->post($this->config['url'], ['body' => json_encode($params)]);
+        $body = json_decode($response->getBody()->getContents(), true);
         if (!isset($body['status_code']) || $body['status_code'] != 200) {
-            throw new \Illuminate\Http\Exceptions\HttpResponseException(response(__("请求失败") . $body['message'], 500));
+            abort(500, ("请求失败") . $body['message']);
         }
-        return Redirect::away($body['data']['payment_url']);
+        return redirect()->away($body['data']['payment_url']);
     }
 
     private function epusdtSign(array $parameter, string $signKey)
