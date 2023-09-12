@@ -29,7 +29,7 @@ class EPUSDT {
             ],
             'epusdt_pay_channel' => [
                 'label' => 'Channel',
-                'description' => '您的 epusdt 支付通道(例如: trc20, polygon)',
+                'description' => 'epusdt 支付通道(2选1: trc20, polygon)',
                 'type' => 'input',
             ]
         ];
