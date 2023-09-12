@@ -46,6 +46,7 @@ class EPUSDT {
             'notify_url' => $order['notify_url'],
             'redirect_url' => $order['return_url'],
             'order_id' => $order['trade_no'],
+            'out_trade_no' => $order['trade_no'],
             'channel' => $this->config['epusdt_pay_channel']
         ];
         $params['signature'] = $this->epusdtSign($params, $this->config['pid']);
@@ -88,14 +89,18 @@ class EPUSDT {
         $status = $params['status'];
         // 1：等待支付，2：支付成功，3：已过期
         if ($status != 2) {
-            return 'fail';
+            return false;
         }
         $sign = $params['signature'];
         unset($params['signature']);
         $md5 = $this->epusdtSign($params, $this->config['pid']);
         if ($sign !== $md5) {
-            return 'fail';
+            return false;
         }
-        return 'ok';
+        return [
+            'trade_no' => $params['order_id'],
+            'callback_no' => $params['trade_id'],
+            'custom_result' => 'ok'
+        ];
     }
 }
