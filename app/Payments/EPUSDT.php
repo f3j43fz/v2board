@@ -85,7 +85,6 @@ class EPUSDT {
             return false;
         }
         $sign = $params['signature'];
-        unset($params['signature']);
         $md5 = $this->epusdtSign($params, $this->config['pid']);
         if ($sign !== $md5) {
             return false;
