@@ -42,7 +42,7 @@ class EPUSDT {
             'notify_url' => $order['notify_url'],
             'redirect_url' => $order['return_url'],
             'order_id' => $order['trade_no'],
-            'channel' => $this->config['epusdt_pay_channel'],
+            'channel' => $this->config['epusdt_pay_channel']
         ];
         $params['signature'] = $this->epusdtSign($params, $this->config['pid']);
 
