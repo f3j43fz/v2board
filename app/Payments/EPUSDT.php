@@ -3,7 +3,6 @@
 namespace App\Payments;
 
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Redirect;
 
 class EPUSDT {
 
@@ -31,6 +30,11 @@ class EPUSDT {
                 'label' => 'Channel',
                 'description' => 'epusdt 支付通道(2选1: trc20, polygon)',
                 'type' => 'input',
+            ],
+            'type' => [
+                'label' => 'TYPE',
+                'description' => '',
+                'type' => 'input',
             ]
         ];
     }
@@ -55,6 +59,7 @@ class EPUSDT {
             abort(500, ("请求失败") . $body['message']);
         }
         return [
+            'type' => 1, // 0:qrcode 1:url
             'data' => $body['data']['payment_url']
         ];
     }
