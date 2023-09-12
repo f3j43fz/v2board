@@ -7,7 +7,7 @@ allow-lan: false
 bind-address: '*'
 mode: rule
 log-level: debug
-ipv6: true
+ipv6: false
 external-controller: 127.0.0.1:23658
 unified-delay: true
 global-client-fingerprint: chrome
@@ -16,7 +16,7 @@ profile:
 dns:
   enable: true
   listen: 0.0.0.0:1053
-  ipv6: true
+  ipv6: false
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
@@ -26,10 +26,6 @@ dns:
     - '*.lan'
     - localhost.ptlogin2.qq.com
   nameserver-policy:
-    'geosite:geolocation-!cn': [tls://8.8.4.4, https://1.0.0.1/dns-query]
-    "geosite:cn,private":
-      - https://doh.pub/dns-query
-      - https://dns.alidns.com/dns-query
     'ghproxy.com': '223.5.5.5'
   nameserver:
     - https://doh.pub/dns-query
