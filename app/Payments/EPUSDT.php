@@ -3,7 +3,7 @@
 namespace App\Payments;
 
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Redirect as LaravelRedirect;
 
 class EPUSDT {
 
@@ -54,7 +54,7 @@ class EPUSDT {
         if (!isset($body['status_code']) || $body['status_code'] != 200) {
             abort(500, ("请求失败") . $body['message']);
         }
-        return redirect()->away($body['data']['payment_url']);
+        return LaravelRedirect::away($body['data']['payment_url']);
     }
 
     private function epusdtSign(array $parameter, string $signKey)
