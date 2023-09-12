@@ -161,7 +161,7 @@ class ClashMeta
             if ($server['network_settings']) {
                 $grpcSettings = $server['network_settings'];
                 $array['grpc-opts'] = [];
-                if (isset($grpcSettings['serviceName'])) $array['grpc-opts']['grpc-service-name'] = $grpcSettings['serviceName'];
+                if (isset($grpcSettings['service_name'])) $array['grpc-opts']['grpc-service-name'] = $grpcSettings['service_name'];
             }
         }
 
@@ -198,11 +198,36 @@ class ClashMeta
                 }
             }
         }
-
         if ($server['network'] === 'tcp') {
-            $array['network'] = 'tcp';
+            $tcpSettings = $server['network_settings'];
+            if (isset($tcpSettings['header']['type'])) $array['network'] = $tcpSettings['header']['type'];
+            if (isset($tcpSettings['header']['request']['path'][0])) $array['http-opts']['path'] = $tcpSettings['header']['request']['path'][0];
         }
-
+        if ($server['network'] === 'ws') {
+            $array['network'] = 'ws';
+            if ($server['network_settings']) {
+                $wsSettings = $server['network_settings'];
+                $array['ws-opts'] = [];
+                if (isset($wsSettings['path']) && !empty($wsSettings['path']))
+                    $array['ws-opts']['path'] = $wsSettings['path'];
+                if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host']))
+                    $array['ws-opts']['headers'] = ['Host' => $wsSettings['headers']['Host']];
+                if (isset($wsSettings['path']) && !empty($wsSettings['path']))
+                    $array['ws-path'] = $wsSettings['path'];
+                if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host']))
+                    $array['ws-headers'] = ['Host' => $wsSettings['headers']['Host']];
+            }
+        }
+        if ($server['network'] === 'grpc') {
+            $array['network'] = 'grpc';
+            if ($server['network_settings']) {
+                $grpcSettings = $server['network_settings'];
+                $array['grpc-opts'] = [];
+                if (isset($grpcSettings['service_name'])) {
+                    $array['grpc-opts'] = ["grpc-service-name" => $grpcSettings['service_name']];
+                }
+            }
+        }
         return $array;
     }
 

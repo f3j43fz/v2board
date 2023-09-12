@@ -40,6 +40,9 @@ class VlessController extends Controller
             if (!isset($params['tls_settings']['private_key'])) {
                 $params['tls_settings']['private_key'] = Helper::base64EncodeUrlSafe(SodiumCompat::crypto_box_secretkey($keyPair));
             }
+            if (!isset($params['tls_settings']['short_id'])) {
+                $params['tls_settings']['short_id'] = Helper::buildShortID();
+            }
         }
 
         if ($request->input('id')) {

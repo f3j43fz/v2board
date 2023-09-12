@@ -95,7 +95,7 @@ class General
         }
         if ((string)$server['network'] === 'grpc') {
             $grpcSettings = $server['network_settings'];
-            if (isset($grpcSettings['serviceName'])) $config['path'] = $grpcSettings['serviceName'];
+            if (isset($grpcSettings['service_name'])) $config['path'] = $grpcSettings['service_name'];
         }
         return "vmess://" . base64_encode(json_encode($config)) . "\r\n";
 
@@ -115,7 +115,20 @@ class General
             "fp" => "chrome",
             "sid" => ((int)$server['tls'] === 2) ? $server['tls_settings']['short_id'] : "",
         ];
-
+        if ((string)$server['network'] === 'tcp') {
+            $tcpSettings = $server['network_settings'];
+            if (isset($tcpSettings['header']['type'])) $config['type'] = $tcpSettings['header']['type'];
+            if (isset($tcpSettings['header']['request']['path'][0])) $config['path'] = $tcpSettings['header']['request']['path'][0];
+        }
+        if ((string)$server['network'] === 'ws') {
+            $wsSettings = $server['network_settings'];
+            if (isset($wsSettings['path'])) $config['path'] = $wsSettings['path'];
+            if (isset($wsSettings['headers']['Host'])) $config['host'] = $wsSettings['headers']['Host'];
+        }
+        if ((string)$server['network'] === 'grpc') {
+            $grpcSettings = $server['network_settings'];
+            if (isset($grpcSettings['service_name'])) $config['path'] = $grpcSettings['service_name'];
+        }
         $output = "vless://" . $uuid . "@" . $config['add'] . ":" . $config['port'];
         $output .= "?" . http_build_query($config);
         $output .= "#" . $server['name'];

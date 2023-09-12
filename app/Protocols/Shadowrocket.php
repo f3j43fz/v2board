@@ -111,8 +111,8 @@ class Shadowrocket
             $config['obfs'] = "grpc";
             if ($server['network_settings']) {
                 $grpcSettings = $server['network_settings'];
-                if (isset($grpcSettings['serviceName']) && !empty($grpcSettings['serviceName']))
-                    $config['path'] = $grpcSettings['serviceName'];
+                if (isset($grpcSettings['service_name']) && !empty($grpcSettings['service_name']))
+                    $config['path'] = $grpcSettings['service_name'];
             }
             if (isset($tls_settings)) {
                 $config['host'] = $tls_settings['serverName'];
@@ -148,7 +148,38 @@ class Shadowrocket
                     $config['peer'] = $tls_settings['server_name'];
             }
         }
-
+        if ($server['network'] === 'tcp') {
+            if ($server['network_settings']) {
+                $tcpSettings = $server['network_settings'];
+                if (isset($tcpSettings['header']['type']) && !empty($tcpSettings['header']['type']))
+                    $config['obfs'] = $tcpSettings['header']['type'];
+                if (isset($tcpSettings['header']['request']['path'][0]) && !empty($tcpSettings['header']['request']['path'][0]))
+                    $config['path'] = $tcpSettings['header']['request']['path'][0];
+            }
+        }
+        if ($server['network'] === 'ws') {
+            $config['obfs'] = "websocket";
+            if ($server['network_settings']) {
+                $wsSettings = $server['network_settings'];
+                if (isset($wsSettings['path']) && !empty($wsSettings['path']))
+                    $config['path'] = $wsSettings['path'];
+                if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host']))
+                    $config['obfsParam'] = $wsSettings['headers']['Host'];
+            }
+        }
+        if ($server['network'] === 'grpc') {
+            $config['obfs'] = "grpc";
+            if ($server['network_settings']) {
+                $grpcSettings = $server['network_settings'];
+                if (isset($grpcSettings['service_name']) && !empty($grpcSettings['service_name']))
+                    $config['path'] = $grpcSettings['service_name'];
+            }
+            if (isset($tls_settings)) {
+                $config['host'] = $tls_settings['serverName'];
+            } else {
+                $config['host'] = $server['host'];
+            }
+        }
 
         $query = http_build_query($config, '', '&', PHP_QUERY_RFC3986);
         $uri = "vless://{$userinfo}?{$query}";
