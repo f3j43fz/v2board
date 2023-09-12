@@ -26,11 +26,6 @@ class EPUSDT {
                 'description' => 'api接口认证token',
                 'type' => 'input',
             ],
-            'epusdt_pay_channel' => [
-                'label' => 'Channel',
-                'description' => 'epusdt 支付通道(2选1: trc20, polygon)',
-                'type' => 'input',
-            ],
             'type' => [
                 'label' => 'TYPE',
                 'description' => '',
@@ -45,8 +40,7 @@ class EPUSDT {
             'amount' => $order['total_amount'] / 100,
             'notify_url' => $order['notify_url'],
             'redirect_url' => $order['return_url'],
-            'order_id' => $order['trade_no'],
-            'channel' => $this->config['epusdt_pay_channel']
+            'order_id' => $order['trade_no']
         ];
         $params['signature'] = $this->epusdtSign($params, $this->config['pid']);
 
