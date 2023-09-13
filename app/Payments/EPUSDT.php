@@ -63,13 +63,11 @@ class EPUSDT {
         ksort($parameter);
         reset($parameter); //内部指针指向数组中的第一个元素
         $sign = '';
-        $urls = '';
         foreach ($parameter as $key => $val) {
             if ($val == '') continue;
             if ($key != 'signature') {
                 if ($sign != '') {
                     $sign .= "&";
-                    $urls .= "&";
                 }
                 $sign .= "$key=$val"; //拼接为url参数形式
             }
@@ -79,11 +77,6 @@ class EPUSDT {
 
     public function notify($params)
     {
-        $status = $params['status'];
-        // 1：等待支付，2：支付成功，3：已过期
-        if ($status != 2) {
-            return false;
-        }
         $sign = $params['signature'];
         $md5 = $this->epusdtSign($params, $this->config['pid']);
         if ($sign !== $md5) {
