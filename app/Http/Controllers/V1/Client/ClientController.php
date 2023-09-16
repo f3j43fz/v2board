@@ -23,7 +23,13 @@ class ClientController extends Controller
         $userIP = $request->ip();
 
         $ip2region = new \Ip2Region();
-        $result = $ip2region->simple($userIP);
+        try {
+            $result = $ip2region->simple($userIP);
+        } catch (\Exception $e) {
+            // 处理异常情况
+            // 可以输出错误信息或执行其他逻辑
+            $result = "未知地区";
+        }
 
 //        $info= IPTest::memorySearch($userIP);
 //        // 使用 strpos 函数找到第三个 "|" 的位置
