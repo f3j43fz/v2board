@@ -253,7 +253,7 @@ window.settings.i18n['zh-CN'] = {
     'purchase_plan_title_2': '其它说明：',
     'purchase_plan_t2_info_1': '我们仅对节点可用性做相关免费技术支持，如果因您的运营商网络环境或客户端设置不当造成的使用问题，仅提供有限的帮助。',
     'purchase_plan_t2_info_2': '如果您是新手，请先查阅「使用文档」。如果购买后全部节点均无法使用，请检查您的网络是否异常，这种情况一般是您的网络问题，始终无法解决再向我们请求帮助。',
-    'purchase_plan_t2_info_3': '赠送的 Apple ID 位于【使用文档】末尾',
+    'purchase_plan_t2_info_3': '即日起，不再为iOS用户提供共享美区 Apple ID, 您需自备账号，也可到左侧的【杂货铺子】购买。',
     'choose_payment_method_note': '请从下面选择一种支付方式。',
     'gift_card': '礼品卡',
     'server_id': '服务器 ID',
