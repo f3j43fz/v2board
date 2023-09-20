@@ -12,7 +12,7 @@ class SingBox
     private $servers;
     private $user;
 
-    public function __construct($user, $servers, $type)
+    public function __construct($user, $servers)
     {
         $this->user = $user;
         $this->servers = $servers;
