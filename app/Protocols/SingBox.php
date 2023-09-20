@@ -260,7 +260,7 @@ class SingBox
         $array['up_mbps'] = $server['up_mbps'];
         $array['down_mbps'] = $server['down_mbps'];
         $array['obfs'] = Helper::getServerKey($server['created_at'], 16);
-
+        $array['tls'] = []; // 添加这一行
         if (!empty($server['server_name'])) $array['tls']['server_name'] = $server['server_name'];
         if (!empty($server['insecure'])) $array['tls']['insecure'] = ($server['insecure'] ? true : false);
         return $array;
