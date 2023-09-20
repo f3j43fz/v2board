@@ -257,8 +257,8 @@ class SingBox
         $array['server'] = $server['host'];
         $array['server_port'] = $server['port'];
         $array['auth_str'] = $password;
-        $array['up'] = $server['up_mbps'];
-        $array['down'] = $server['down_mbps'];
+        $array['up_mbps'] = $server['up_mbps'];
+        $array['down_mbps'] = $server['down_mbps'];
         $array['obfs'] = Helper::getServerKey($server['created_at'], 16);
         $array['tls'] =[];
 
