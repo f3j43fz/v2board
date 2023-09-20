@@ -129,7 +129,7 @@ class SingBox
             if ((int)$server['tls'] === 2) {
                 $publicKey = $tls_settings['public_key'];
                 $shortID = $tls_settings['short_id'];
-                $array['tls'] = [
+                $array['tls'] += [
                     'reality' => [
                         'enabled' => true,
                         'public_key' => $publicKey,
