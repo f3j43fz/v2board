@@ -261,7 +261,7 @@ class SingBox
         $array['down_mbps'] = $server['down_mbps'];
         $array['obfs'] = Helper::getServerKey($server['created_at'], 16);
         $array['tls'] = [
-            'enabled' => !empty($server['tls']) && $server['tls'] ? true : false
+            'enabled' => true
         ];
         if (!empty($server['server_name'])) $array['tls']['server_name'] = $server['server_name'];
         if (!empty($server['insecure'])) $array['tls']['insecure'] = ($server['insecure'] ? true : false);
