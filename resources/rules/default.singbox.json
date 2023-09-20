@@ -99,7 +99,7 @@
             },
             {
                 "geosite": "geolocation-!cn",
-                "outbound": "app_name"
+                "outbound": "appname"
             },
             {
                 "geoip": "cn",
@@ -119,7 +119,7 @@
     },
     "outbounds": [
         {
-            "tag": "app_name",
+            "tag": "appname",
             "type": "selector",
             "outbounds": [
                 "auto"
@@ -130,82 +130,82 @@
             "tag": "google",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "openai",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "bahamut",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "instagram",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "twitch",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "spotify",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "netflix",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "disney",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "hbo",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "cn",
@@ -213,7 +213,7 @@
             "outbounds": [
                 "direct",
                 "auto",
-                "app_name"
+                "appname"
             ],
             "default": "direct"
         },
@@ -221,11 +221,11 @@
             "tag": "final",
             "type": "selector",
             "outbounds": [
-                "app_name",
+                "appname",
                 "auto",
                 "direct"
             ],
-            "default": "app_name"
+            "default": "appname"
         },
         {
             "tag": "dns",

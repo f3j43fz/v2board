@@ -74,10 +74,8 @@ class SingBox
 
         $config['outbounds'] = $outbounds;
 
-        $placeholder = "app_name";
+        $placeholder = "appname";
         $config = str_replace($placeholder, $appName, $config);
-
-
         return json_encode($config, JSON_PRETTY_PRINT);
     }
 
