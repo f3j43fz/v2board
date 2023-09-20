@@ -1,0 +1,313 @@
+{
+    "dns": {
+        "servers": [
+            {
+                "tag": "google",
+                "address": "tls://8.8.4.4",
+                "address_strategy": "prefer_ipv4",
+                "detour": "proxy"
+            },
+            {
+                "tag": "tx",
+                "address": "https://120.53.53.53/dns-query",
+                "address_strategy": "prefer_ipv4",
+                "detour": "direct"
+            }
+        ],
+        "rules": [
+            {
+                "outbound": "any",
+                "server": "tx",
+                "disable_cache": true
+            },
+            {
+                "clash_mode": "direct",
+                "server": "tx"
+            },
+            {
+                "clash_mode": "global",
+                "server": "google"
+            },
+            {
+                "geosite": "cn",
+                "server": "tx"
+            },
+            {
+                "geosite": "geolocation-!cn",
+                "server": "google"
+            }
+        ],
+        "final": "google"
+    },
+    "route": {
+        "rules": [
+            {
+                "port": 53,
+                "outbound": "dns-out"
+            },
+            {
+                "clash_mode": "direct",
+                "outbound": "direct"
+            },
+            {
+                "clash_mode": "global",
+                "outbound": "GLOBAL"
+            },
+            {
+                "geoip": "google",
+                "geosite": "google",
+                "outbound": "google"
+            },
+            {
+                "geosite": "openai",
+                "outbound": "openai"
+            },
+            {
+                "geosite": "bahamut",
+                "outbound": "bahamut"
+            },
+            {
+                "geosite": "instagram",
+                "outbound": "instagram"
+            },
+            {
+                "geosite": "twitch",
+                "outbound": "twitch"
+            },
+            {
+                "geosite": "spotify",
+                "outbound": "spotify"
+            },
+            {
+                "geoip": "netflix",
+                "geosite": "netflix",
+                "outbound": "netflix"
+            },
+            {
+                "geoip": "disney",
+                "geosite": "disney",
+                "outbound": "disney"
+            },
+            {
+                "geoip": "hbo",
+                "geosite": "hbo",
+                "outbound": "hbo"
+            },
+            {
+                "geosite": "cn",
+                "outbound": "cn"
+            },
+            {
+                "geosite": "geolocation-!cn",
+                "outbound": "proxy"
+            },
+            {
+                "geoip": "cn",
+                "outbound": "cn"
+            }
+        ],
+        "final": "final",
+        "auto_detect_interface": true,
+        "geoip": {
+            "download_url": "https://ghproxy.com/https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
+            "download_detour": "direct"
+        },
+        "geosite": {
+            "download_url": "https://ghproxy.com/https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
+            "download_detour": "direct"
+        }
+    },
+    "outbounds": [
+        {
+            "tag": "proxy",
+            "type": "selector",
+            "outbounds": [
+                "auto"
+            ],
+            "default": "auto",
+            "interrupt_exist_connections": false
+        },
+        {
+            "tag": "google",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "openai",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "bahamut",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "instagram",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "twitch",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "spotify",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "netflix",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "disney",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "hbo",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "cn",
+            "type": "selector",
+            "outbounds": [
+                "direct",
+                "auto",
+                "proxy"
+            ],
+            "default": "direct"
+        },
+        {
+            "tag": "final",
+            "type": "selector",
+            "outbounds": [
+                "proxy",
+                "auto",
+                "direct"
+            ],
+            "default": "proxy"
+        },
+        {
+            "tag": "dns",
+            "type": "selector",
+            "outbounds": [
+                "auto",
+                "direct"
+            ],
+            "default": "auto"
+        },
+        {
+            "tag": "GLOBAL",
+            "type": "selector",
+            "outbounds": [
+                "auto",
+                "direct"
+            ],
+            "default": "auto"
+        },
+        {
+            "tag": "auto",
+            "type": "urltest",
+            "outbounds": [
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interval": "1m",
+            "tolerance": 50
+        },
+        {
+            "tag": "direct",
+            "type": "direct"
+        },
+        {
+            "tag": "dns-out",
+            "type": "dns"
+        }
+    ],
+    "inbounds": [
+        {
+            "tag": "tun",
+            "type": "tun",
+            "inet4_address": "172.19.0.1/30",
+            "inet6_address": "fdfe:dcba:9876::1/126",
+            "mtu": 9000,
+            "stack": "system",
+            "auto_route": true,
+            "strict_route": true,
+            "sniff": true,
+            "sniff_override_destination": true,
+            "domain_strategy": "prefer_ipv4",
+            "platform": {
+                "http_proxy": {
+                    "enabled": false,
+                    "server": "127.0.0.1",
+                    "server_port": 7899
+                }
+            }
+        },
+        {
+            "tag": "mixed",
+            "type": "mixed",
+            "listen": "127.0.0.1",
+            "listen_port": 7890,
+            "sniff": true,
+            "sniff_override_destination": true,
+            "domain_strategy": "prefer_ipv4"
+        }
+    ],
+    "experimental": {
+        "clash_api": {
+            "external_controller": "127.0.0.1:9090",
+            "external_ui_download_detour": "proxy",
+            "external_ui": "ui",
+            "secret": "",
+            "store_selected": true,
+            "store_fakeip": true
+        }
+    },
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    }
+}
