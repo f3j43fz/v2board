@@ -176,35 +176,40 @@ class SingBox
         $array['security'] = "auto";
         $array['alter_id'] = 0;
 
+        if ($server['tls']) {
+            $tls_settings =[];
+            if ($server['tls_settings']) {
+                $tls_settings = $server['tls_settings'];
+            }
+
+            $array['tls'] = [
+                'enabled' => true,
+                'server_name' => $tls_settings['server_name'],
+                'insecure' => (bool)$tls_settings['allowInsecure']
+            ];
+        }
+
+        $array['transport'] = [];
         if ($server['network'] === 'ws') {
             $array['transport']['type'] = 'ws';
             if (isset($server['networkSettings'])) {
                 $wsSettings = $server['networkSettings'];
-                $array['transport'] = [];
-                if (isset($wsSettings['path']) && !empty($wsSettings['path']))
+                if (isset($wsSettings['path']) && !empty($wsSettings['path'])){
                     $array['transport']['path'] = $wsSettings['path'];
-                if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host']))
+                }
+                if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host'])){
                     $array['transport']['headers'] = ['Host' => $wsSettings['headers']['Host']];
+                }
             }
         }
 
-        if ($server['network'] === 'ws') {
-            $array['transport']['type'] = 'ws';
-            if (isset($server['networkSettings'])) {
-                $wsSettings = $server['networkSettings'];
-                $array['transport'] = [];
-                if (isset($wsSettings['path']) && !empty($wsSettings['path']))
-                    $array['transport']['path'] = $wsSettings['path'];
-                if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host']))
-                    $array['transport']['headers'] = ['Host' => $wsSettings['headers']['Host']];
-            }
-        }
         if ($server['network'] === 'grpc') {
             $array['transport']['type'] = 'grpc';
             if (isset($server['networkSettings'])) {
                 $grpcSettings = $server['networkSettings'];
-                $array['transport'] = [];
-                if (isset($grpcSettings['serviceName'])) $array['transport']['service_name'] = $grpcSettings['serviceName'];
+                if (isset($grpcSettings['serviceName'])){
+                    $array['transport']['service_name'] = $grpcSettings['serviceName'];
+                }
             }
         }
 
