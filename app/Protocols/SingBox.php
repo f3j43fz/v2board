@@ -176,20 +176,21 @@ class SingBox
         $array['security'] = "auto";
         $array['alter_id'] = 0;
 
-        if ($server['tls']) {
-            $array['tls']['enabled'] = true;
-            if ($server['tlsSettings']) {
-                $tlsSettings = $server['tlsSettings'];
-                if (isset($tlsSettings['allowInsecure']) && !empty($tlsSettings['allowInsecure']))
-                    $array['tls']['insecure'] = ($tlsSettings['allowInsecure'] ? true : false);
-                if (isset($tlsSettings['serverName']) && !empty($tlsSettings['serverName']))
-                    $array['tls']['server_name'] = $tlsSettings['serverName'];
+        if ($server['network'] === 'ws') {
+            $array['transport']['type'] = 'ws';
+            if (isset($server['networkSettings'])) {
+                $wsSettings = $server['networkSettings'];
+                $array['transport'] = [];
+                if (isset($wsSettings['path']) && !empty($wsSettings['path']))
+                    $array['transport']['path'] = $wsSettings['path'];
+                if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host']))
+                    $array['transport']['headers'] = ['Host' => $wsSettings['headers']['Host']];
             }
         }
 
         if ($server['network'] === 'ws') {
             $array['transport']['type'] = 'ws';
-            if ($server['networkSettings']) {
+            if (isset($server['networkSettings'])) {
                 $wsSettings = $server['networkSettings'];
                 $array['transport'] = [];
                 if (isset($wsSettings['path']) && !empty($wsSettings['path']))
@@ -200,7 +201,7 @@ class SingBox
         }
         if ($server['network'] === 'grpc') {
             $array['transport']['type'] = 'grpc';
-            if ($server['networkSettings']) {
+            if (isset($server['networkSettings'])) {
                 $grpcSettings = $server['networkSettings'];
                 $array['transport'] = [];
                 if (isset($grpcSettings['serviceName'])) $array['transport']['service_name'] = $grpcSettings['serviceName'];
