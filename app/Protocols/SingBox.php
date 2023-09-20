@@ -142,22 +142,21 @@ class SingBox
 
         $array['packet_encoding'] = 'xudp';
 
+        $array['transport'] =[];
         if ($server['network'] === 'ws') {
             $array['transport']['type'] = 'ws';
             if ($server['network_settings']) {
                 $wsSettings = $server['network_settings'];
-                $array['transport'] = [];
                 if (isset($wsSettings['path']) && !empty($wsSettings['path']))
                     $array['transport']['path'] = $wsSettings['path'];
                 if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host']))
-                    $array['transport']['headers'] = ['Host' => $wsSettings['headers']['Host']];
+                    $array['transport']['headers'] = $wsSettings['headers'];
             }
         }
         if ($server['network'] === 'grpc') {
             $array['transport']['type'] = 'grpc';
             if ($server['network_settings']) {
                 $grpcSettings = $server['network_settings'];
-                $array['transport'] = [];
                 if (isset($grpcSettings['serviceName'])) $array['transport']['service_name'] = $grpcSettings['serviceName'];
             }
         }
@@ -198,14 +197,14 @@ class SingBox
                     $array['transport']['path'] = $wsSettings['path'];
                 }
                 if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host'])){
-                    $array['transport']['headers'] = $wsSettings['headers']['Host'];
+                    $array['transport']['headers'] = $wsSettings['headers'];
                 }
             }
         }
 
         if ($server['network'] === 'grpc') {
             $array['transport']['type'] = 'grpc';
-            if (isset($server['network_settings'])) {
+            if ($server['network_settings']) {
                 $grpcSettings = $server['network_settings'];
                 if (isset($grpcSettings['serviceName'])){
                     $array['transport']['service_name'] = $grpcSettings['serviceName'];
@@ -228,7 +227,7 @@ class SingBox
         $array['tls'] =[];
 
         if (!empty($server['server_name'])) $array['tls']['server_name'] = $server['server_name'];
-        if (!empty($server['allow_insecure'])) $array['tls']['insecure'] = ($server['allow_insecure'] ? true : false);
+        if (!empty($server['allow_insecure'])) $array['tls']['insecure'] = (bool)$server['allow_insecure'];
         return $array;
     }
 
@@ -246,7 +245,7 @@ class SingBox
         $array['tls'] = [
             'enabled' => true,
             'server_name' => isset($server['server_name']) ? $server['server_name'] : '',
-            'insecure' => $server['insecure'] ? true : false,
+            'insecure' => (bool)$server['insecure'],
             'alpn' => ['h3'],
             'utls' => [
                 'enabled' => false,
@@ -270,7 +269,7 @@ class SingBox
             'enabled' => true
         ];
         if (!empty($server['server_name'])) $array['tls']['server_name'] = $server['server_name'];
-        if (!empty($server['insecure'])) $array['tls']['insecure'] = ($server['insecure'] ? true : false);
+        if (!empty($server['insecure'])) $array['tls']['insecure'] = (bool)$server['insecure'];
         return $array;
     }
 
