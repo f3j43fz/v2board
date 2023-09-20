@@ -119,7 +119,7 @@
     },
     "outbounds": [
         {
-            "tag": "proxy",
+            "tag": "$app_name",
             "type": "selector",
             "outbounds": [
                 "auto"

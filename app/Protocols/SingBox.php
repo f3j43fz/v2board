@@ -74,6 +74,8 @@ class SingBox
 
         $config['outbounds'] = $outbounds;
 
+        $config = str_replace('$app_name', config('v2board.app_name', 'V2Board'), $config);
+
         return json_encode($config, JSON_PRETTY_PRINT);
     }
 
