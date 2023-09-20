@@ -192,13 +192,13 @@ class SingBox
         $array['transport'] = [];
         if ($server['network'] === 'ws') {
             $array['transport']['type'] = 'ws';
-            if (isset($server['network_settings'])) {
+            if ($server['network_settings']) {
                 $wsSettings = $server['network_settings'];
                 if (isset($wsSettings['path']) && !empty($wsSettings['path'])){
                     $array['transport']['path'] = $wsSettings['path'];
                 }
                 if (isset($wsSettings['headers']['Host']) && !empty($wsSettings['headers']['Host'])){
-                    $array['transport']['headers'] = ['Host' => $wsSettings['headers']['Host']];
+                    $array['transport']['headers'] = $wsSettings['headers']['Host'];
                 }
             }
         }
