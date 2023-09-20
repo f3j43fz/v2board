@@ -130,82 +130,82 @@
             "tag": "google",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "openai",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "bahamut",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "instagram",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "twitch",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "spotify",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "netflix",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "disney",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "hbo",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "cn",
@@ -213,7 +213,7 @@
             "outbounds": [
                 "direct",
                 "auto",
-                "proxy"
+                "$app_name"
             ],
             "default": "direct"
         },
@@ -221,11 +221,11 @@
             "tag": "final",
             "type": "selector",
             "outbounds": [
-                "proxy",
+                "$app_name",
                 "auto",
                 "direct"
             ],
-            "default": "proxy"
+            "default": "$app_name"
         },
         {
             "tag": "dns",
