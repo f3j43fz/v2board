@@ -11,12 +11,10 @@ class SingBox
 
     private $servers;
     private $user;
-    private $type;
 
     public function __construct($user, $servers, $type)
     {
         $this->user = $user;
-        $this->type = $type;
         $this->servers = $servers;
     }
 
@@ -24,7 +22,6 @@ class SingBox
     {
         $servers = $this->servers;
         $user = $this->user;
-        $type = $this->type;
         $appName = config('v2board.app_name', 'V2Board');
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
         header("content-disposition:attachment;filename*=UTF-8''".rawurlencode($appName));
@@ -32,37 +29,11 @@ class SingBox
         $outbounds = $config['outbounds'];
         $selectorOutbounds = [];
         $tuic = false;
-        $vless = false;
-        $vmess = false;
-        $shadowsocks = false;
-        $trojan = false;
-        $hysteria = false;
-        if ( $type === 'all' || $type === '' ) {
-//            $tuic = true; // 我还没有tuic ，所以默认 false
-            $vless = true;
-        } else foreach ( explode( ',', $type ) as $t ) {
-            switch( $t )
-            {
-                case 'tuic':
-                    $tuic = true;
-                    break;
-                case 'vless':
-                    $vless = true;
-                    break;
-                case 'vmess':
-                    $vmess = true;
-                    break;
-                case 'shadowsocks':
-                    $shadowsocks = true;
-                    break;
-                case 'trojan':
-                    $trojan = true;
-                    break;
-                case 'hysteria':
-                    $hysteria = true;
-                    break;
-            }
-        }
+        $vless = true;
+        $vmess = true;
+        $shadowsocks = true;
+        $trojan = true;
+        $hysteria = true;
 
         $proxy = [];
 
