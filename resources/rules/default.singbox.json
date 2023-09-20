@@ -99,7 +99,7 @@
             },
             {
                 "geosite": "geolocation-!cn",
-                "outbound": "appname"
+                "outbound": "V2Pass"
             },
             {
                 "geoip": "cn",
@@ -119,7 +119,7 @@
     },
     "outbounds": [
         {
-            "tag": "appname",
+            "tag": "V2Pass",
             "type": "selector",
             "outbounds": [
                 "auto"
@@ -130,82 +130,82 @@
             "tag": "google",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "openai",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "bahamut",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "instagram",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "twitch",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "spotify",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "netflix",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "disney",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "hbo",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "cn",
@@ -213,7 +213,7 @@
             "outbounds": [
                 "direct",
                 "auto",
-                "appname"
+                "V2Pass"
             ],
             "default": "direct"
         },
@@ -221,11 +221,11 @@
             "tag": "final",
             "type": "selector",
             "outbounds": [
-                "appname",
+                "V2Pass",
                 "auto",
                 "direct"
             ],
-            "default": "appname"
+            "default": "V2Pass"
         },
         {
             "tag": "dns",
