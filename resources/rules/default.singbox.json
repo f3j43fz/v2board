@@ -56,42 +56,42 @@
             {
                 "geoip": "google",
                 "geosite": "google",
-                "outbound": "google"
+                "outbound": "谷歌系"
             },
             {
                 "geosite": "openai",
-                "outbound": "openai"
+                "outbound": "OpenAI"
             },
             {
                 "geosite": "bahamut",
-                "outbound": "bahamut"
+                "outbound": "动画疯"
             },
             {
                 "geosite": "instagram",
-                "outbound": "instagram"
+                "outbound": "Instagram"
             },
             {
                 "geosite": "twitch",
-                "outbound": "twitch"
+                "outbound": "Twitch"
             },
             {
                 "geosite": "spotify",
-                "outbound": "spotify"
+                "outbound": "Spotify"
             },
             {
                 "geoip": "netflix",
                 "geosite": "netflix",
-                "outbound": "netflix"
+                "outbound": "Netflix"
             },
             {
                 "geoip": "disney",
                 "geosite": "disney",
-                "outbound": "disney"
+                "outbound": "Disney"
             },
             {
                 "geoip": "hbo",
                 "geosite": "hbo",
-                "outbound": "hbo"
+                "outbound": "HBO"
             },
             {
                 "geosite": "cn",
@@ -127,7 +127,7 @@
             "default": "auto"
         },
         {
-            "tag": "google",
+            "tag": "谷歌系",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -136,7 +136,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "openai",
+            "tag": "OpenAI",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -145,7 +145,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "bahamut",
+            "tag": "动画疯",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -154,7 +154,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "instagram",
+            "tag": "Instagram",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -163,7 +163,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "twitch",
+            "tag": "Twitch",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -172,7 +172,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "spotify",
+            "tag": "Spotify",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -181,7 +181,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "netflix",
+            "tag": "Netflix",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -190,7 +190,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "disney",
+            "tag": "Disney",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
@@ -199,7 +199,7 @@
             "default": "V2Pass"
         },
         {
-            "tag": "hbo",
+            "tag": "HBO",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
