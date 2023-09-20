@@ -124,8 +124,7 @@
             "outbounds": [
                 "auto"
             ],
-            "default": "auto",
-            "interrupt_exist_connections": false
+            "default": "auto"
         },
         {
             "tag": "google",
