@@ -99,7 +99,7 @@
             },
             {
                 "geosite": "geolocation-!cn",
-                "outbound": "proxy"
+                "outbound": "$app_name"
             },
             {
                 "geoip": "cn",
