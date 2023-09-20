@@ -8,7 +8,6 @@ use App\Utils\Helper;
 class SingBox
 {
     public $flag = 'sing';
-
     private $servers;
     private $user;
 
@@ -133,11 +132,10 @@ class SingBox
                 $array['tls'] = [
                     'reality' => [
                         'enabled' => true,
-                        'public-key' => $publicKey,
-                        'short-id' => $shortID
+                        'public_key' => $publicKey,
+                        'short_id' => $shortID
                     ]
                 ];
-                $array['client-fingerprint'] = 'chrome';
             }
 
         }
