@@ -796,6 +796,9 @@
                     title: "Clash Meta",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "%26flag%3Dmeta" + "&name=" + window.settings.title
                 }), t.push({
+                    title: "NekoBox",
+                    href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
+                }), t.push({
                     title: "sing-box",
                     href: "sing-box://import-remote-profile?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 })), c.a.createElement("div", {
