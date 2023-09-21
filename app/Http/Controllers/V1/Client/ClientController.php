@@ -19,16 +19,16 @@ class ClientController extends Controller
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
 
+        $UA = $_SERVER['HTTP_USER_AGENT'];
+        $UA = strtolower($UA);
         $allowedFlags = ['clash', 'meta', 'sing', 'clash-verge', 'shadowrocket', 'sing-box', 'loon', 'clashforandroid', 'clashforwindows', 'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'passwall'];
         $flagContainsAllowed = false;
-
         foreach ($allowedFlags as $allowedFlag) {
-            if (strpos($flag, $allowedFlag) !== false) {
+            if (strpos($UA, $allowedFlag) !== false) {
                 $flagContainsAllowed = true;
                 break;
             }
         }
-
         if (!$flagContainsAllowed) {
             header('Location: https://bilibili.com');
             exit();
