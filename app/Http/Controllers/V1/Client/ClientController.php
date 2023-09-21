@@ -18,6 +18,23 @@ class ClientController extends Controller
         $flag = $request->input('flag')
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
+
+        $allowedFlags = ['clash', 'shadowrocket', 'sing-box', 'loon', 'clashforandroid', 'clashforwindows', 'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'passwall'];
+        $flagContainsAllowed = false;
+
+        foreach ($allowedFlags as $allowedFlag) {
+            if (strpos($flag, $allowedFlag) !== false) {
+                $flagContainsAllowed = true;
+                break;
+            }
+        }
+
+        if (!$flagContainsAllowed) {
+            header('Location: https://bilibili.com');
+            exit();
+        }
+
+
         $user = $request->user;
 
         $userIP = $request->ip();
