@@ -266,7 +266,7 @@ window.settings.i18n['zh-CN'] = {
     'please_join_our': '',
     'tg_chat_url': '',
     'to_contact_customer_service': '如有问题，可通过本工单联系客服求助。',
-    'describe_your_question_info1': '您提问后必须等客服回复后才能再次提问，所以请尽可能细致地描述您遇到的问题，这样我们才能更准确地明白您要表达的意图，以便处理您的问题。如果是节点类的问题请您回答以下3个问题：1.什么客户端(安卓clash/电脑clash/ios小火箭)？2.会不会更新订阅？3.有没有更新订阅？不回答上述问题瞎提问的，客服可以直接封号处理。',
+    'describe_your_question_info1': '您提问后必须等客服回复后才能再次提问，所以请尽可能细致地描述您遇到的问题，这样我们才能更准确地明白您要表达的意图，以便处理您的问题。如果是节点类的问题请您回答以下4个问题：1. 什么平台（安卓/ios/windows/macOS）？ 2. 什么客户端(clash for android/clash meta/NekoBox/sing-box/clash verge/shadowrocket/windows官方客户端)？ 3.会不会更新订阅？ 4.有没有更新订阅？不回答上述问题瞎提问的，客服可以直接封号处理。',
     'describe_your_question_info2': '各部门工作时间：周一到周五 10:00 - 22:00（北京时间），双休日及法定节假日仅限处理紧急问题。',
     'you_can_join': '现在您可以 <a class="text-primary" href="https://t.me/" target="_blank"><i class="fab fa-telegram-plane"></i> 加入我们的 Telegram 讨论群组</a> 或 <a class="text-primary" href="https://t.me/" target="_blank"><i class="fab fa-telegram-plane"></i> 关注我们的 Telegram 通知频道</a> 来获取最新信息。其他人通过您的邀请码购买服务您将会获得 20% 佣金',
     'tg_channel_url': 'https://t.me/',
