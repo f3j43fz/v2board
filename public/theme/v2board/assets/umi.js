@@ -800,7 +800,7 @@
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 }), t.push({
                     title: "sing-box",
-                    href: "sing-box://import-remote-profile?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
+                    href: "sing-box://import-remote-profile?url=" + encodeURIComponent(e) + "#" + window.settings.title
                 })), c.a.createElement("div", {
                     className: v.a.oneClickSubscribe,
                     ref: "subscribeBox"
