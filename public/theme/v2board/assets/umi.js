@@ -773,6 +773,9 @@
                     title: "Shadowrocket",
                     href: "shadowrocket://add/sub://" + window.btoa(e + "&flag=shadowrocket").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "") + "?remark=" + window.settings.title
                 }), t.push({
+                    title: "sing-box",
+                    href: "sing-box://import-remote-profile?url=" + encodeURIComponent(e) + "%26flag%3Dsing#" + window.settings.title
+                }), t.push({
                     title: "QuantumultX",
                     href: "quantumult-x:///update-configuration?remote-resource=" + encodeURI(JSON.stringify({
                         server_remote: [e + ", tag=" + window.settings.title]
