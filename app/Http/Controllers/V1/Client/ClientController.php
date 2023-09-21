@@ -19,7 +19,7 @@ class ClientController extends Controller
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
 
-        $allowedFlags = ['clash', 'shadowrocket', 'sing-box', 'loon', 'clashforandroid', 'clashforwindows', 'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'passwall'];
+        $allowedFlags = ['clash', 'clash-verge', 'shadowrocket', 'sing-box', 'loon', 'clashforandroid', 'clashforwindows', 'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'passwall'];
         $flagContainsAllowed = false;
 
         foreach ($allowedFlags as $allowedFlag) {
