@@ -253,6 +253,14 @@ rules:
     - 'DOMAIN,v2pass.me,DIRECT'
     - 'DOMAIN,emby.chinayyds.top,DIRECT'
     - 'DOMAIN,chinabest.live,DIRECT'
+    # Alibabacloud
+    - 'DOMAIN-SUFFIX,alibabacloud.co.in,$app_name'
+    - 'DOMAIN-SUFFIX,alibabacloud.com,$app_name'
+    - 'DOMAIN-SUFFIX,alibabacloud.com.au,$app_name'
+    - 'DOMAIN-SUFFIX,alibabacloud.com.hk,$app_name'
+    - 'DOMAIN-SUFFIX,alibabacloud.com.my,$app_name'
+    - 'DOMAIN-SUFFIX,alibabacloud.com.sg,$app_name'
+    - 'DOMAIN-SUFFIX,alibabacloud.com.tw,$app_name'
     # speedtest
     - 'DOMAIN,cdnst.net,DIRECT'
     - 'DOMAIN,cellmaps.com,DIRECT'
