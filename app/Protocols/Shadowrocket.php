@@ -175,7 +175,7 @@ class Shadowrocket
                     $config['path'] = $grpcSettings['service_name'];
             }
             if (isset($tls_settings)) {
-                $config['host'] = $tls_settings['serverName'];
+                $config['host'] = $tls_settings['server_name'];
             } else {
                 $config['host'] = $server['host'];
             }
