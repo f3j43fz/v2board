@@ -7,6 +7,7 @@ use App\Models\CommissionLog;
 use App\Models\InviteCode;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\TelegramService;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,7 @@ class InviteController extends Controller
         $inviteCode = new InviteCode();
         $inviteCode->user_id = $request->user['id'];
         $inviteCode->code = Helper::randomChar(8);
+        $this->sendNotify($request->user['id']);
         return response([
             'data' => $inviteCode->save()
         ]);
@@ -88,5 +90,11 @@ class InviteController extends Controller
                 'stat' => $stat
             ]
         ]);
+    }
+
+    private function sendNotify(int $id)
+    {
+        $telegramService = new TelegramService();
+        $telegramService->sendMessageWithAdmin("🏷💌邀请码提醒\n———————————————\n用户ID：{$id}生成了邀请码`", true);
     }
 }
