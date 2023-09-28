@@ -45,6 +45,8 @@ class UserRoute
             $router->post('/ticket/save', 'V1\\User\\TicketController@save');
             $router->get ('/ticket/fetch', 'V1\\User\\TicketController@fetch');
             $router->post('/ticket/withdraw', 'V1\\User\\TicketController@withdraw');
+            // Record
+            $router->get ('/record/fetch', 'V1\\User\\RecordController@fetch');
             // Server
             $router->get ('/server/fetch', 'V1\\User\\ServerController@fetch');
             // Coupon
