@@ -18,11 +18,11 @@ class ClientController extends Controller
     {
         $userIP = $request->ip();
         $token = $request->input('token');
-//        if (!$this->checkTokenRequest($token, $userIP)) {
-//            // 禁止该Token请求
-//            header('Location: https://bilibili.com');
-//            exit();
-//        }
+        if (!$this->checkTokenRequest($token, $userIP)) {
+            // 禁止该Token请求
+            header('Location: https://bilibili.com');
+            exit();
+        }
 
         if(!$this->checkUA($request)){
             header('Location: https://bilibili.com');
@@ -92,7 +92,8 @@ class ClientController extends Controller
     }
 
     //过滤 UA 白名单
-    private function checkUA($request){
+    private function checkUA($request): bool
+    {
         $UA = strtolower($request->header('User-Agent'));
         $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch'];
         $flagContainsAllowed = false;
@@ -108,7 +109,7 @@ class ClientController extends Controller
             return true;
         }
     }
-    private function checkTokenRequest($token, $ip)
+    private function checkTokenRequest($token, $ip): bool
     {
         $hourAgo = time() - 3600; // 一小时前的时间
         $tokenRequest = Tokenrequest::firstOrCreate(
