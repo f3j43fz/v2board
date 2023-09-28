@@ -13,7 +13,8 @@ class RecordController extends Controller
 {
     public function fetch(Request $request)
     {
-        $record = Tokenrequest::where('token', $request->user['token'])
+        $token = User::find($request->user['id'])->token;
+        $record = Tokenrequest::where('token', $token)
             ->orderBy('requested_at', 'DESC')
             ->get();
         return response([
