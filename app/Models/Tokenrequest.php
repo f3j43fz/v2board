@@ -16,7 +16,7 @@ class Tokenrequest extends Model
     ];
 
     protected $casts = [
-        'requested_at' => 'datetime',
+        'requested_at' => 'timestamp',
     ];
 
     public $timestamps = false;
