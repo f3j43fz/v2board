@@ -62,14 +62,14 @@ class ClearInviteCode extends Command
 
             if (in_array($user->plan_id, $oneTimePlans) && (time() - $user->updated_at) > 432000) {
                 if (InviteCode::where('user_id', $user->id)->delete()) {
-                    $this->info("已删除用户(拥有长期套餐)ID为{$user->id}的邀请码");
+                    $this->info("已删除用户(拥有一次性套餐)ID为{$user->id}的邀请码");
                 }
             }
 
             // Delete invitation code for users who have been expired for 7 days or more
             if (in_array($user->plan_id, $trafficPlans) && (time() - $user->expired_at) > 604800) {
                 if (InviteCode::where('user_id', $user->id)->delete()) {
-                    $this->info("已删除用户ID为{$user->id}的邀请码");
+                    $this->info("已删除用户(拥有周期套餐)ID为{$user->id}的邀请码");
                 }
             }
 
