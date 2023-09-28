@@ -18,11 +18,11 @@ class ClientController extends Controller
     {
         $userIP = $request->ip();
         $token = $request->input('token');
-//        if (!$this->checkTokenRequest($token, $userIP)) {
-//            // 禁止该Token请求
-//            header('Location: https://bilibili.com');
-//            exit();
-//        }
+        if (!$this->checkTokenRequest($token, $userIP)) {
+            // 禁止该Token请求
+            header('Location: https://bilibili.com');
+            exit();
+        }
 
         if(!$this->checkUA($request)){
             header('Location: https://bilibili.com');
@@ -113,8 +113,8 @@ class ClientController extends Controller
     {
         $hourAgo = time() - 3600; // 一小时前的时间
         $tokenRequest = Tokenrequest::firstOrCreate(
-            ['token' => $token, 'ip' => $ip],
-            ['requested_at' => time()]
+            ['token' => strval($token), 'ip' => strval($ip)],
+            ['requested_at' => now()]
         );
 
         $requests = Tokenrequest::where('token', $token)
