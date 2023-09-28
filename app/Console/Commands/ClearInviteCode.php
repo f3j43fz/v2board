@@ -43,7 +43,11 @@ class ClearInviteCode extends Command
     public function handle()
     {
         ini_set('memory_limit', -1);
-        $this->info("功能：删除过期7天以上的按周期付费用户的邀请码 以及 5天以上不使用流量的一次性套餐用户的邀请码");
+        $this->info("功能：删除过期7天以上的【按周期付费用户】的邀请码 以及 7天以上不使用流量的【一次性套餐用户】的邀请码");
+
+        $daysToExpire = 7;
+        $daysWithoutTraffic = 7;
+
         $users = User::all();
         $plans = Plan::all();
         $oneTimePlans = [];
@@ -59,8 +63,8 @@ class ClearInviteCode extends Command
         foreach ($users as $user) {
             // Delete invitation code for users expired for 7 days
             // Delete invitation code for users who haven't used traffic for 5 days
-            if ((in_array($user->plan_id, $oneTimePlans) && (time() - $user->updated_at) > 432000) ||
-                (in_array($user->plan_id, $trafficPlans) && (time() - $user->expired_at) > 604800)) {
+            if ((in_array($user->plan_id, $oneTimePlans) && (time() - $user->updated_at) > ($daysWithoutTraffic * 86400)) ||
+                (in_array($user->plan_id, $trafficPlans) && (time() - $user->expired_at) > ($daysToExpire * 86400))) {
                 if (InviteCode::where('user_id', $user->id)->delete()) {
                     $this->info("已删除用户ID为{$user->id}的邀请码");
                 }
