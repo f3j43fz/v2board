@@ -19,21 +19,21 @@ class ClientController extends Controller
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
 
-//        //过滤 UA 白名单
-//        $UA = $_SERVER['HTTP_USER_AGENT'];
-//        $UA = strtolower($UA);
-//        $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'telegrambot', 'twitterbot'];
-//        $flagContainsAllowed = false;
-//        foreach ($allowedFlags as $allowedFlag) {
-//            if (strpos($UA, $allowedFlag) !== false) {
-//                $flagContainsAllowed = true;
-//                break;
-//            }
-//        }
-//        if (!$flagContainsAllowed) {
-//            header('Location: https://bilibili.com');
-//            exit();
-//        }
+        //过滤 UA 白名单
+        $UA = $_SERVER['HTTP_USER_AGENT'];
+        $UA = strtolower($UA);
+        $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch'];
+        $flagContainsAllowed = false;
+        foreach ($allowedFlags as $allowedFlag) {
+            if (strpos($UA, $allowedFlag) !== false) {
+                $flagContainsAllowed = true;
+                break;
+            }
+        }
+        if (!$flagContainsAllowed) {
+            header('Location: https://bilibili.com');
+            exit();
+        }
 
 
         $user = $request->user;
