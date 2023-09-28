@@ -16,7 +16,12 @@ class RecordController extends Controller
         $token = User::find($request->user['id'])->token;
         $record = Tokenrequest::where('token', $token)
             ->orderBy('requested_at', 'DESC')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                unset($item['token']);
+                return $item;
+            });
+
         return response([
             'data' => $record
         ]);
