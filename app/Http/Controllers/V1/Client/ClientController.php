@@ -22,7 +22,7 @@ class ClientController extends Controller
         //过滤 UA 白名单
         $UA = $_SERVER['HTTP_USER_AGENT'];
         $UA = strtolower($UA);
-        $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch'];
+        $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'telegrambot'];
         $flagContainsAllowed = false;
         foreach ($allowedFlags as $allowedFlag) {
             if (strpos($UA, $allowedFlag) !== false) {
