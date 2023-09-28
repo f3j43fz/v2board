@@ -49,7 +49,7 @@ class Kernel extends ConsoleKernel
 
         //delete user token request more than one 1 hour ago
         $schedule->call(function () {
-            $hourAgo = time() - 3700; // 一小时前的时间
+            $hourAgo = time() - 21600; // 一小时前的时间
             TokenRequest::where('requested_at', '<', $hourAgo)->delete();
         })->hourly();
     }
