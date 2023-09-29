@@ -19,29 +19,29 @@ class ClientController extends Controller
         $user = $request->user;
         $userService = new UserService();
 
-        // 过滤无效用户
-        if (!$userService->isAvailable($user)){
-            $response = [
-                'error' => '您已被 Ban 或者套餐已过期'
-            ];
-            return response()->json($response, Response::HTTP_FORBIDDEN);
-        }
+//        // 过滤无效用户
+//        if (!$userService->isAvailable($user)){
+//            $response = [
+//                'error' => '您已被 Ban 或者套餐已过期'
+//            ];
+//            return response()->json($response, Response::HTTP_FORBIDDEN);
+//        }
 
 
         $userIP = $request->ip();
         $userID = $user->id;
 
-        // 禁止多IP更新，管理员除外
-        if(!$user->is_admin){
-            if (!$this->checkTokenRequest($userID, $userIP)) {
-                return redirect('https://bilibili.com');
-            }
-        }
+//        // 禁止多IP更新，管理员除外
+//        if(!$user->is_admin){
+//            if (!$this->checkTokenRequest($userID, $userIP)) {
+//                return redirect('https://bilibili.com');
+//            }
+//        }
 
-        // UA过滤
-        if(!$this->checkUA($request->header('User-Agent'))){
-            return redirect('https://bilibili.com');
-        }
+//        // UA过滤
+//        if(!$this->checkUA($request->header('User-Agent'))){
+//            return redirect('https://bilibili.com');
+//        }
 
         $flag = $request->input('flag')
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
