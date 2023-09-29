@@ -26580,6 +26580,33 @@
                                 className: "content content-full"
                             },
                             l.a.createElement("div", {
+                                className: "block block-content block-content-full"
+                            }, l.a.createElement("div", {
+                                className: "description"
+                            }, l.a.createElement("p", {
+                                className: "sub-request-title"
+                            }, Object(v["formatMessage"])({
+                                id: "sub-request-title-1"
+                            })), l.a.createElement("p", {
+                                className: "badge-dot"
+                            }, l.a.createElement("i", {
+                                className: "bg-info"
+                            }), Object(v["formatMessage"])({
+                                id: "sub_request_info1"
+                            })), l.a.createElement("p", {
+                                className: "badge-dot"
+                            }, l.a.createElement("i", {
+                                className: "bg-info"
+                            }), Object(v["formatMessage"])({
+                                id: "sub_request_info2"
+                            })), l.a.createElement("p", {
+                                className: "badge-dot"
+                            }, l.a.createElement("i", {
+                                className: "bg-info"
+                            }), Object(v["formatMessage"])({
+                                id: "sub_request_info3"
+                            })))),
+                            l.a.createElement("div", {
                                     className: "block block-rounded  ".concat(n ? "block-mode-loading" : "")
                                 },
                                 l.a.createElement("div", {
@@ -26596,21 +26623,7 @@
                                         scroll: {
                                             x: 800
                                         }
-                                    }))), l.a.createElement("div", {
-                                className: "block block-content block-content-full"
-                            }, l.a.createElement("div", {
-                                className: "font-w400"
-                            }, Object(w["formatMessage"])({
-                                id: "sub_request_info1"
-                            })), l.a.createElement("div", {
-                                className: "font-w400"
-                            }, Object(w["formatMessage"])({
-                                id: "sub_request_info2"
-                            })), l.a.createElement("div", {
-                                className: "font-w600"
-                            }, Object(w["formatMessage"])({
-                                id: "sub_request_info3"
-                            }))))))
+                                    }))))))
             }
         }
 
