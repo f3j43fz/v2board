@@ -8,7 +8,6 @@ use App\Protocols\General;
 use App\Services\ServerService;
 use App\Services\UserService;
 use App\Utils\Helper;
-use App\Utils\IPTest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Ip2Region;
