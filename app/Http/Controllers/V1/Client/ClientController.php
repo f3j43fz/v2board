@@ -22,15 +22,17 @@ class ClientController extends Controller
         // 过滤无效用户
         // 过滤无效用户
         // 过滤无效用户
+        // 过滤无效用户
         if (!$userService->isAvailable($user)){
             header('HTTP/1.1 403 Forbidden');
             header('Content-Type: application/json; charset=utf-8');
             $response = [
                 'error' => '您已被 Ban 或者套餐已过期'
             ];
-            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             exit();
         }
+
 
 
 
