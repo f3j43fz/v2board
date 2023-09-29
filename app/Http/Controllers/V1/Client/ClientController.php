@@ -38,10 +38,10 @@ class ClientController extends Controller
 //            }
 //        }
 
-        // UA过滤
-        if(!$this->checkUA($request->header('User-Agent'))){
-            return redirect('https://bilibili.com');
-        }
+//        // UA过滤
+//        if(!$this->checkUA($request->header('User-Agent'))){
+//            return redirect('https://bilibili.com');
+//        }
 
         $flag = $request->input('flag')
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
