@@ -159,7 +159,7 @@ class StatController extends Controller
         $request->validate([
             'user_id' => 'required|integer'
         ]);
-        $userID = $request->user['id'];
+        $userID = $request->input('user_id');
         $current = $request->input('current') ? $request->input('current') : 1;
         $pageSize = $request->input('pageSize') >= 10 ? $request->input('pageSize') : 10;
         $builder = Tokenrequest::orderBy('requested_at', 'DESC')->where('user_id', $userID);
