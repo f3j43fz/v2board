@@ -98,19 +98,18 @@ class ClientController extends Controller
     {
         $UA = strtolower($UA);
         $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch'];
-        $flagContainsAllowed = false;
+
         foreach ($allowedFlags as $allowedFlag) {
             if (strpos($UA, $allowedFlag) !== false) {
-                $flagContainsAllowed = true;
-                break;
+                return true;
             }
         }
-        if (!$flagContainsAllowed) {
-            return false;
-        }else{
-            return true;
-        }
+
+        return false;
     }
+
+
+
 
     private function checkTokenRequest($userID, $userIP): bool
     {
