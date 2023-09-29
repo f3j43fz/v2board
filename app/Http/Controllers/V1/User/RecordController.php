@@ -36,4 +36,27 @@ class RecordController extends Controller
         ]);
     }
 
+    private function maskIpAddress($ipAddress)
+    {
+        // Check if the IP address is IPv4
+        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $parts = explode('.', $ipAddress);
+            $parts[2] = '*';
+            $parts[3] = '*';
+            return implode('.', $parts);
+        }
+
+        // Check if the IP address is IPv6
+        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $parts = explode(':', $ipAddress);
+            $parts[count($parts) - 2] = '*';
+            $parts[count($parts) - 1] = '*';
+            return implode(':', $parts);
+        }
+
+        // Return the original IP address if it's not valid
+        return $ipAddress;
+    }
+
+
 }
