@@ -20,15 +20,17 @@ class ClientController extends Controller
         $userService = new UserService();
 
         // 过滤无效用户
+        // 过滤无效用户
         if (!$userService->isAvailable($user)){
             header('HTTP/1.1 403 Forbidden');
-            header('Content-Type: application/json');
+            header('Content-Type: application/json; charset=utf-8');
             $response = [
-                'error' => '用户被ban或者套餐已过期'
+                'error' => '\u60a8\u5df2\u88ab ban \u6216\u8005\u5957\u9910\u5df2\u8fc7\u671f' // 使用 Unicode 转义序列表示中文字符
             ];
-            echo json_encode($response);
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
             exit();
         }
+
 
         $userIP = $request->ip();
         $userID = $user->id;
