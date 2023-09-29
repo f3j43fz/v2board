@@ -14,6 +14,7 @@ use App\Models\Stat;
 use App\Models\StatServer;
 use App\Models\StatUser;
 use App\Models\Ticket;
+use App\Models\Tokenrequest;
 use App\Models\User;
 use App\Services\StatisticalService;
 use Illuminate\Http\Request;
@@ -147,6 +148,30 @@ class StatController extends Controller
         $total = $builder->count();
         $records = $builder->forPage($current, $pageSize)
             ->get();
+        return [
+            'data' => $records,
+            'total' => $total
+        ];
+    }
+
+    public function getSubUser(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|integer'
+        ]);
+        $userID = $request->user['id'];
+        $current = $request->input('current') ? $request->input('current') : 1;
+        $pageSize = $request->input('pageSize') >= 10 ? $request->input('pageSize') : 10;
+        $builder = Tokenrequest::orderBy('requested_at', 'DESC')->where('user_id', $userID);
+
+        $total = $builder->count();
+        $records = $builder->forPage($current, $pageSize)
+            ->get()
+            ->map(function ($record) {
+                unset($record->user_id);
+                return $record;
+            });
+
         return [
             'data' => $records,
             'total' => $total
