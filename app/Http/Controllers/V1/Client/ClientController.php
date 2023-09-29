@@ -20,9 +20,6 @@ class ClientController extends Controller
         $userService = new UserService();
 
         // 过滤无效用户
-        // 过滤无效用户
-        // 过滤无效用户
-        // 过滤无效用户
         if (!$userService->isAvailable($user)){
             header('HTTP/1.1 403 Forbidden');
             header('Content-Type: application/json; charset=utf-8');
@@ -32,8 +29,6 @@ class ClientController extends Controller
             echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             exit();
         }
-
-
 
 
         $userIP = $request->ip();
