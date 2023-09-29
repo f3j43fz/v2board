@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tokenrequest;
+use App\Models\User;
 use App\Protocols\General;
 use App\Services\ServerService;
 use App\Services\UserService;
