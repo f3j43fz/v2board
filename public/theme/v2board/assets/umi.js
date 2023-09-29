@@ -26088,7 +26088,7 @@
         t["default"] = {
             name: "record",
             state: {
-                messg: [],
+                records: [],
                 getRecordLoading: !1
             },
             reducers: {
@@ -26129,7 +26129,7 @@
                                     return e.next = 12, n({
                                         type: "setState",
                                         payload: {
-                                            messg: r.data
+                                            records: r.data
                                         }
                                     });
                                 case 12:
@@ -26547,7 +26547,7 @@
 
             render() {
                 var e = this.props.record,
-                    t = e.messg,
+                    t = e.records,
                     n = e.getRecordLoading,
                     r = [{
                         title: Object(v["formatMessage"])({
