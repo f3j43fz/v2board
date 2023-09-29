@@ -37977,7 +37977,7 @@
         }
         class v extends u.a.Component {
             constructor(e) {
-                super(e), this.record = {
+                super(e), this.state = {
                     visible: !1,
                     records: [],
                     loading: !1,
@@ -37989,14 +37989,14 @@
                 }
             }
             show() {
-                this.setRecord({
+                this.setState({
                     visible: !0
                 }), this.getSubUser()
             }
             getSubUser() {
                 var e = this,
-                    t = this.record.pagination;
-                this.setRecord({
+                    t = this.state.pagination;
+                this.setState({
                     loading: !0
                 }, l()(g().mark(function n() {
                     var r;
@@ -38007,7 +38007,7 @@
                                     user_id: e.props.userId
                                 }, t));
                             case 2:
-                                if (r = n.sent, e.setRecord({
+                                if (r = n.sent, e.setState({
                                     loading: !1
                                 }), 200 === r.code) {
                                     n.next = 6;
@@ -38015,7 +38015,7 @@
                                 }
                                 return n.abrupt("return");
                             case 6:
-                                t.total = r.total, e.setRecord({
+                                t.total = r.total, e.setState({
                                     records: r.data,
                                     pagination: t
                                 });
@@ -38027,7 +38027,7 @@
                 })))
             }
             render() {
-                var e = this.record,
+                var e = this.state,
                     t = e.visible,
                     n = e.records,
                     o = e.pagination,
@@ -38052,7 +38052,7 @@
                         padding: "0 10px",
                         top: 20
                     },
-                    onCancel: () => this.setRecord({
+                    onCancel: () => this.setState({
                         visible: !1
                     }),
                     bodyStyle: {
@@ -38070,7 +38070,7 @@
                     columns: l,
                     dataSource: n,
                     onChange: e => {
-                        this.setRecord({
+                        this.setState({
                             pagination: e
                         }, () => {
                             this.getSubUser()
