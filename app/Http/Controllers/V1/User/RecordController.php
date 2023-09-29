@@ -13,7 +13,15 @@ class RecordController extends Controller
 {
     public function fetch(Request $request)
     {
-        $token = User::find($request->user['id'])->token;
+        // not show for admins
+        $user = User::find($request->user['id']);
+        if($user->is_admin){
+            return response([
+                'data' => []
+            ]);
+        }
+
+        $token = $user->token;
         $record = Tokenrequest::where('token', $token)
             ->orderBy('requested_at', 'DESC')
             ->get()
