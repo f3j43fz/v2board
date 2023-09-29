@@ -26089,7 +26089,7 @@
             name: "record",
             state: {
                 records: [],
-                getRecordLoading: !1
+                fetchLoading: !1
             },
             reducers: {
                 setState(e, t) {
@@ -26098,7 +26098,7 @@
                 }
             },
             effects: {
-                getRecord(e, t) {
+                fetch(e, t) {
                     return a().mark(function e() {
                         var n, r;
                         return a().wrap(function(e) {
@@ -26107,7 +26107,7 @@
                                     return n = t.put, e.next = 3, n({
                                         type: "setState",
                                         payload: {
-                                            getRecordLoading: !0
+                                            fetchLoading: !0
                                         }
                                     });
                                 case 3:
@@ -26116,7 +26116,7 @@
                                     return r = e.sent, e.next = 8, n({
                                         type: "setState",
                                         payload: {
-                                            getRecordLoading: !1
+                                            fetchLoading: !1
                                         }
                                     });
                                 case 8:
