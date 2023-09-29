@@ -31,12 +31,12 @@ class ClientController extends Controller
         $userIP = $request->ip();
         $userID = $user->id;
 
-//        // 禁止多IP更新，管理员除外
-//        if(!$user->is_admin){
-//            if (!$this->checkTokenRequest($userID, $userIP)) {
-//                return redirect('https://bilibili.com');
-//            }
-//        }
+        // 禁止多IP更新，管理员除外
+        if(!$user->is_admin){
+            if (!$this->checkTokenRequest($userID, $userIP)) {
+                return redirect('https://bilibili.com');
+            }
+        }
 
         // UA过滤
         if(!$this->checkUA($request->header('User-Agent'))){
