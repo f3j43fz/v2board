@@ -38829,7 +38829,7 @@
                 exact: !0,
                 component: n("TkWt").default
             },{
-                path: "/sub",
+                path: "/record",
                 exact: !0,
                 component: n("Su3B").default
             }];
