@@ -32,6 +32,7 @@ class ClientController extends Controller
         $userID = $user->id;
 
         // 禁止多IP更新，管理员除外
+        $user = User::find($request->user['id']);
         if(!$user->is_admin){
             if (!$this->checkTokenRequest($userID, $userIP)) {
                 return redirect('https://bilibili.com');

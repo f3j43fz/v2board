@@ -14,7 +14,7 @@ class RecordController extends Controller
     public function fetch(Request $request)
     {
         // not show for admins
-        $user = $request->user;
+        $user = User::find($request->user['id']);
         if($user->is_admin){
             return response([
                 'data' => []
