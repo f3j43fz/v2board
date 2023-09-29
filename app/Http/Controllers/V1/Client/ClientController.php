@@ -38,10 +38,10 @@ class ClientController extends Controller
 //            }
 //        }
 
-//        // UA过滤
-//        if(!$this->checkUA($request->header('User-Agent'))){
-//            return redirect('https://bilibili.com');
-//        }
+        // UA过滤
+        if(!$this->checkUA($request->header('User-Agent'))){
+            return redirect('https://bilibili.com');
+        }
 
         $flag = $request->input('flag')
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
@@ -98,8 +98,18 @@ class ClientController extends Controller
     {
         $UA = strtolower($UA);
         $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch'];
-
-        return in_array($UA, $allowedFlags);
+        $flagContainsAllowed = false;
+        foreach ($allowedFlags as $allowedFlag) {
+            if (strpos($UA, $allowedFlag) !== false) {
+                $flagContainsAllowed = true;
+                break;
+            }
+        }
+        if (!$flagContainsAllowed) {
+            return false;
+        }else{
+            return true;
+        }
     }
 
     private function checkTokenRequest($userID, $userIP): bool
