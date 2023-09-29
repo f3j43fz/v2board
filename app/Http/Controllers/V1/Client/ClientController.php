@@ -28,10 +28,12 @@ class ClientController extends Controller
         $userIP = $request->ip();
         $userID = $user->id;
 
-        // 禁止多IP更新
-        if (!$this->checkTokenRequest($userID, $userIP)) {
-            header('Location: https://bilibili.com');
-            exit();
+        // 禁止多IP更新，管理员除外
+        if(!$user->is_admin){
+            if (!$this->checkTokenRequest($userID, $userIP)) {
+                header('Location: https://bilibili.com');
+                exit();
+            }
         }
 
         // UA过滤
