@@ -16,15 +16,26 @@ class ClientController extends Controller
 {
     public function subscribe(Request $request)
     {
-        $userIP = $request->ip();
-        $token = $request->input('token');
-        if (!$this->checkTokenRequest($token, $userIP)) {
-            // 禁止该Token请求
+        $user = $request->user;
+        $userService = new UserService();
+
+        // 过滤无效用户
+        if (!$userService->isAvailable($user)){
             header('Location: https://bilibili.com');
             exit();
         }
 
-        if(!$this->checkUA($request)){
+        $userIP = $request->ip();
+        $userID = $user->id;
+
+        // 禁止多IP更新
+        if (!$this->checkTokenRequest($userID, $userIP)) {
+            header('Location: https://bilibili.com');
+            exit();
+        }
+
+        // UA过滤
+        if(!$this->checkUA($request->header('User-Agent'))){
             header('Location: https://bilibili.com');
             exit();
         }
@@ -32,37 +43,25 @@ class ClientController extends Controller
         $flag = $request->input('flag')
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
-        $user = $request->user;
 
+        // 获取用户IP所在的地区
+        $userISP = $this->getUserISP($userIP);
 
-        $ip2region = new \Ip2Region();
-        try {
-            $result = $ip2region->simple($userIP);
-        } catch (\Exception $e) {
-            // 处理异常情况
-            // 可以输出错误信息或执行其他逻辑
-            $result = "未知地区";
-        }
-
-
-        // account not expired and is not banned.
-        $userService = new UserService();
-        if ($userService->isAvailable($user)) {
-            $serverService = new ServerService();
-            $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user,$result);
-            if ($flag) {
-                foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
-                    $file = 'App\\Protocols\\' . basename($file, '.php');
-                    $class = new $file($user, $servers);
-                    if (strpos($flag, $class->flag) !== false) {
-                        die($class->handle());
-                    }
+        $serverService = new ServerService();
+        $servers = $serverService->getAvailableServers($user);
+        $this->setSubscribeInfoToServers($servers, $user, $userISP);
+        if ($flag) {
+            foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
+                $file = 'App\\Protocols\\' . basename($file, '.php');
+                $class = new $file($user, $servers);
+                if (strpos($flag, $class->flag) !== false) {
+                    die($class->handle());
                 }
             }
-            $class = new General($user, $servers);
-            die($class->handle());
         }
+        $class = new General($user, $servers);
+        die($class->handle());
+
     }
 
     private function setSubscribeInfoToServers(&$servers, $user,$info)
@@ -92,9 +91,9 @@ class ClientController extends Controller
     }
 
     //过滤 UA 白名单
-    private function checkUA($request): bool
+    private function checkUA($UA): bool
     {
-        $UA = strtolower($request->header('User-Agent'));
+        $UA = strtolower($UA);
         $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch'];
         $flagContainsAllowed = false;
         foreach ($allowedFlags as $allowedFlag) {
@@ -109,15 +108,15 @@ class ClientController extends Controller
             return true;
         }
     }
-    private function checkTokenRequest($token, $ip): bool
+    private function checkTokenRequest($userID, $userIP): bool
     {
-        $hourAgo = time() - 3600; // 一小时前的时间
+        $hourAgo = time() - 3600; // 6小时前的时间
         $tokenRequest = Tokenrequest::firstOrCreate(
-            ['token' => strval($token), 'ip' => strval($ip)],
+            ['user_id' => strval($userID), 'ip' => strval($userIP)],
             ['requested_at' => time()]
         );
 
-        $requests = Tokenrequest::where('token', $token)
+        $requests = Tokenrequest::where('user_id', $userID)
             ->where('requested_at', '>', $hourAgo)
             ->distinct('ip')
             ->count('ip');
@@ -131,5 +130,15 @@ class ClientController extends Controller
         return true;
     }
 
+    private function getUserISP($userIP){
+        $ip2region = new \Ip2Region();
+        try {
+            return $ip2region->simple($userIP);
+        } catch (\Exception $e) {
+            // 处理异常情况
+            // 可以输出错误信息或执行其他逻辑
+            return "未知地区";
+        }
+    }
 
 }

@@ -10,7 +10,7 @@ class Tokenrequest extends Model
     protected $dateFormat = 'U';
 
     protected $fillable = [
-        'token',
+        'user_id',
         'ip',
         'requested_at',
     ];

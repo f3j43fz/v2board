@@ -47,9 +47,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('changePort:vmess 1')->dailyAt('2:30'); //VMess节点ID 1 更换端口
         //$schedule->command('customFunction:addCoupon 108 3')->dailyAt('12:00'); // ID 108 优惠券补充 1-5 张
 
-        //delete user token request more than one 1 hour ago
+        //delete user token request more than one 6 hours ago
         $schedule->call(function () {
-            $hourAgo = time() - 21600; // 一小时前的时间
+            $hourAgo = time() - 21600; // 六小时前的时间
             TokenRequest::where('requested_at', '<', $hourAgo)->delete();
         })->hourly();
     }

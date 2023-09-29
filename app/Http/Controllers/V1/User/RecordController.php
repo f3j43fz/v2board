@@ -14,19 +14,19 @@ class RecordController extends Controller
     public function fetch(Request $request)
     {
         // not show for admins
-        $user = User::find($request->user['id']);
+        $user = $request->user;
         if($user->is_admin){
             return response([
                 'data' => []
             ]);
         }
 
-        $token = $user->token;
-        $record = Tokenrequest::where('token', $token)
+        $userID = $user->id;
+        $record = Tokenrequest::where('user_id', $userID)
             ->orderBy('requested_at', 'DESC')
             ->get()
             ->map(function ($item) {
-                unset($item['token']);
+                unset($item['user_id']);
                 return $item;
             });
 
