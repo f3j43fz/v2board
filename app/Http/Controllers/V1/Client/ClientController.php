@@ -10,6 +10,7 @@ use App\Services\UserService;
 use App\Utils\Helper;
 use App\Utils\IPTest;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Ip2Region;
 
 class ClientController extends Controller
@@ -21,13 +22,10 @@ class ClientController extends Controller
 
         // 过滤无效用户
         if (!$userService->isAvailable($user)){
-            header('HTTP/1.1 403 Forbidden');
-            header('Content-Type: application/json; charset=utf-8');
             $response = [
                 'error' => '您已被 Ban 或者套餐已过期'
             ];
-            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            exit();
+            return response()->json($response, Response::HTTP_FORBIDDEN);
         }
 
 
@@ -99,23 +97,15 @@ class ClientController extends Controller
     }
 
     //过滤 UA 白名单
+    //过滤 UA 白名单
     private function checkUA($UA): bool
     {
         $UA = strtolower($UA);
         $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch'];
-        $flagContainsAllowed = false;
-        foreach ($allowedFlags as $allowedFlag) {
-            if (strpos($UA, $allowedFlag) !== false) {
-                $flagContainsAllowed = true;
-                break;
-            }
-        }
-        if (!$flagContainsAllowed) {
-            return false;
-        }else{
-            return true;
-        }
+
+        return in_array($UA, $allowedFlags);
     }
+
     private function checkTokenRequest($userID, $userIP): bool
     {
         $hourAgo = time() - 3600; // 6小时前的时间
