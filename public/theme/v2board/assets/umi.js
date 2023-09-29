@@ -20381,7 +20381,7 @@
                             id: "\u8ba2\u9605\u8bb0\u5f55"
                         }),
                         type: "item",
-                        href: "/sub",
+                        href: "/record",
                         icon: i.a.createElement("i", {
                             className: "nav-main-link-icon si si-bar-chart"
                         })
