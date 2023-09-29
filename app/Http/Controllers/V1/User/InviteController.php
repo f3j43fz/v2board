@@ -95,6 +95,6 @@ class InviteController extends Controller
     private function sendNotify(int $id)
     {
         $telegramService = new TelegramService();
-        $telegramService->sendMessageWithAdmin("🏷💌邀请码提醒\n———————————————\n用户ID：{$id}生成了邀请码`", true);
+        $telegramService->sendMessageWithAdmin("💌邀请码提醒\n———————————————\n用户ID：{$id}生成了邀请码");
     }
 }
