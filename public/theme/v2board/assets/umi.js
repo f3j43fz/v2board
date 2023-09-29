@@ -26596,7 +26596,21 @@
                                         scroll: {
                                             x: 800
                                         }
-                                    }))))))
+                                    }))), m.a.createElement("div", {
+                                className: "block block-content block-content-full"
+                            }, m.a.createElement("div", {
+                                className: "font-w400"
+                            }, Object(w["formatMessage"])({
+                                id: "sub_request_info1"
+                            })), m.a.createElement("div", {
+                                className: "font-w400"
+                            }, Object(w["formatMessage"])({
+                                id: "sub_request_info2"
+                            })), m.a.createElement("div", {
+                                className: "font-w600"
+                            }, Object(w["formatMessage"])({
+                                id: "sub_request_info3"
+                            }))))))
             }
         }
 
