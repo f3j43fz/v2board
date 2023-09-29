@@ -37977,7 +37977,7 @@
         }
         class v extends u.a.Component {
             constructor(e) {
-                super(e), this.state = {
+                super(e), this.record = {
                     visible: !1,
                     records: [],
                     loading: !1,
@@ -37989,14 +37989,14 @@
                 }
             }
             show() {
-                this.setState({
+                this.setRecord({
                     visible: !0
                 }), this.getSubUser()
             }
             getSubUser() {
                 var e = this,
-                    t = this.state.pagination;
-                this.setState({
+                    t = this.record.pagination;
+                this.setRecord({
                     loading: !0
                 }, l()(g().mark(function n() {
                     var r;
@@ -38007,7 +38007,7 @@
                                     user_id: e.props.userId
                                 }, t));
                             case 2:
-                                if (r = n.sent, e.setState({
+                                if (r = n.sent, e.setRecord({
                                     loading: !1
                                 }), 200 === r.code) {
                                     n.next = 6;
@@ -38015,7 +38015,7 @@
                                 }
                                 return n.abrupt("return");
                             case 6:
-                                t.total = r.total, e.setState({
+                                t.total = r.total, e.setRecord({
                                     records: r.data,
                                     pagination: t
                                 });
@@ -38027,7 +38027,7 @@
                 })))
             }
             render() {
-                var e = this.state,
+                var e = this.record,
                     t = e.visible,
                     n = e.records,
                     o = e.pagination,
@@ -38036,7 +38036,7 @@
                         title: "\u8bf7\u6c42\u65f6\u95f4",
                         dataIndex: "requested_at",
                         key: "requested_at",
-                        render: e => d()(1e3 * e).format("YYYY-MM-DD")
+                        render: e => d()(1e3 * e).format("YYYY-MM-DD HH:mm:ss")
                     }, {
                         title: "\u8bf7\u6c42\u0049\u0050",
                         dataIndex: "ip",
@@ -38052,7 +38052,7 @@
                         padding: "0 10px",
                         top: 20
                     },
-                    onCancel: () => this.setState({
+                    onCancel: () => this.setRecord({
                         visible: !1
                     }),
                     bodyStyle: {
@@ -38070,7 +38070,7 @@
                     columns: l,
                     dataSource: n,
                     onChange: e => {
-                        this.setState({
+                        this.setRecord({
                             pagination: e
                         }, () => {
                             this.getSubUser()
