@@ -94,7 +94,6 @@ class ClientController extends Controller
     }
 
     //过滤 UA 白名单
-    //过滤 UA 白名单
     private function checkUA($UA): bool
     {
         $UA = strtolower($UA);
