@@ -19,13 +19,13 @@ class ClientController extends Controller
         $user = $request->user;
         $userService = new UserService();
 
-//        // 过滤无效用户
-//        if (!$userService->isAvailable($user)){
-//            $response = [
-//                'error' => '您已被 Ban 或者套餐已过期'
-//            ];
-//            return response()->json($response, Response::HTTP_FORBIDDEN);
-//        }
+        // 过滤无效用户
+        if (!$userService->isAvailable($user)){
+            $response = [
+                'error' => '您已被 Ban 或者套餐已过期'
+            ];
+            return response()->json($response, Response::HTTP_FORBIDDEN);
+        }
 
 
         $userIP = $request->ip();
