@@ -27,6 +27,7 @@ class RecordController extends Controller
             ->get()
             ->map(function ($item) {
                 unset($item['user_id']);
+                $item['ip'] = $this->maskIpAddress($item['ip']);
                 return $item;
             });
 
