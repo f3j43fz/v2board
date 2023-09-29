@@ -21793,7 +21793,7 @@
                         title: "TA\u7684\u8ba2\u9605\u8bb0\u5f55",
                         placement: "left"
                     }, o.a.createElement(c["a"], {
-                        type: "sub-record"
+                        type: "solution"
                 }))))), o.a.createElement("div", {
                     className: "bg-white js-chat-messages block-content block-content-full text-wrap-break-word overflow-y-auto ".concat(d.a.content),
                     ref: "chat"
@@ -56197,7 +56197,7 @@
                                     userId: null === t || void 0 === t ? void 0 : t.id,
                                     key: null === t || void 0 === t ? void 0 : t.email
                                 }, g.a.createElement("a", null, g.a.createElement(u["a"], {
-                                    type: "sub-record"
+                                    type: "solution"
                                 }), " TA\u7684\u8ba2\u9605\u8bb0\u5f55"))))
                             }, g.a.createElement("a", {
                                 href: "javascript:void(0);"
@@ -56409,7 +56409,7 @@
                     userId: null === (o = this.record) || void 0 === o ? void 0 : o.id,
                     key: null === (p = this.record) || void 0 === p ? void 0 : p.email
                 }, g.a.createElement("a", null, g.a.createElement(u["a"], {
-                    type: "sub-record"
+                    type: "solution"
                 }), " TA\u7684\u8ba2\u9605\u8bb0\u5f55")))))))))
             }
         }
