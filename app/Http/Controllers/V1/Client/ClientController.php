@@ -21,7 +21,8 @@ class ClientController extends Controller
 
         // 过滤无效用户
         if (!$userService->isAvailable($user)){
-            header('Location: https://bilibili.com');
+            header('HTTP/1.1 403 Forbidden');
+            echo "用户被ban或者套餐已过期";
             exit();
         }
 
