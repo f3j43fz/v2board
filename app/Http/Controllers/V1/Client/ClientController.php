@@ -35,15 +35,13 @@ class ClientController extends Controller
         // 禁止多IP更新，管理员除外
         if(!$user->is_admin){
             if (!$this->checkTokenRequest($userID, $userIP)) {
-                header('Location: https://bilibili.com');
-                exit();
+                return redirect('https://bilibili.com');
             }
         }
 
         // UA过滤
         if(!$this->checkUA($request->header('User-Agent'))){
-            header('Location: https://bilibili.com');
-            exit();
+            return redirect('https://bilibili.com');
         }
 
         $flag = $request->input('flag')
