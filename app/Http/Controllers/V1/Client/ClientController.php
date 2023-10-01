@@ -20,6 +20,11 @@ class ClientController extends Controller
         $user = $request->user;
         $userService = new UserService();
 
+        // UA过滤
+        if(!$this->checkUA($request->header('User-Agent'))){
+            return redirect('https://bilibili.com');
+        }
+
         // 过滤无效用户
         if (!$userService->isAvailable($user)){
             $response = [
@@ -28,12 +33,12 @@ class ClientController extends Controller
             return response()->json($response, Response::HTTP_FORBIDDEN);
         }
 
-
         $userIP = $request->ip();
         $userID = $user->id;
 
         // 获取用户IP所在的地区
         $userISPInfo = $this->getUserISP($userIP);
+
 
         // 禁止多IP更新，管理员除外
         $user = User::find($userID);
@@ -41,11 +46,6 @@ class ClientController extends Controller
             if (!$this->checkTokenRequest($userID, $userIP, $userISPInfo)) {
                 return redirect('https://bilibili.com');
             }
-        }
-
-        // UA过滤
-        if(!$this->checkUA($request->header('User-Agent'))){
-            return redirect('https://bilibili.com');
         }
 
         $flag = $request->input('flag')
@@ -71,7 +71,7 @@ class ClientController extends Controller
 
     }
 
-    private function setSubscribeInfoToServers(&$servers, $user,$info)
+    private function setSubscribeInfoToServers(&$servers, $user, $info)
     {
         if (!isset($servers[0])) return;
         if (!(int)config('v2board.show_info_to_server_enable', 0)) return;
