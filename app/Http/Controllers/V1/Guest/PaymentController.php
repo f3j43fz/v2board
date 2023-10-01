@@ -47,7 +47,7 @@ class PaymentController extends Controller
         $types = [1 => "新购", 2 => "续费", 3 => "升级"];
         $type = $types[$order->type] ?? "未知";
         if ($type == "新购" && $hasPaidBefore){
-            $type .= "[首购]";
+            $type .= "(首购)";
         }
 
         // planName
