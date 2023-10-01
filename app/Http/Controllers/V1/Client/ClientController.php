@@ -33,9 +33,9 @@ class ClientController extends Controller
         $userID = $user->id;
 
         // 禁止多IP更新，管理员除外
-        $user = User::find($request->user['id']);
+        $user = User::find($userID);
         if(!$user->is_admin){
-            if (!$this->checkTokenRequest($userID, $userIP)) {
+            if (!$this->checkTokenRequest($user)) {
                 return redirect('https://bilibili.com');
             }
         }
@@ -113,12 +113,15 @@ class ClientController extends Controller
 
 
 
-    private function checkTokenRequest($userID, $userIP): bool
+    private function checkTokenRequest($user, $ip): bool
     {
+        $userIP = $ip;
+        $userID = $user->id;
+        $userISPInfo = $this->getUserISP($userIP);
         $hourAgo = time() - 3600; // 6小时前的时间
         $tokenRequest = Tokenrequest::firstOrCreate(
             ['user_id' => strval($userID), 'ip' => strval($userIP)],
-            ['requested_at' => time()]
+            ['requested_at' => time(), 'location' => $userISPInfo]
         );
 
         $requests = Tokenrequest::where('user_id', $userID)
@@ -129,6 +132,7 @@ class ClientController extends Controller
         if ($requests > 16) {
             // 禁止该Token请求
             // 可以在这里记录禁止请求的日志或执行其他逻辑
+
             return false;
         }
 

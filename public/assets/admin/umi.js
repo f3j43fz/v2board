@@ -38042,6 +38042,11 @@
                         dataIndex: "ip",
                         key: "ip",
                         render: e => e
+                    }, {
+                        title: "\u0049\u0050\u5f52\u5c5e",
+                        dataIndex: "location",
+                        key: "location",
+                        render: e => e
                     }];
                 return u.a.createElement(u.a.Fragment, null, u.a.cloneElement(this.props.children, {
                     onClick: () => this.show()

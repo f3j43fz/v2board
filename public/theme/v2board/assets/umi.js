@@ -26567,6 +26567,15 @@
                         render: e => {
                             return e
                         }
+                    }, {
+                        title: Object(v["formatMessage"])({
+                            id: "\u0049\u0050\u5f52\u5c5e"
+                        }),
+                        dataIndex: "location",
+                        key: "location",
+                        render: e => {
+                            return e
+                        }
                     }];
                 return l.a.createElement(f["a"], o()({}, this.props, {
                         title: Object(v["formatMessage"])({
