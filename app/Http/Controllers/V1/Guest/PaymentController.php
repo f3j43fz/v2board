@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Guest;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\User;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Services\OrderService;
@@ -70,12 +70,15 @@ class PaymentController extends Controller
         ];
         $period = $periodMapping[$order->period];
 
+        // email
+        $userMail = User::find($order->user_id)->email;
 
         $telegramService = new TelegramService();
         $message = sprintf(
-            "💰成功收款%s元\n———————————————\n订单号：%s\n套餐：%s\n类型：%s\n周期：%s",
+            "💰成功收款%s元\n———————————————\n订单号：%s\n邮箱： %s\n套餐：%s\n类型：%s\n周期：%s",
             $order->total_amount / 100,
             $order->trade_no,
+            $userMail,
             $planName,
             $type,
             $period
