@@ -45,11 +45,11 @@ class PaymentController extends Controller
         $type = $types[$order->type] ?? "未知";
 
         // planName
+        $planName = "";
         $plan = Plan::find($order->plan_id);
-        if (!$plan) {
-            abort(500, __('Subscription plan does not exist'));
+        if ($plan) {
+            $planName = $plan->name;
         }
-        $planName = $plan->name;
 
         // period
         // 定义英文到中文的映射关系
@@ -65,17 +65,20 @@ class PaymentController extends Controller
         $period = $periodMapping[$order->period];
 
         // email
-        $userEmail = User::find($order->user_id)->email;
+        $userEmail = "";
+        $user = User::find($order->user_id);
+        if ($user){
+            $userEmail = $user->email;
+        }
 
-
-        //invitorEmail  and invitorCommission
+        // invitorEmail  and invitorCommission
         $invitorEmail = '';
         $invitorCommission = 0;
         if (!empty($order->invite_user_id)) {
             $invitor = User::find($order->invite_user_id);
             if ($invitor) {
                 $invitorEmail = $invitor->email;
-                $invitorCommission = $this->getCommision($invitor->id, $order);
+                $invitorCommission = $this->getCommission($invitor->id, $order);
             }
         }
 
@@ -96,7 +99,7 @@ class PaymentController extends Controller
         return true;
     }
 
-    private function getCommision($inviteUserId, Order $order)
+    private function getCommission($inviteUserId, Order $order)
     {
         $commissionBalance = 0;
         $level = 3;
