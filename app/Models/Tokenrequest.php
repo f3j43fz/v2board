@@ -13,6 +13,7 @@ class Tokenrequest extends Model
         'user_id',
         'ip',
         'requested_at',
+        'location',
     ];
 
     protected $casts = [
