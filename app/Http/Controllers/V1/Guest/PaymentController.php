@@ -71,18 +71,36 @@ class PaymentController extends Controller
         $period = $periodMapping[$order->period];
 
         // email
-        $userMail = User::find($order->user_id)->email;
+        $userEmail = User::find($order->user_id)->email;
+
+        // commmission
+        $commission = 0;
+        if (!empty($order->commission_balance)) {
+            $commission = $order->commission_balance / 100;
+        }
+
+        //invitorEmail
+        $invitorEmail = '';
+        if (!empty($order->invite_user_id)) {
+            $invitor = User::find($order->invite_user_id);
+            if ($invitor) {
+                $invitorEmail = $invitor->email;
+            }
+        }
 
         $telegramService = new TelegramService();
         $message = sprintf(
-            "💰成功收款%s元\n———————————————\n订单号：%s\n邮箱： %s\n套餐：%s\n类型：%s\n周期：%s",
+            "💰成功收款%s元\n———————————————\n订单号：%s\n邮箱： %s\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： %s\n佣金：%s元",
             $order->total_amount / 100,
             $order->trade_no,
-            $userMail,
+            $userEmail,
             $planName,
             $type,
-            $period
+            $period,
+            $invitorEmail,
+            $commission
         );
+
         $telegramService->sendMessageWithAdmin($message);
         return true;
     }
