@@ -113,9 +113,9 @@ class ClientController extends Controller
 
 
 
-    private function checkTokenRequest($user, $ip): bool
+    private function checkTokenRequest($user): bool
     {
-        $userIP = $ip;
+        $userIP = $user->ip;
         $userID = $user->id;
         $userISPInfo = $this->getUserISP($userIP);
         $hourAgo = time() - 3600; // 6小时前的时间
