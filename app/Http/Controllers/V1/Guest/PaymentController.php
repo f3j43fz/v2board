@@ -75,7 +75,7 @@ class PaymentController extends Controller
 
         // commmission
         $commission = 0;
-        if (!empty($order->commission_balance)) {
+        if ($order->commission_balance !== null && $order->commission_balance != 0) {
             $commission = $order->commission_balance / 100;
         }
 
