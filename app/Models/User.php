@@ -13,4 +13,6 @@ class User extends Model
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp'
     ];
+
+    protected $fillable = ['email'];
 }
