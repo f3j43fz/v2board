@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Guest;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\User;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Services\OrderService;
@@ -38,9 +39,16 @@ class PaymentController extends Controller
         if (!$orderService->paid($callbackNo)) {
             return false;
         }
-        // type
+
+        //type
+        $hasPaidBefore = Order::where('user_id', $order->user_id)
+            ->where('status', 3)
+            ->exists();
         $types = [1 => "新购", 2 => "续费", 3 => "升级"];
         $type = $types[$order->type] ?? "未知";
+        if ($type == "新购" && $hasPaidBefore){
+            $type .= "[首购]";
+        }
 
         // planName
         $plan = Plan::find($order->plan_id);
@@ -61,6 +69,7 @@ class PaymentController extends Controller
             'onetime_price' => '一次性付款'
         ];
         $period = $periodMapping[$order->period];
+
 
         $telegramService = new TelegramService();
         $message = sprintf(

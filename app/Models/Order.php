@@ -14,6 +14,6 @@ class Order extends Model
         'updated_at' => 'timestamp',
         'surplus_order_ids' => 'array'
     ];
-    protected $fillable = ['type', 'plan_id', 'period'];
+    protected $fillable = ['type', 'plan_id', 'period', 'user_id'];
 
 }
