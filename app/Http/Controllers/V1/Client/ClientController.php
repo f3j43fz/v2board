@@ -32,10 +32,13 @@ class ClientController extends Controller
         $userIP = $request->ip();
         $userID = $user->id;
 
+        // 获取用户IP所在的地区
+        $userISPInfo = $this->getUserISP($userIP);
+
         // 禁止多IP更新，管理员除外
         $user = User::find($userID);
         if(!$user->is_admin){
-            if (!$this->checkTokenRequest($userID, $userIP)) {
+            if (!$this->checkTokenRequest($userID, $userIP, $userISPInfo)) {
                 return redirect('https://bilibili.com');
             }
         }
@@ -49,12 +52,11 @@ class ClientController extends Controller
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
 
-        // 获取用户IP所在的地区
-        $userISP = $this->getUserISP($userIP);
+
 
         $serverService = new ServerService();
         $servers = $serverService->getAvailableServers($user);
-        $this->setSubscribeInfoToServers($servers, $user, $userISP);
+        $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
         if ($flag) {
             foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                 $file = 'App\\Protocols\\' . basename($file, '.php');
@@ -114,9 +116,8 @@ class ClientController extends Controller
 
 
 
-    private function checkTokenRequest($userID, $userIP): bool
+    private function checkTokenRequest($userID, $userIP, $userISPInfo): bool
     {
-        $userISPInfo = $this->getUserISP($userIP);
         $hourAgo = time() - 3600; // 6小时前的时间
         $tokenRequest = Tokenrequest::firstOrCreate(
             ['user_id' => strval($userID), 'ip' => strval($userIP)],
