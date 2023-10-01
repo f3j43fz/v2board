@@ -41,14 +41,8 @@ class PaymentController extends Controller
         }
 
         //type
-        $hasPaidBefore = Order::where('user_id', $order->user_id)
-            ->where('status', 3)
-            ->exists();
         $types = [1 => "新购", 2 => "续费", 3 => "升级"];
         $type = $types[$order->type] ?? "未知";
-        if ($type == "新购" && $hasPaidBefore){
-            $type .= "(首购)";
-        }
 
         // planName
         $plan = Plan::find($order->plan_id);
@@ -73,24 +67,21 @@ class PaymentController extends Controller
         // email
         $userEmail = User::find($order->user_id)->email;
 
-        // commmission
-        $commission = 0;
-        if ($order->commission_balance !== null && $order->commission_balance != 0) {
-            $commission = $order->commission_balance / 100;
-        }
 
-        //invitorEmail
+        //invitorEmail  and invitorCommission
         $invitorEmail = '';
+        $invitorCommission = 0;
         if (!empty($order->invite_user_id)) {
             $invitor = User::find($order->invite_user_id);
             if ($invitor) {
                 $invitorEmail = $invitor->email;
+                $invitorCommission = $this->getCommision($invitor->id, $order);
             }
         }
 
         $telegramService = new TelegramService();
         $message = sprintf(
-            "💰成功收款%s元\n———————————————\n订单号：%s\n邮箱： %s\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： %s\n佣金：%s元",
+            "💰成功收款%s元\n———————————————\n订单号：%s\n邮箱： %s\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： %s\n本次佣金：%s元",
             $order->total_amount / 100,
             $order->trade_no,
             $userEmail,
@@ -98,10 +89,35 @@ class PaymentController extends Controller
             $type,
             $period,
             $invitorEmail,
-            $commission
+            $invitorCommission
         );
 
         $telegramService->sendMessageWithAdmin($message);
         return true;
+    }
+
+    private function getCommision($inviteUserId, Order $order)
+    {
+        $commissionBalance = 0;
+        $level = 3;
+        if ((int)config('v2board.commission_distribution_enable', 0)) {
+            $commissionShareLevels = [
+                0 => (int)config('v2board.commission_distribution_l1'),
+                1 => (int)config('v2board.commission_distribution_l2'),
+                2 => (int)config('v2board.commission_distribution_l3')
+            ];
+        } else {
+            $commissionShareLevels = [
+                0 => 100
+            ];
+        }
+        for ($l = 0; $l < $level; $l++) {
+            $inviter = User::find($inviteUserId);
+            if (!$inviter) continue;
+            if (!isset($commissionShareLevels[$l])) continue;
+            $commissionBalance = $order->commission_balance * ($commissionShareLevels[$l] / 100);
+            if (!$commissionBalance) continue;
+        }
+        return $commissionBalance;
     }
 }
