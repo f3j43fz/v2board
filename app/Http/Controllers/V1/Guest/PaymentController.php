@@ -41,7 +41,7 @@ class PaymentController extends Controller
         }
 
         // type
-        $types = [1 => "新购", 2 => "续费", 3 => "升级"];
+        $types = [1 => "新购", 2 => "续费", 3 => "变更" , 4 => "流量包"];
         $type = $types[$order->type] ?? "未知";
 
         // planName
@@ -60,7 +60,8 @@ class PaymentController extends Controller
             'year_price' => '年付',
             'two_year_price' => '2年付',
             'three_year_price' => '3年付',
-            'onetime_price' => '一次性付款'
+            'onetime_price' => '一次性付款',
+            'reset_price' => '流量重置包'
         ];
         $period = $periodMapping[$order->period];
 
