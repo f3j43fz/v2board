@@ -71,28 +71,40 @@ class PaymentController extends Controller
             $userEmail = $user->email;
         }
 
-        // invitorEmail  and invitorCommission
-        $invitorEmail = '';
-        $invitorCommission = 0;
+        // inviterEmail  inviterCommission
+        $inviterEmail = '';
+        $getAmount = 0; // 本次佣金
+        $anotherInfo = "";
+
         if (!empty($order->invite_user_id)) {
-            $invitor = User::find($order->invite_user_id);
-            if ($invitor) {
-                $invitorEmail = $invitor->email;
-                $invitorCommission = $this->getCommission($invitor->id, $order);
+            $inviter = User::find($order->invite_user_id);
+            if ($inviter) {
+                $inviterEmail = $inviter->email;
+                $getAmount = $this->getCommission($inviter->id, $order); // 本次佣金
+
+                if ((int)config('v2board.withdraw_close_enable', 0)) {
+                    $inviterBalance = $inviter->balance / 100 + $getAmount; // 总余额 （关闭提现）
+                    $anotherInfo = "邀请人总余额： " . $inviterBalance;
+                } else {
+                    $inviterCommissionBalance = $inviter->commission_balance / 100 + $getAmount; // 总佣金 （允许提现）
+                    $anotherInfo = "邀请人总佣金： " . $inviterCommissionBalance;
+
+                }
             }
         }
 
         $telegramService = new TelegramService();
         $message = sprintf(
-            "💰成功收款%s元\n———————————————\n订单号：%s\n邮箱： %s\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： %s\n本次佣金：%s元",
+            "💰成功收款%s元\n———————————————\n订单号：%s\n邮箱： %s\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： %s\n本次佣金：%s元\n%s元",
             $order->total_amount / 100,
             $order->trade_no,
             $userEmail,
             $planName,
             $type,
             $period,
-            $invitorEmail,
-            $invitorCommission
+            $inviterEmail,
+            $getAmount,
+            $anotherInfo
         );
 
         $telegramService->sendMessageWithAdmin($message);
@@ -101,7 +113,7 @@ class PaymentController extends Controller
 
     private function getCommission($inviteUserId, $order)
     {
-        $commissionBalance = 0;
+        $getAmount = 0;
         $level = 3;
         if ((int)config('v2board.commission_distribution_enable', 0)) {
             $commissionShareLevels = [
@@ -118,9 +130,9 @@ class PaymentController extends Controller
             $inviter = User::find($inviteUserId);
             if (!$inviter) continue;
             if (!isset($commissionShareLevels[$l])) continue;
-            $commissionBalance = $order->commission_balance * ($commissionShareLevels[$l] / 100);
-            if (!$commissionBalance) continue;
+            $getAmount = $order->commission_balance * ($commissionShareLevels[$l] / 100);
+            if (!$getAmount) continue;
         }
-        return $commissionBalance / 100;
+        return $getAmount / 100;
     }
 }
