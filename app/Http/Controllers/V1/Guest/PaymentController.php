@@ -99,7 +99,7 @@ class PaymentController extends Controller
         return true;
     }
 
-    private function getCommission($inviteUserId, Order $order)
+    private function getCommission($inviteUserId, $order)
     {
         $commissionBalance = 0;
         $level = 3;
