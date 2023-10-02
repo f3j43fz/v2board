@@ -121,6 +121,6 @@ class PaymentController extends Controller
             $commissionBalance = $order->commission_balance * ($commissionShareLevels[$l] / 100);
             if (!$commissionBalance) continue;
         }
-        return $commissionBalance;
+        return $commissionBalance / 100;
     }
 }
