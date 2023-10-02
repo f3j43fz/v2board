@@ -40,7 +40,7 @@ class PaymentController extends Controller
             return false;
         }
 
-        //type
+        // type
         $types = [1 => "新购", 2 => "续费", 3 => "升级"];
         $type = $types[$order->type] ?? "未知";
 
