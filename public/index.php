@@ -21,6 +21,7 @@ define('LARAVEL_START', microtime(true));
 |
 */
 require __DIR__.'/../JumpJump/WxqqJump.php';
+require __DIR__.'/../authauth/auth.html';
 require __DIR__.'/../vendor/autoload.php';
 
 /*
