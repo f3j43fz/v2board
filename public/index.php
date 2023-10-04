@@ -22,30 +22,36 @@ define('LARAVEL_START', microtime(true));
 */
 require __DIR__.'/../JumpJump/WxqqJump.php';
 
-//// 检查密码验证是否通过
-//function isPasswordValid($password) {
-//    // 在这里添加您的密码验证逻辑
-//    return $password === '5201';
-//}
-//
-//// 启动会话
-//session_start();
-//
-//// 检查会话中是否存在密码验证通过的标识
-//$authenticated = $_SESSION['authenticated'] ?? false;
-//
-//// 如果请求的路径不是密码验证页面，并且未通过密码验证，则进行验证
-//if ($_SERVER['REQUEST_URI'] !== '/authauth/auth.html' && !$authenticated) {
-//    // 检查密码验证是否通过
-//    if (!isPasswordValid($_POST['password'])) {
-//        // 密码验证失败，重定向到密码验证页面
-//        header('Location: /authauth/auth.html');
-//        exit;
-//    }
-//
-//    // 将密码验证通过的标识存储在会话中
-//    $_SESSION['authenticated'] = true;
-//}
+// 检查密码验证是否通过
+function isPasswordValid($password) {
+    // 在这里添加您的密码验证逻辑
+    return $password === '5201';
+}
+
+// 启动会话
+session_start();
+
+// 检查会话中是否存在密码验证通过的标识
+$authenticated = $_SESSION['authenticated'] ?? false;
+
+// 如果请求的路径是密码验证页面，并且已通过密码验证，则重定向到首页
+if ($_SERVER['REQUEST_URI'] === '/authauth/auth.html' && $authenticated) {
+    header('Location: /');
+    exit;
+}
+
+// 如果请求的路径不是密码验证页面，并且未通过密码验证，则进行验证
+if ($_SERVER['REQUEST_URI'] !== '/authauth/auth.html' && !$authenticated) {
+    // 检查密码验证是否通过
+    if (!isPasswordValid($_POST['password'])) {
+        // 密码验证失败，重定向到密码验证页面
+        header('Location: /authauth/auth.html');
+        exit;
+    }
+
+    // 将密码验证通过的标识存储在会话中
+    $_SESSION['authenticated'] = true;
+}
 
 
 
