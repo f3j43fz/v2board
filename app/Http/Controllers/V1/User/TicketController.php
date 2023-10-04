@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\TicketSave;
 use App\Http\Requests\User\TicketWithdraw;
+use App\Models\Plan;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
@@ -13,6 +14,7 @@ use App\Services\TicketService;
 use App\Utils\Dict;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Ip2Region;
 
 class TicketController extends Controller
 {
@@ -71,7 +73,19 @@ class TicketController extends Controller
             abort(500, __('Failed to open ticket'));
         }
         DB::commit();
-        $this->sendNotify($ticket, $request->input('message'));
+
+        //ISPInfo
+        $ISPInfo = $this->getISPInfo($request->ip());
+
+        //planName
+        $planID = User::find($request->user['id'])->plan_id;
+        $plan = Plan::find($planID);
+        $planName = '';
+        if ($plan) {
+            $planName = $plan->name;
+        }
+
+        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName);
         return response([
             'data' => true
         ]);
@@ -189,9 +203,20 @@ class TicketController extends Controller
         ]);
     }
 
-    private function sendNotify(Ticket $ticket, string $message)
+    private function sendNotify(Ticket $ticket, string $message, $ISPInfo, $planName)
     {
         $telegramService = new TelegramService();
-        $telegramService->sendMessageWithAdmin("📮工单提醒 #{$ticket->id}\n———————————————\n主题：\n`{$ticket->subject}`\n内容：\n`{$message}`", true);
+        $telegramService->sendMessageWithAdmin("📮工单提醒 #{$ticket->id}\n———————————————\n套餐：\n`{$planName}`\n主题：\n`{$ticket->subject}`\n内容：\n`{$message}`\n运营商：\n`{$ISPInfo}`", true);
+    }
+
+    private function getISPInfo($userIP){
+        $ip2region = new \Ip2Region();
+        try {
+            return $ip2region->simple($userIP);
+        } catch (\Exception $e) {
+            // 处理异常情况
+            // 可以输出错误信息或执行其他逻辑
+            return "未知地区";
+        }
     }
 }
