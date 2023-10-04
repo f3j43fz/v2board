@@ -14,5 +14,5 @@ class User extends Model
         'updated_at' => 'timestamp'
     ];
 
-    protected $fillable = ['email'];
+    //protected $fillable = ['email', 'commission_balance'];
 }
