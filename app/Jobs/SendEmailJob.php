@@ -50,21 +50,11 @@ class SendEmailJob implements ShouldQueue
         $subject = $params['subject'];
         $params['template_name'] = 'mail.' . config('v2board.email_template', 'default') . '.' . $params['template_name'];
         try {
-//            Mail::send(
-//                $params['template_name'],
-//                $params['template_value'],
-//                function ($message) use ($email, $subject) {
-//                    $message->to($email)->subject($subject);
-//                }
-//            );
-
             Mail::send(
                 $params['template_name'],
                 $params['template_value'],
                 function ($message) use ($email, $subject) {
-                    $message->to($email, '')->subject($subject)->getSwiftMessage()
-                        ->getHeaders()
-                        ->addTextHeader('X-Mailer', 'Laravel with bypass address validation');
+                    $message->to($email)->subject($subject);
                 }
             );
         } catch (\Exception $e) {
