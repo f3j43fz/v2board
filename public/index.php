@@ -20,8 +20,26 @@ define('LARAVEL_START', microtime(true));
 | loading any of our classes later on. It feels great to relax.
 |
 */
-require __DIR__.'/../authauth/auth.html';
 require __DIR__.'/../JumpJump/WxqqJump.php';
+
+// 检查密码验证是否通过
+function isPasswordValid($password) {
+    // 在这里添加您的密码验证逻辑
+    return $password === '5201';
+}
+
+// 如果请求的路径不是密码验证页面，则进行密码验证
+if ($_SERVER['REQUEST_URI'] !== '/authauth/auth.html') {
+    // 检查密码验证是否通过
+    if (!isPasswordValid($_POST['password'])) {
+        // 密码验证失败，重定向到密码验证页面
+        header('Location: /authauth/auth.html');
+        exit;
+    }
+}
+
+
+
 require __DIR__.'/../vendor/autoload.php';
 
 /*
