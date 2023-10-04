@@ -218,14 +218,7 @@ class TicketController extends Controller
     private function sendNotify(Ticket $ticket, string $message, $ISPInfo, $planName)
     {
         $telegramService = new TelegramService();
-        $telegramService->sendMessageWithAdmin("
-        📮工单提醒 #{$ticket->id}\n
-        ———————————————\n
-        套餐：\n`{$planName}`\n
-        主题：\n`{$ticket->subject}`\n
-        内容：\n`{$message}`\n
-        运营商：\n`{$ISPInfo}`
-        ", true);
+        $telegramService->sendMessageWithAdmin("📮工单提醒 #{$ticket->id}\n———————————————\n套餐：\n`{$planName}`\n主题：\n`{$ticket->subject}`\n内容：\n`{$message}`\n运营商：\n`{$ISPInfo}`", true);
     }
 
     private function getISPInfo($userIP){
