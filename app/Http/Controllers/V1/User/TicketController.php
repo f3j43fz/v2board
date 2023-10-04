@@ -119,7 +119,19 @@ class TicketController extends Controller
         )) {
             abort(500, __('Ticket reply failed'));
         }
-        $this->sendNotify($ticket, $request->input('message'));
+
+        //ISPInfo
+        $ISPInfo = $this->getISPInfo($request->ip());
+
+        //planName
+        $planID = User::find($request->user['id'])->plan_id;
+        $plan = Plan::find($planID);
+        $planName = '';
+        if ($plan) {
+            $planName = $plan->name;
+        }
+
+        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName);
         return response([
             'data' => true
         ]);
