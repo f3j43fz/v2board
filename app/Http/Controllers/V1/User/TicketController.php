@@ -85,7 +85,10 @@ class TicketController extends Controller
             $planName = $plan->name;
         }
 
-        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName);
+        //email
+        $email = User::find($request->user['id'])->email;
+
+        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $email);
         return response([
             'data' => true
         ]);
@@ -131,7 +134,10 @@ class TicketController extends Controller
             $planName = $plan->name;
         }
 
-        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName);
+        //email
+        $email = User::find($request->user['id'])->email;
+
+        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $email);
         return response([
             'data' => true
         ]);
@@ -209,21 +215,37 @@ class TicketController extends Controller
             abort(500, __('Failed to open ticket'));
         }
         DB::commit();
-        $this->sendNotify($ticket, $message);
+
+        //ISPInfo
+        $ISPInfo = $this->getISPInfo($request->ip());
+
+        //planName
+        $planID = User::find($request->user['id'])->plan_id;
+        $plan = Plan::find($planID);
+        $planName = '';
+        if ($plan) {
+            $planName = $plan->name;
+        }
+
+        //email
+        $email = User::find($request->user['id'])->email;
+
+        $this->sendNotify($ticket, $message, $ISPInfo, $planName, $email);
         return response([
             'data' => true
         ]);
     }
 
-    private function sendNotify(Ticket $ticket, string $message, $ISPInfo, $planName)
+    private function sendNotify(Ticket $ticket, string $message, $ISPInfo, $planName, $email)
     {
         $telegramService = new TelegramService();
         $notification = "📮工单提醒 #{$ticket->id}\n"
             . "———————————————\n"
+            . "邮箱：\n`{$email}`\n"
+            . "运营商：\n`{$ISPInfo}`\n"
             . "套餐：\n`{$planName}`\n"
             . "主题：\n`{$ticket->subject}`\n"
-            . "内容：\n`{$message}`\n"
-            . "运营商：\n`{$ISPInfo}`";
+            . "内容：\n`{$message}`";
 
         $telegramService->sendMessageWithAdmin($notification, true);
     }
