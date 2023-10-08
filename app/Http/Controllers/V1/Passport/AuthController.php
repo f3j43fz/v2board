@@ -76,6 +76,8 @@ class AuthController extends Controller
 
     public function register(AuthRegister $request)
     {
+        $userIP = $request->ip();
+
         if ((int)config('v2board.register_limit_by_ip_enable', 0)) {
             $registerCountByIP = Cache::get(CacheKey::get('REGISTER_IP_RATE_LIMIT', $request->ip())) ?? 0;
             if ((int)$registerCountByIP >= (int)config('v2board.register_limit_count', 3)) {
@@ -100,6 +102,7 @@ class AuthController extends Controller
             $response = Http::post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
                 'secret' => $secret,
                 'response' => $response,
+                'ip' => $userIP,
             ]);
 
             if ($response->failed()) {
