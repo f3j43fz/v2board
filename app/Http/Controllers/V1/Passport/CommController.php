@@ -26,13 +26,39 @@ class CommController extends Controller
 
     public function sendEmailVerify(CommSendEmailVerify $request)
     {
+        $userIP = $request->ip();
+//        if ((int)config('v2board.recaptcha_enable', 0)) {
+//            $recaptcha = new ReCaptcha(config('v2board.recaptcha_key'));
+//            $recaptchaResp = $recaptcha->verify($request->input('recaptcha_data'));
+//            if (!$recaptchaResp->isSuccess()) {
+//                abort(500, __('Invalid code is incorrect'));
+//            }
+//        }
+
         if ((int)config('v2board.recaptcha_enable', 0)) {
-            $recaptcha = new ReCaptcha(config('v2board.recaptcha_key'));
-            $recaptchaResp = $recaptcha->verify($request->input('recaptcha_data'));
-            if (!$recaptchaResp->isSuccess()) {
+
+            $secret = config('v2board.recaptcha_key');
+            $response = $request->input('recaptcha_data');
+
+            $response = Http::post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => $secret,
+                'response' => $response,
+                'ip' => $userIP,
+            ]);
+
+            if ($response->failed()) {
+                abort(500, __('Failed to verify captcha'));
+            }
+
+            $responseData = $response->json();
+
+            if (isset($responseData['success']) && $responseData['success'] === true) {
+                // Verification successful
+            } else {
                 abort(500, __('Invalid code is incorrect'));
             }
         }
+
         $email = $request->input('email');
         if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
             abort(500, __('Email verification code has been sent, please request again later'));
