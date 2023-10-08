@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use ReCaptcha\ReCaptcha;
+use Illuminate\Support\Facades\Http;
 
 class CommController extends Controller
 {
