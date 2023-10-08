@@ -17,6 +17,7 @@ use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use ReCaptcha\ReCaptcha;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -83,13 +84,37 @@ class AuthController extends Controller
                 ]));
             }
         }
+//        if ((int)config('v2board.recaptcha_enable', 0)) {
+//            $recaptcha = new ReCaptcha(config('v2board.recaptcha_key'));
+//            $recaptchaResp = $recaptcha->verify($request->input('recaptcha_data'));
+//            if (!$recaptchaResp->isSuccess()) {
+//                abort(500, __('Invalid code is incorrect'));
+//            }
+//        }
+
         if ((int)config('v2board.recaptcha_enable', 0)) {
-            $recaptcha = new ReCaptcha(config('v2board.recaptcha_key'));
-            $recaptchaResp = $recaptcha->verify($request->input('recaptcha_data'));
-            if (!$recaptchaResp->isSuccess()) {
+
+            $secret = config('v2board.recaptcha_key');
+            $response = $request->input('recaptcha_data');
+
+            $response = Http::post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => $secret,
+                'response' => $response,
+            ]);
+
+            if ($response->failed()) {
+                abort(500, __('Failed to verify captcha'));
+            }
+
+            $responseData = $response->json();
+
+            if (isset($responseData['success']) && $responseData['success'] === true) {
+                // Verification successful
+            } else {
                 abort(500, __('Invalid code is incorrect'));
             }
         }
+
         if ((int)config('v2board.email_whitelist_enable', 0)) {
             if (!Helper::emailSuffixVerify(
                 $request->input('email'),
