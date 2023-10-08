@@ -15157,13 +15157,13 @@
                 super(), this.handleExpired = this.handleExpired.bind(this), this.handleErrored = this.handleErrored.bind(this), this.handleChange = this.handleChange.bind(this), this.handleRecaptchaRef = this.handleRecaptchaRef.bind(this)
             }
             getValue() {
-                return this.props.grecaptcha && void 0 !== this._widgetId ? this.props.grecaptcha.getResponse(this._widgetId) : null
+                return this.props.turnstile && void 0 !== this._widgetId ? this.props.turnstile.getResponse(this._widgetId) : null
             }
             getWidgetId() {
-                return this.props.grecaptcha && void 0 !== this._widgetId ? this._widgetId : null
+                return this.props.turnstile && void 0 !== this._widgetId ? this._widgetId : null
             }
             execute() {
-                var e = this.props.grecaptcha;
+                var e = this.props.turnstile;
                 if (e && void 0 !== this._widgetId) return e.execute(this._widgetId);
                 this._executeRequested = !0
             }
@@ -15173,7 +15173,7 @@
                 })
             }
             reset() {
-                this.props.grecaptcha && void 0 !== this._widgetId && this.props.grecaptcha.reset(this._widgetId)
+                this.props.turnstile && void 0 !== this._widgetId && this.props.turnstile.reset(this._widgetId)
             }
             handleExpired() {
                 this.props.onExpired ? this.props.onExpired() : this.handleChange(null)
@@ -15185,9 +15185,9 @@
                 this.props.onChange && this.props.onChange(e), this.executionResolve && (this.executionResolve(e), delete this.executionReject, delete this.executionResolve)
             }
             explicitRender() {
-                if (this.props.grecaptcha && this.props.grecaptcha.render && void 0 === this._widgetId) {
+                if (this.props.turnstile && this.props.turnstile.render && void 0 === this._widgetId) {
                     var e = document.createElement("div");
-                    this._widgetId = this.props.grecaptcha.render(e, {
+                    this._widgetId = this.props.turnstile.render(e, {
                         sitekey: this.props.sitekey,
                         callback: this.handleChange,
                         theme: this.props.theme,
@@ -15201,7 +15201,7 @@
                         badge: this.props.badge
                     }), this.captcha.appendChild(e)
                 }
-                this._executeRequested && this.props.grecaptcha && void 0 !== this._widgetId && (this._executeRequested = !1, this.execute())
+                this._executeRequested && this.props.turnstile && void 0 !== this._widgetId && (this._executeRequested = !1, this.execute())
             }
             componentDidMount() {
                 this.explicitRender()
@@ -15225,7 +15225,7 @@
             }
             render() {
                 var e = this.props,
-                    t = (e.sitekey, e.onChange, e.theme, e.type, e.tabindex, e.onExpired, e.onErrored, e.size, e.stoken, e.grecaptcha, e.badge, e.hl, u()(e, ["sitekey", "onChange", "theme", "type", "tabindex", "onExpired", "onErrored", "size", "stoken", "grecaptcha", "badge", "hl"]));
+                    t = (e.sitekey, e.onChange, e.theme, e.type, e.tabindex, e.onExpired, e.onErrored, e.size, e.stoken, e.turnstile, e.badge, e.hl, u()(e, ["sitekey", "onChange", "theme", "type", "tabindex", "onExpired", "onErrored", "size", "stoken", "turnstile", "badge", "hl"]));
                 return i.a.createElement("div", s()({}, t, {
                     ref: this.handleRecaptchaRef
                 }))
@@ -15364,8 +15364,8 @@
                     }, h()(a, n)
                 }
         }
-        var x = "onloadcallback",
-            O = "grecaptcha";
+        var x = "onloadturnstilecallback",
+            O = "turnstile";
 
         function E() {
             return "undefined" !== typeof window && window.recaptchaOptions || {}
@@ -15373,7 +15373,7 @@
 
         function _() {
             E();
-            return "https://www.recaptcha.net/recaptcha/api.js?onload=".concat(x, "&render=explicit")
+            return "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=".concat(x, "&render=explicit")
         }
         var k = w(_, {
                 callbackName: x,
