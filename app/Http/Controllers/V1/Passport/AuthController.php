@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use ReCaptcha\ReCaptcha;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -210,16 +211,13 @@ class AuthController extends Controller
 
         $authData = $authService->generateAuthData($request);
 
-        // Automatically log in the user after registration
-        $loginRequest = new AuthLogin([
-            'email' => $request->input('email'),
-            'password' => $request->input('password')
-        ]);
-        $loginResponse = $this->login($loginRequest);
-        $loginData = json_decode($loginResponse->getContent(), true);
+        // Manually log in the user after registration
+        Auth::login($user);
 
         // Merge the generated auth data with the login data
-        $authData = array_merge($authData, $loginData);
+        $authData = array_merge($authData, [
+            'user' => $user
+        ]);
 
         return response()->json([
             'data' => $authData
