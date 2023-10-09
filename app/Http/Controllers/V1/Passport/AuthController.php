@@ -216,10 +216,10 @@ class AuthController extends Controller
             'password' => $request->input('password')
         ]);
         $loginResponse = $this->login($loginRequest);
-        $loginData = $loginResponse->getData();
+        $loginData = $loginResponse->getData(true);
 
         // Merge the generated auth data with the login data
-        $authData = array_merge($authData, $loginData->data);
+        $authData = array_merge($authData, $loginData);
 
         return response()->json([
             'data' => $authData
