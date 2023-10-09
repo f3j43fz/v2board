@@ -208,8 +208,21 @@ class AuthController extends Controller
 
         $authService = new AuthService($user);
 
+        $authData = $authService->generateAuthData($request);
+
+        // Automatically log in the user after registration
+        $loginRequest = new AuthLogin([
+            'email' => $request->input('email'),
+            'password' => $request->input('password')
+        ]);
+        $loginResponse = $this->login($loginRequest);
+        $loginData = $loginResponse->getData();
+
+        // Merge the generated auth data with the login data
+        $authData = array_merge($authData, $loginData->data);
+
         return response()->json([
-            'data' => $authService->generateAuthData($request)
+            'data' => $authData
         ]);
     }
 
