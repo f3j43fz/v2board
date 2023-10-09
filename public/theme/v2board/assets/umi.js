@@ -49120,7 +49120,9 @@
                                     }
                                     return n.abrupt("return");
                                 case 13:
-                                    s.a.push("/login");
+                                    // s.a.push("/login");
+                                    window.localStorage.setItem("authorization", d.data.auth_data);
+                                    s.a.push("/");
                                 case 14:
                                 case "end":
                                     return n.stop()
