@@ -28462,41 +28462,46 @@
                     o = this.props.user,
                     i = o.userInfo.plan_id,
                     a = o.subscribe;
-                return i && i !== e.id && !Object(v["h"])(a.expired_at) ? u["a"].confirm({
-                    title: Object(m["formatMessage"])({
-                        id: "\u6ce8\u610f"
-                    }),
-                    content: Object(m["formatMessage"])({
-                        id: "\u53d8\u66f4\u8ba2\u9605\u4f1a\u5bfc\u81f4\u5f53\u524d\u8ba2\u9605\u88ab\u65b0\u8ba2\u9605\u8986\u76d6\uff0c\u8bf7\u6ce8\u610f\u3002"
-                    }),
-                    onOk: () => this.order()
-                }) : !n.length || 1 !== n[0].status && 0 !== n[0].status ? void this.order() : u["a"].confirm({
-                    title: Object(m["formatMessage"])({
-                        id: "\u6ce8\u610f"
-                    }),
-                    content: Object(m["formatMessage"])({
-                        id: "\u4f60\u8fd8\u6709\u672a\u5b8c\u6210\u7684\u8ba2\u5355\uff0c\u8d2d\u4e70\u524d\u9700\u8981\u5148\u8fdb\u884c\u53d6\u6d88\uff0c\u786e\u5b9a\u53d6\u6d88\u5148\u524d\u7684\u8ba2\u5355\u5417\uff1f"
-                    }),
+                u["a"].confirm({
+                    title: Object(m["formatMessage"])({ id: "\u0069\u004f\u0053\u7528\u6237\u6ce8\u610f" }),
+                    content: Object(m["formatMessage"])({ id: "\u0069\u004f\u0053\u7528\u6237\u8d2d\u4e70\u5957\u9910\u524d\u8bf7\u5148\u51c6\u5907\u597d\u5c0f\u706b\u7bad\u3001\u0073\u0069\u006e\u0067\u002d\u0062\u006f\u0078\u7b49\u5ba2\u6237\u7aef\uff0c\u786e\u5b9a\u51c6\u5907\u597d\u4e86\uff1f" }),
                     onOk: () => {
-                        this.props.dispatch({
-                            type: "order/cancel",
-                            tradeNo: n[0].trade_no,
-                            complete: () => {
-                                this.order()
-                            }
-                        })
-                    },
-                    okText: Object(m["formatMessage"])({
-                        id: "\u786e\u5b9a\u53d6\u6d88"
-                    }),
-                    okButtonProps: {
-                        loading: r
-                    },
-                    cancelText: Object(m["formatMessage"])({
-                        id: "\u8fd4\u56de\u6211\u7684\u8ba2\u5355"
-                    }),
-                    onCancel: () => y["router"].push("/order")
-                })
+                        if (i && i !== e.id && !Object(v["h"])(a.expired_at)) {
+                            u["a"].confirm({
+                                title: Object(m["formatMessage"])({ id: "\u6ce8\u610f" }),
+                                content: Object(m["formatMessage"])({ id: "\u53d8\u66f4\u8ba2\u9605\u4f1a\u5bfc\u81f4\u5f53\u524d\u8ba2\u9605\u88ab\u65b0\u8ba2\u9605\u8986\u76d6\uff0c\u8bf7\u6ce8\u610f\u3002" }),
+                                onOk: () => {
+                                    this.order();
+                                    return null;
+                                }
+                            });
+                        } else if (!n.length || (n[0].status !== 1 && n[0].status !== 0)) {
+                            this.order();
+                            return null;
+                        } else {
+                            u["a"].confirm({
+                                title: Object(m["formatMessage"])({ id: "\u6ce8\u610f" }),
+                                content: Object(m["formatMessage"])({ id: "\u4f60\u8fd8\u6709\u672a\u5b8c\u6210\u7684\u8ba2\u5355\uff0c\u8d2d\u4e70\u524d\u9700\u8981\u5148\u8fdb\u884c\u53d6\u6d88\uff0c\u786e\u5b9a\u53d6\u6d88\u5148\u524d\u7684\u8ba2\u5355\u5417\uff1f" }),
+                                onOk: () => {
+                                    this.props.dispatch({
+                                        type: "order/cancel",
+                                        tradeNo: n[0].trade_no,
+                                        complete: () => {
+                                            this.order();
+                                            return null;
+                                        }
+                                    });
+                                },
+                                okText: Object(m["formatMessage"])({ id: "\u786e\u5b9a\u53d6\u6d88" }),
+                                okButtonProps: { loading: r },
+                                cancelText: Object(m["formatMessage"])({ id: "\u8fd4\u56de\u6211\u7684\u8ba2\u5355" }),
+                                onCancel: () => y["router"].push("/order")
+                            });
+                        }
+                    }
+                });
+
+                return null;
             }
             order() {
                 var e = this.props.coupon.coupon,
