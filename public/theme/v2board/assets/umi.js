@@ -33540,7 +33540,8 @@
             i = n.n(o),
             a = n("t3Un"),
             s = n("3a4m"),
-            c = n.n(s);
+            c = n.n(s),
+            B = (n("2qtc"), n("kLXV"));
 
         function u() {
             u = function() {
@@ -33981,7 +33982,24 @@
                                 case 0:
                                     return n = t.put, r = t.select, e.next = 3, r(e => e.ticket);
                                 case 3:
-                                    return o = e.sent, i = o.saveData, e.next = 7, Object(a["b"])("/user/ticket/save", i);
+                                    B["a"].confirm({
+                                        title: Object(m["formatMessage"])({
+                                            id: "\u6ce8\u610f"
+                                        }),
+                                        content: Object(m["formatMessage"])({
+                                            id: "\u5982\u679c\u662f\u8282\u70b9\u7c7b\u7684\u95ee\u9898\u8bf7\u60a8\u56de\u7b54\u4ee5\u4e0b\u0034\u4e2a\u95ee\u9898\uff1a\u0031\u002e\u0020\u4ec0\u4e48\u5e73\u53f0\uff08\u5b89\u5353\u002f\u0069\u006f\u0073\u002f\u0077\u0069\u006e\u0064\u006f\u0077\u0073\u002f\u006d\u0061\u0063\u004f\u0053\uff09\uff1f\u0020\u0032\u002e\u0020\u4ec0\u4e48\u5ba2\u6237\u7aef\u0028\u0063\u006c\u0061\u0073\u0068\u0020\u0066\u006f\u0072\u0020\u0061\u006e\u0064\u0072\u006f\u0069\u0064\u002f\u0063\u006c\u0061\u0073\u0068\u0020\u006d\u0065\u0074\u0061\u002f\u004e\u0065\u006b\u006f\u0042\u006f\u0078\u002f\u0073\u0069\u006e\u0067\u002d\u0062\u006f\u0078\u002f\u0063\u006c\u0061\u0073\u0068\u0020\u0076\u0065\u0072\u0067\u0065\u002f\u0073\u0068\u0061\u0064\u006f\u0077\u0072\u006f\u0063\u006b\u0065\u0074\u002f\u0077\u0069\u006e\u0064\u006f\u0077\u0073\u5b98\u65b9\u5ba2\u6237\u7aef\u0029\uff1f\u0020\u0033\u002e\u4f1a\u4e0d\u4f1a\u66f4\u65b0\u8ba2\u9605\uff1f\u0020\u0034\u002e\u6709\u6ca1\u6709\u66f4\u65b0\u8ba2\u9605\uff1f\u4e0d\u56de\u7b54\u4e0a\u8ff0\u95ee\u9898\u778e\u63d0\u95ee\u7684\uff0c\u5ba2\u670d\u53ef\u4ee5\u76f4\u63a5\u5c01\u53f7\u5904\u7406\u3002"
+                                        }),
+                                        onOk() {
+                                            return o = e.sent, i = o.saveData, e.next = 7, Object(a["b"])("/user/ticket/save", i);
+                                        },
+                                        onCancel() {},
+                                        okText: Object(m["formatMessage"])({
+                                            id: "\u786e\u8ba4"
+                                        }),
+                                        cancelText: Object(m["formatMessage"])({
+                                            id: "\u53d6\u6d88"
+                                        })
+                                    })
                                 case 7:
                                     if (s = e.sent, 200 === s.code) {
                                         e.next = 10;
