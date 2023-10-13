@@ -286,7 +286,7 @@ window.settings.i18n['zh-CN'] = {
     'sub_request_info2': '规则如下：系统在您每次更新订阅时，会记录您的请求IP。若6小时内不同请求IP数超过16个，将被阻止更新订阅',
     'sub_request_info3': '其他说明：管理员能看到你的IP地址吗？不能，本功能旨在保护用户的订阅链接不被泄露后滥用，而不是偷窥用户IP。出于隐私保护的角度，我们对记录的IP地址进行了掩码覆盖，后台也看不到你的具体IP，请放心订阅。',
     'ios_confirm_title': 'iOS用户请注意',
-    'ios_confirm_info': '如果您是iOS用户，在您购买套餐之前，请确保您已经准备好了小火箭（Shadowrocket）、Sing-box等客户端。这些客户端是iOS平台上使用我们的VPN服务所必需的工具。请确认您已经准备好了这些客户端，以便您能够顺利地使用我们的节点。安卓用户点【确认】忽略本提示。',
+    'ios_confirm_info': '如果您是iOS用户，在您购买套餐之前，请确保您已经准备好了小火箭（Shadowrocket）或者 Sing-box等客户端。这些客户端是iOS平台上使用我们的VPN服务所必需的工具。请确认您已经准备好了上述客户端，以便您能够顺利地使用我们的节点。安卓用户点【确认】忽略本提示。',
     'I_know_it_title':'封号警告',
     'I_know_it_info':'如果是节点类的问题请您回答以下4个问题：1. 什么平台（安卓/ios/windows/macOS）？ 2. 什么客户端(clash for android/clash meta/NekoBox/sing-box/clash verge/shadowrocket/windows官方客户端)？ 3.会不会更新订阅？ 4.有没有更新订阅？不回答上述问题瞎提问的，客服可以直接封号处理。',
     '该订阅无法续费，仅允许新用户购买': '该订阅无法续费，仅允许新用户购买',
