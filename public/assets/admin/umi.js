@@ -4883,7 +4883,9 @@
                     value: "darkblue"
                 }, "\u6697\u84dd\u8272"), f.a.createElement("option", {
                     value: "green"
-                }, "\u5976\u7eff\u8272"))), f.a.createElement(m, {
+                }, "\u5976\u7eff\u8272"), f.a.createElement("option", {
+                    value: "pink"
+                }, "\u7c89\u8272"))), f.a.createElement(m, {
                     title: "\u80cc\u666f",
                     description: "\u5c06\u4f1a\u5728\u540e\u53f0\u767b\u5f55\u9875\u9762\u8fdb\u884c\u5c55\u793a\u3002"
                 }, f.a.createElement("input", {
