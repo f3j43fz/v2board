@@ -33540,7 +33540,9 @@
             i = n.n(o),
             a = n("t3Un"),
             s = n("3a4m"),
-            c = n.n(s);
+            c = n.n(s),
+            L = (n("2qtc"), n("kLXV")),
+            m = n("Y2fQ");
 
         function u() {
             u = function() {
@@ -33981,7 +33983,24 @@
                                 case 0:
                                     return n = t.put, r = t.select, e.next = 3, r(e => e.ticket);
                                 case 3:
-                                    return o = e.sent, i = o.saveData, e.next = 7, Object(a["b"])("/user/ticket/save", i);
+                                    L["a"].confirm({
+                                        title: Object(m["formatMessage"])({
+                                            id: "\u0069\u006f\u0073\u7528\u6237\u786e\u5b9a\u8981\u8d2d\u4e70\u5957\u9910\u5417\uff1f"
+                                        }),
+                                        content: Object(m["formatMessage"])({
+                                            id: "\u0069\u004f\u0053\u7528\u6237\u8d2d\u4e70\u5957\u9910\u524d\u8bf7\u5148\u51c6\u5907\u597d\u5c0f\u706b\u7bad\u3001\u0073\u0069\u006e\u0067\u002d\u0062\u006f\u0078\u7b49\u5ba2\u6237\u7aef\uff0c\u786e\u5b9a\u51c6\u5907\u597d\u4e86\u5417\uff1f"
+                                        }),
+                                        onOk() {
+                                            return o = e.sent, i = o.saveData, e.next = 7, Object(a["b"])("/user/ticket/save", i);
+                                        },
+                                        onCancel() {},
+                                        okText: Object(m["formatMessage"])({
+                                            id: "\u786e\u8ba4"
+                                        }),
+                                        cancelText: Object(m["formatMessage"])({
+                                            id: "\u53d6\u6d88"
+                                        })
+                                    })
                                 case 7:
                                     if (s = e.sent, 200 === s.code) {
                                         e.next = 10;
