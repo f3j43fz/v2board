@@ -199,26 +199,51 @@ class Shadowrocket
         return $uri;
     }
 
+//    public static function buildHysteria($password, $server)
+//    {
+//        $uri = "hysteria://{$server['host']}:{$server['server_port']}";
+//        $params = [];
+//        $params[] = "protocol=udp";
+//        $params[] = "fastopen=0";
+//        $params[] = "auth={$password}";
+//        if (isset($server['server_name'])) {
+//            $params[] = "peer={$server['server_name']}";
+//        }
+//        if (isset($server['insecure'])) {
+//            $params[] = "allowInsecure=" . ($server['insecure'] ? "1" : "0");
+//        }
+//        $params[] = "upmbps={$server['up_mbps']}";
+//        $params[] = "downmbps={$server['down_mbps']}";
+//        $obfs = Helper::getServerKey($server['created_at'], 16);
+//        $params[] = "obfsParam={$obfs}";
+//        $uri .= "?" . implode("&", $params);
+//        $remarks = rawurlencode($server['name']);
+//        $uri .= "#{$remarks}\r\n";
+//        return $uri;
+//    }
+
     public static function buildHysteria($password, $server)
     {
-        $uri = "hysteria://{$server['host']}:{$server['server_port']}";
+        $uri = "hysteria2://{$password}@{$server['host']}:{$server['server_port']}";
         $params = [];
-        $params[] = "protocol=udp";
         $params[] = "fastopen=0";
-        $params[] = "auth={$password}";
+
         if (isset($server['server_name'])) {
             $params[] = "peer={$server['server_name']}";
         }
         if (isset($server['insecure'])) {
-            $params[] = "allowInsecure=" . ($server['insecure'] ? "1" : "0");
+            $params[] = "insecure=" . ($server['insecure'] ? "1" : "0");
         }
-        $params[] = "upmbps={$server['up_mbps']}";
-        $params[] = "downmbps={$server['down_mbps']}";
+
         $obfs = Helper::getServerKey($server['created_at'], 16);
-        $params[] = "obfsParam={$obfs}";
+        $params[] = "obfs=salamander";
+        $params[] = "obfs-password={$obfs}";
+
+
         $uri .= "?" . implode("&", $params);
         $remarks = rawurlencode($server['name']);
         $uri .= "#{$remarks}\r\n";
         return $uri;
     }
+
 }
