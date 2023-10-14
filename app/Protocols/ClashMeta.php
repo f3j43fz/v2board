@@ -249,13 +249,14 @@ class ClashMeta
     {
         $array = [];
         $array['name'] = $server['name'];
-        $array['type'] = 'hysteria';
+        $array['type'] = 'hysteria2';
         $array['server'] = $server['host'];
         $array['port'] = $server['port'];
-        $array['auth_str'] = $password;
-        $array['up'] = $server['up_mbps'];
-        $array['down'] = $server['down_mbps'];
-        $array['obfs'] = Helper::getServerKey($server['created_at'], 16);
+        $array['password'] = $password;
+        $array['up'] = 0;
+        $array['down'] = 0;
+        $array['obfs'] = 'salamander';
+        $array['obfs-password'] = Helper::getServerKey($server['created_at'], 16);
         if (!empty($server['server_name'])) $array['sni'] = $server['server_name'];
         if (!empty($server['insecure'])) $array['skip-cert-verify'] = ($server['insecure'] ? true : false);
         return $array;
