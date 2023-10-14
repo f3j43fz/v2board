@@ -11,7 +11,11 @@
                 "tag": "tx",
                 "address": "https://120.53.53.53/dns-query",
                 "address_strategy": "prefer_ipv4",
-                "detour": "direct"
+                "detour": "直连"
+            },
+            {
+                "tag": "fakedns",
+                "address": "fakeip"
             }
         ],
         "rules": [
@@ -21,23 +25,41 @@
                 "disable_cache": true
             },
             {
-                "clash_mode": "direct",
+                "clash_mode": "直连",
                 "server": "tx"
             },
             {
-                "clash_mode": "global",
+                "clash_mode": "全局",
                 "server": "google"
             },
             {
-                "geosite": "cn",
+                "geosite": [
+                    "cn",
+                    "apple@cn",
+                    "category-games@cn",
+                    "private"
+                ],
+                "domain_keyword": "ntp",
                 "server": "tx"
             },
             {
                 "geosite": "geolocation-!cn",
                 "server": "google"
+            },
+            {
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "server": "fakedns"
             }
         ],
-        "final": "google"
+        "final": "tx",
+        "fakeip": {
+            "enabled": true,
+            "inet4_range": "198.18.0.0/15",
+            "inet6_range": "fc00::/18"
+        }
     },
     "route": {
         "rules": [
@@ -46,12 +68,12 @@
                 "outbound": "dns-out"
             },
             {
-                "clash_mode": "direct",
-                "outbound": "direct"
+                "clash_mode": "直连",
+                "outbound": "直连"
             },
             {
-                "clash_mode": "global",
-                "outbound": "GLOBAL"
+                "clash_mode": "全局",
+                "outbound": "全局"
             },
             {
                 "geoip": "google",
@@ -94,27 +116,24 @@
                 "outbound": "HBO"
             },
             {
+                "geoip": "cn",
                 "geosite": "cn",
-                "outbound": "cn"
+                "outbound": "国内服务"
             },
             {
                 "geosite": "geolocation-!cn",
                 "outbound": "V2Pass"
-            },
-            {
-                "geoip": "cn",
-                "outbound": "cn"
             }
         ],
-        "final": "final",
+        "final": "兜底",
         "auto_detect_interface": true,
         "geoip": {
             "download_url": "https://ghproxy.com/https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
-            "download_detour": "direct"
+            "download_detour": "直连"
         },
         "geosite": {
             "download_url": "https://ghproxy.com/https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
-            "download_detour": "direct"
+            "download_detour": "直连"
         }
     },
     "outbounds": [
@@ -122,16 +141,16 @@
             "tag": "V2Pass",
             "type": "selector",
             "outbounds": [
-                "auto"
+                "自动选择"
             ],
-            "default": "auto"
+            "default": "自动选择"
         },
         {
             "tag": "谷歌系",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -140,7 +159,7 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -149,7 +168,7 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -158,7 +177,7 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -167,7 +186,7 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -176,7 +195,7 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -185,7 +204,7 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -194,7 +213,7 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
@@ -203,27 +222,27 @@
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto"
+                "自动选择"
             ],
             "default": "V2Pass"
         },
         {
-            "tag": "cn",
+            "tag": "国内服务",
             "type": "selector",
             "outbounds": [
-                "direct",
-                "auto",
+                "直连",
+                "自动选择",
                 "V2Pass"
             ],
-            "default": "direct"
+            "default": "直连"
         },
         {
-            "tag": "final",
+            "tag": "兜底",
             "type": "selector",
             "outbounds": [
                 "V2Pass",
-                "auto",
-                "direct"
+                "自动选择",
+                "直连"
             ],
             "default": "V2Pass"
         },
@@ -231,22 +250,22 @@
             "tag": "dns",
             "type": "selector",
             "outbounds": [
-                "auto",
-                "direct"
+                "自动选择",
+                "直连"
             ],
-            "default": "auto"
+            "default": "自动选择"
         },
         {
-            "tag": "GLOBAL",
+            "tag": "全局",
             "type": "selector",
             "outbounds": [
-                "auto",
-                "direct"
+                "自动选择",
+                "直连"
             ],
-            "default": "auto"
+            "default": "自动选择"
         },
         {
-            "tag": "auto",
+            "tag": "自动选择",
             "type": "urltest",
             "outbounds": [ ],
             "url": "https://www.gstatic.com/generate_204",
@@ -254,7 +273,7 @@
             "tolerance": 50
         },
         {
-            "tag": "direct",
+            "tag": "直连",
             "type": "direct"
         },
         {
