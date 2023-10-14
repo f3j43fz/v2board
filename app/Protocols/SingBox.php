@@ -258,13 +258,16 @@ class SingBox
     {
         $array = [];
         $array['tag'] = $server['name'];
-        $array['type'] = 'hysteria';
+        $array['type'] = 'hysteria2';
         $array['server'] = $server['host'];
         $array['server_port'] = $server['port'];
-        $array['auth_str'] = $password;
-        $array['up_mbps'] = $server['up_mbps'];
-        $array['down_mbps'] = $server['down_mbps'];
-        $array['obfs'] = Helper::getServerKey($server['created_at'], 16);
+        $array['password'] = $password;
+        $array['up_mbps'] = 0;
+        $array['down_mbps'] = 0;
+        $array['obfs'] = [
+            'type' => 'salamander',
+            'password' => Helper::getServerKey($server['created_at'], 16)
+        ];
         $array['tls'] = [
             'enabled' => true
         ];
