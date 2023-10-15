@@ -82105,6 +82105,38 @@
                     onChange: e => this.formChange("down_mbps", e.target.value)
                 })), y.a.createElement("div", {
                     className: "form-group"
+                }, y.a.createElement("label", null, "\u6df7\u6dc6\u7c7b\u578b"), y.a.createElement(N["a"], {
+                    value: e.obfs_type,
+                    placeholder: "\u6df7\u6dc6\u7c7b\u578b",
+                    style: {
+                        width: "100%"
+                    },
+                    onChange: e => this.formChange("obfs_type", e)
+                }, y.a.createElement(N["a"].Option, {
+                    key: 0,
+                    value: "salamander"
+                }, "Salamander"))), y.a.createElement("div", {
+                    className: "form-group"
+                }, y.a.createElement("label", null, y.a.createElement(u["a"], {
+                    placement: "top",
+                    title: "\u542f\u7528\u540e\u4e0a\u884c\u5e26\u5bbd\u4e0b\u884c\u5e26\u5bbd\u53c2\u6570\u5c06\u4e0d\u751f\u6548"
+                }, "Ignore Client Bandwidth ", y.a.createElement(m["a"], {
+                    type: "question-circle"
+                }))), y.a.createElement(N["a"], {
+                    value: parseInt(e.ignore_client_bandwidth) ? 1 : 0,
+                    placeholder: "\u5ffd\u7565\u5ba2\u6237\u7aef\u5e26\u5bbd",
+                    style: {
+                        width: "100%"
+                    },
+                    onChange: e => this.formChange("ignore_client_bandwidth", e)
+                }, y.a.createElement(N["a"].Option, {
+                    key: 0,
+                    value: 0
+                }, "\u5426"), y.a.createElement(N["a"].Option, {
+                    key: 1,
+                    value: 1
+                }, "\u662f"))), y.a.createElement("div", {
+                    className: "form-group"
                 }, y.a.createElement("label", null, y.a.createElement(u["a"], {
                     placement: "top"
                 }, "\u7236\u8282\u70b9 ", y.a.createElement("a", {
