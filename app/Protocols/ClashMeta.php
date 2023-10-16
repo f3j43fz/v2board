@@ -253,8 +253,8 @@ class ClashMeta
         $array['server'] = $server['host'];
         $array['port'] = $server['port'];
         $array['password'] = $password;
-        $array['up'] = 0;
-        $array['down'] = 0;
+        $array['up'] = "0 Mbps";
+        $array['down'] = "0 Mbps";
         $array['obfs'] = 'salamander';
         $array['obfs-password'] = Helper::getServerKey($server['created_at'], 16);
         if (!empty($server['server_name'])) $array['sni'] = $server['server_name'];
