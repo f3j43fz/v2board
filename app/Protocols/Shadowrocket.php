@@ -41,7 +41,7 @@ class Shadowrocket
             if ($item['type'] === 'trojan') {
                 $uri .= self::buildTrojan($user['uuid'], $item);
             }
-            if ($item['type'] === 'hysteria') {
+            if ($item['type'] === 'hysteria2') {
                 $uri .= self::buildhysteria($user['uuid'], $item);
             }
         }

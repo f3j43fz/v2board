@@ -99,7 +99,7 @@ class ServerService
         $servers = $model->get()->keyBy('id');
         foreach ($servers as $key => $v) {
             if (!$v['show']) continue;
-            $servers[$key]['type'] = 'hysteria';
+            $servers[$key]['type'] = 'hysteria2';
             $servers[$key]['last_check_at'] = Cache::get(CacheKey::get('SERVER_HYSTERIA_LAST_CHECK_AT', $v['id']));
             if (!in_array($user->group_id, $v['group_id'])) continue;
             if (strpos($v['port'], '-') !== false) {
@@ -255,7 +255,7 @@ class ServerService
             ->get()
             ->toArray();
         foreach ($servers as $k => $v) {
-            $servers[$k]['type'] = 'hysteria';
+            $servers[$k]['type'] = 'hysteria2';
         }
         return $servers;
     }
@@ -313,7 +313,7 @@ class ServerService
                 return ServerShadowsocks::find($serverId);
             case 'trojan':
                 return ServerTrojan::find($serverId);
-            case 'hysteria':
+            case 'hysteria2':
                 return ServerHysteria::find($serverId);
             case 'vless':
                 return ServerVless::find($serverId);
