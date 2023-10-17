@@ -288,7 +288,7 @@ window.settings.i18n['zh-CN'] = {
     'ios_confirm_title': 'iOS用户请注意',
     'ios_confirm_info': '如果您是iOS用户，在您购买套餐之前，请确保您已经准备好了小火箭（Shadowrocket）或者 Sing-box等客户端。这些客户端是iOS平台上使用我们的VPN服务所必需的工具。请确认您已经准备好了上述客户端，以便您能够顺利地使用我们的节点。安卓用户点【确认】忽略本提示。',
     'I_know_it_title':'封号警告',
-    'I_know_it_info':'如果是节点类的问题请您回答以下4个问题：1. 什么平台（安卓/ios/windows/macOS）？ 2. 什么客户端(clash for android/clash meta/NekoBox/sing-box/clash verge/shadowrocket/windows官方客户端)？ 3.会不会更新订阅？ 4.有没有更新订阅？不回答上述问题瞎提问的，客服可以直接封号处理。',
+    'I_know_it_info':'如果是节点类的问题请您回答以下4个问题：1. 什么平台（安卓/ios/windows/macOS）？ 2. 什么客户端(clash for android/clash meta/NekoBox/sing-box/clash verge/shadowrocket/windows官方客户端)？ 3.会不会更新订阅？ 4.有没有更新订阅？不回答上述问题瞎提问的，客服可以直接封号处理。直连套餐若无法更新订阅，可快速自查：1.Clash Verge 如果无法更新订阅，请看一下我们网站里面的Verge使用文档里的温馨提示部分； 2.小火箭无法更新订阅请升级至 2.2.37 本版及以上；3. NekoBox 建议升级到 1.2.7 版本。 BGP套餐和学术套餐无法更新订阅多数情况是网络问题，与客户端版本无关，直接查看使用文档：【手动更新订阅方法汇总】即可解决',
     '该订阅无法续费，仅允许新用户购买': '该订阅无法续费，仅允许新用户购买',
   '重置当月流量': '重置当月流量',
   '流量明细仅保留近月数据以供查询。': '流量明细仅保留近一个月数据以供查询。',
