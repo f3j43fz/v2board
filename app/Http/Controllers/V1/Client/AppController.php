@@ -50,7 +50,7 @@ class AppController extends Controller
                 array_push($proxy, \App\Protocols\Clash::buildTrojan($user['uuid'], $item));
                 array_push($proxies, $item['name']);
             }
-            if ($item['type'] === 'hysteria2') {
+            if ($item['type'] === 'hysteria') {
                 array_push($proxy, \App\Protocols\ClashMeta::buildHysteria($user['uuid'], $item));
                 array_push($proxies, $item['name']);
             }

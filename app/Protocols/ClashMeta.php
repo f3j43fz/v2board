@@ -52,7 +52,7 @@ class ClashMeta
                 array_push($proxy, self::buildTrojan($user['uuid'], $item));
                 array_push($proxies, $item['name']);
             }
-            if ($item['type'] === 'hysteria2') {
+            if ($item['type'] === 'hysteria') {
                 array_push($proxy, self::buildHysteria($user['uuid'], $item));
                 array_push($proxies, $item['name']);
             }

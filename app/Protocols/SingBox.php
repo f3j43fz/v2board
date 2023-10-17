@@ -50,7 +50,7 @@ class SingBox
             if ($item['type'] === 'trojan' && $trojan) {
                 $proxy = self::buildTrojan($user['uuid'], $item);
             }
-            if ($item['type'] === 'hysteria2') {
+            if ($item['type'] === 'hysteria') {
                 if ($tuic){
                     $proxy = self::buildTuic($user['uuid'], $item);
                 }elseif ($hysteria) {
