@@ -25,16 +25,13 @@ Route::get('/', function (Request $request) {
     if (config('v2board.logo') !== null){
 
         $a = config('v2board.logo');
-        $origin = $request->headers->get('origin');
+        $newDomain = $request->getHost();
 
         // 提取 $a 中的域名部分
         $prefix = 'https://';
         $oldDomain = substr($a, strlen($prefix));
         $oldDomain = strtok($oldDomain, '/');
 
-        // 提取 $origin 中的域名部分
-        $newDomain = substr($origin, strlen($prefix));
-        $newDomain = strtok($newDomain, '/');
 
         // 替换 $a 中的域名
         $newLOGO = str_replace($oldDomain, $newDomain, $a);
