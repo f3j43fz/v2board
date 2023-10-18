@@ -13,7 +13,8 @@
         'darkblue' => '#3b5998',
         'black' => '#343a40',
         'default' => '#0665d0',
-        'green' => '#319795'
+        'green' => '#319795',
+        'pink' => '#f48aab'
     ])
     <meta name="theme-color" content="{{$colors[$theme_config['theme_color']]}}">
 
