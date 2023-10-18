@@ -28,13 +28,13 @@ Route::get('/', function (Request $request) {
         $origin = $request->headers->get('origin');
 
         // 提取 $a 中的域名部分
-        $pattern = '/^(https?:\/\/)([^\/]+)/';
-        preg_match($pattern, $a, $matches);
-        $oldDomain = $matches[2];
+        $prefix = 'https://';
+        $oldDomain = substr($a, strlen($prefix));
+        $oldDomain = strtok($oldDomain, '/');
 
         // 提取 $origin 中的域名部分
-        preg_match($pattern, $origin, $matches);
-        $newDomain = $matches[2];
+        $newDomain = substr($origin, strlen($prefix));
+        $newDomain = strtok($newDomain, '/');
 
         // 替换 $a 中的域名
         $newLOGO = str_replace($oldDomain, $newDomain, $a);
