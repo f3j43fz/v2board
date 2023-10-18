@@ -21,20 +21,20 @@ Route::get('/', function (Request $request) {
         }
     }
 
-    $newLOGO = "";
+    $newLogoURL = "";
     if (config('v2board.logo') !== null){
+        $oldLogoURL = config('v2board.logo');
 
-        $a = config('v2board.logo');
-        $newDomain = $request->getHost();
-
-        // 提取 $a 中的域名部分
+        // 提取 $oldLogoURL 中的域名部分，得到旧域名
         $prefix = 'https://';
-        $oldDomain = substr($a, strlen($prefix));
+        $oldDomain = substr($oldLogoURL, strlen($prefix));
         $oldDomain = strtok($oldDomain, '/');
 
+        //提取请求中的域名，得到新域名
+        $newDomain = $request->getHost();
 
-        // 替换 $a 中的域名
-        $newLOGO = str_replace($oldDomain, $newDomain, $a);
+        $newLogoURL = ($oldDomain != $newDomain ? str_replace($oldDomain, $newDomain, $oldLogoURL) : $newLogoURL );
+
     }
 
     $renderParams = [
@@ -42,7 +42,7 @@ Route::get('/', function (Request $request) {
         'theme' => config('v2board.frontend_theme', 'v2board'),
         'version' => config('app.version'),
         'description' => config('v2board.app_description', 'V2Board is best'),
-        'logo' => $newLOGO
+        'logo' => $newLogoURL
     ];
 
     if (!config("theme.{$renderParams['theme']}")) {
