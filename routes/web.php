@@ -20,12 +20,32 @@ Route::get('/', function (Request $request) {
             abort(403);
         }
     }
+
+    $newLOGO = "";
+    if (config('v2board.logo') !== null){
+
+        $a = config('v2board.logo');
+        $origin = $request->headers->get('origin');
+
+        // 提取 $a 中的域名部分
+        $pattern = '/^(https?:\/\/)([^\/]+)/';
+        preg_match($pattern, $a, $matches);
+        $oldDomain = $matches[2];
+
+        // 提取 $origin 中的域名部分
+        preg_match($pattern, $origin, $matches);
+        $newDomain = $matches[2];
+
+        // 替换 $a 中的域名
+        $newLOGO = str_replace($oldDomain, $newDomain, $a);
+    }
+
     $renderParams = [
         'title' => config('v2board.app_name', 'V2Board'),
         'theme' => config('v2board.frontend_theme', 'v2board'),
         'version' => config('app.version'),
         'description' => config('v2board.app_description', 'V2Board is best'),
-        'logo' => config('v2board.logo')
+        'logo' => $newLOGO
     ];
 
     if (!config("theme.{$renderParams['theme']}")) {
