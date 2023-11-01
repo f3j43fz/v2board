@@ -12,18 +12,38 @@ $conf["payurl"]="pay";
 $conf["adminurl"]="admin";
 
 
-if(strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')||strpos($_SERVER['HTTP_USER_AGENT'], 'Weibo')||strpos($_SERVER['HTTP_USER_AGENT'], 'UCBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'UBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'baidubrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'baiduboxapp')||strpos($_SERVER['HTTP_USER_AGENT'], '360SE')||strpos($_SERVER['HTTP_USER_AGENT'], '360browser')||strpos($_SERVER['HTTP_USER_AGENT'], '360se')||strpos($_SERVER['HTTP_USER_AGENT'], '360EE')||strpos($_SERVER['HTTP_USER_AGENT'], 'MQQBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'QQBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'TencentTraveler')||strpos($_SERVER['HTTP_USER_AGENT'], 'MQQBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'MiuiBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'Quark')||strpos($_SERVER['HTTP_USER_AGENT'], 'Maxthon')||strpos($_SERVER['HTTP_USER_AGENT'], 'MetaSr')||strpos($_SERVER['HTTP_USER_AGENT'], 'SogouMobileBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'NewsArticle')||strpos($_SERVER['HTTP_USER_AGENT'], 'TTWebView')||strpos($_SERVER['HTTP_USER_AGENT'], 'VivoBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'HuaweiBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'HeyTapBrowser')||strpos($_SERVER['HTTP_USER_AGENT'], 'LBBROWSER')||strpos($_SERVER['HTTP_USER_AGENT'], 'TheWorld')!==false
+function isUserAgentNotSupported(): bool
+{
+    $userAgents = array(
+        'MicroMessenger', 'Weibo', 'UCBrowser', 'UBrowser', 'baidubrowser', 'baiduboxapp',
+        '360SE', '360browser', '360se', '360EE', 'MQQBrowser', 'QQBrowser', 'TencentTraveler',
+        'MQQBrowser', 'MiuiBrowser', 'Quark', 'Maxthon', 'MetaSr', 'SogouMobileBrowser',
+        'NewsArticle', 'TTWebView', 'VivoBrowser', 'HuaweiBrowser', 'HeyTapBrowser',
+        'LBBROWSER', 'TheWorld'
+    );
 
+    foreach ($userAgents as $agent) {
+        if (strpos($_SERVER['HTTP_USER_AGENT'], $agent) !== false) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+
+if(isUserAgentNotSupported()
     && strpos($_SERVER['REQUEST_URI'], strval($conf["vpayurl"]))===false
     && strpos($_SERVER['REQUEST_URI'], strval($conf["adminurl"]))===false
     && strpos($_SERVER['REQUEST_URI'], strval($conf["payurl"]))===false
 
     && $conf["wxqqjump"]==="yes"){
-//    $siteurl='https://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
     $siteurl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 
-echo '<html>
+
+    echo '<html>
 <head>
     <meta charset="UTF-8">
     <title>使用浏览器打开</title>
