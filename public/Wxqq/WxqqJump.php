@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+$request = \Illuminate\Http\Request::capture();
 
 // 微信QQ域名防红跳转 把下面一行代码添加至 index.php
 // require_once('WxqqJump/WxqqJump.php');
