@@ -19,9 +19,9 @@ if(strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')||strpos($_SERVER['HTTP_
     && strpos($_SERVER['REQUEST_URI'], strval($conf["payurl"]))===false
 
     && $conf["wxqqjump"]==="yes"){
-    $siteurl='https://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-//    $request = Request::instance();
-//    $siteurl = $request->fullUrl();
+//    $siteurl='https://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+    $siteurl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
 
 echo '<html>
 <head>
