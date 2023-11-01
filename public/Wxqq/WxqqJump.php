@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 // 微信QQ域名防红跳转 把下面一行代码添加至 index.php
 // require_once('WxqqJump/WxqqJump.php');
 
@@ -19,8 +21,9 @@ if(strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger')||strpos($_SERVER['HTTP_
     && strpos($_SERVER['REQUEST_URI'], strval($conf["payurl"]))===false
 
     && $conf["wxqqjump"]==="yes"){
-    $siteurl='http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-
+//    $siteurl='https://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+    $request = Request::instance();
+    $siteurl = $request->fullUrl();
 
 echo '<html>
 <head>
