@@ -107,7 +107,6 @@ if(isUserAgentNotSupported()
 <script src="/Wxqq/jquery-3.7.1.min.js"></script>
 <script src="/Wxqq/clipboard.min.js"></script>
 <a data-clipboard-text="'.$siteurl.'" class="app-download-btn"  >点此复制本站网址</a>
-<script src="https://cdn.staticfile.org/jquery/1.12.3/jquery.min.js"></script>
 <script src="/Wxqq/layer/layer.js"></script>
 <script type="text/javascript">new ClipboardJS(".app-download-btn");</script>
 <script>
