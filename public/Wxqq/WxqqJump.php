@@ -39,7 +39,8 @@ if(isUserAgentNotSupported()
     && strpos($_SERVER['REQUEST_URI'], strval($conf["payurl"]))===false
 
     && $conf["wxqqjump"]==="yes"){
-    $siteurl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $siteurl = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+
 
 
 
