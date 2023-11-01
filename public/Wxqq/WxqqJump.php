@@ -1,7 +1,7 @@
 <?php
 
 // 微信QQ域名防红跳转 把下面一行代码添加至 index.php
-// require_once('WxqqJump/WxqqJump.php');
+// require_once('Wxqq/WxqqJump.php');
 
 // 是否开启跳转
 $conf["wxqqjump"]="yes";
