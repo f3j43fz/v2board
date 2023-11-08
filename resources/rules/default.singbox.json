@@ -128,11 +128,11 @@
         "final": "兜底",
         "auto_detect_interface": true,
         "geoip": {
-            "download_url": "https://ghproxy.com/https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
+            "download_url": "https://gh-proxy.com/https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
             "download_detour": "直连"
         },
         "geosite": {
-            "download_url": "https://ghproxy.com/https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
+            "download_url": "https://gh-proxy.com/https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
             "download_detour": "直连"
         }
     },
