@@ -23,7 +23,9 @@ class SingBox
         $user = $this->user;
         $appName = config('v2board.app_name', 'V2Board');
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
-        header("content-disposition:attachment;filename*=UTF-8''".rawurlencode($appName));
+        header('profile-update-interval: 24');
+        header("content-disposition:attachment; filename*=UTF-8''".rawurlencode($appName));
+        header("profile-web-page-url:" . config('v2board.app_url'));
         $config = json_decode(file_get_contents(base_path() . '/resources/rules/default.singbox.json'), true);
         $outbounds = $config['outbounds'];
         $selectorOutbounds = [];
