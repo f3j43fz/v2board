@@ -80,6 +80,7 @@ class TicketController extends Controller
         //tansfer
         $user = User::find($request->user['id']);
         $transferEnable = ($user->transfer_enable) / (1024*1024*1024);
+        $transferEnable = number_format($transferEnable, 2);
         $transferUsed = ($user->u + $user->d) / (1024*1024*1024);
 
         //email
@@ -136,6 +137,7 @@ class TicketController extends Controller
         //tansfer
         $user = User::find($request->user['id']);
         $transferEnable = ($user->transfer_enable) / (1024*1024*1024);
+        $transferEnable = number_format($transferEnable, 2);
         $transferUsed = ($user->u + $user->d) / (1024*1024*1024);
 
         //email
@@ -236,6 +238,7 @@ class TicketController extends Controller
         //tansfer
         $user = User::find($request->user['id']);
         $transferEnable = ($user->transfer_enable) / (1024*1024*1024);
+        $transferEnable = number_format($transferEnable, 2);
         $transferUsed = ($user->u + $user->d) / (1024*1024*1024);
 
         //email
@@ -264,7 +267,7 @@ class TicketController extends Controller
             . "———————————————\n"
             . "邮箱：\n`{$email}`\n"
             . "运营商：\n`{$ISPInfo}`\n"
-            . "套餐及流量：\n`{$planName}` | `{$transferUsed}` of `{$transferEnable}`\n"
+            . "套餐及流量：\n`{$planName}` | `{$transferUsed}` of `{$transferEnable}` GB\n"
             . "到期时间：\n`{$expiredTime}`\n"
             . "主题：\n`{$ticket->subject}`\n"
             . "内容：\n`{$message}`";
