@@ -15,5 +15,8 @@ class Order extends Model
         'surplus_order_ids' => 'array'
     ];
     //protected $fillable = ['type', 'plan_id', 'period', 'user_id', 'commission_balance', 'invite_user_id', 'commission_balance'];
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

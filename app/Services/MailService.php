@@ -89,4 +89,21 @@ class MailService
             ]
         ]);
     }
+
+    ////赠金提醒
+    public function dispatchRemindGiftGotten(User $user, $moneyGift)
+    {
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('开奖！抽奖活动赠金已到账~', [
+                'app_name' =>  config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'remindGiftGotten',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'moneyGift' => $moneyGift
+            ]
+        ]);
+    }
 }
