@@ -64,9 +64,8 @@ class choujiang extends Command
             $user = $order->user;
 
             if ($user) {
-                $oldMoney = $user->balance / 100;
-                $this->info("原始余额：" . $oldMoney);
-
+                $this->info("用户【". $user->id . "】的原始余额：" . ($user->balance/100));
+                $this->info("用户【". $user->id . "】的最新余额：" . ($user->balance + $randomMoney)/100);
                 $userUpdates[$user->id] = $randomMoney;
                 $giftedUsers[] = $user;
             }
@@ -82,7 +81,6 @@ class choujiang extends Command
         // Send email notifications asynchronously
         foreach ($giftedUsers as $user) {
             $randomMoney = $userUpdates[$user->id];
-            $this->info("新余额：" . $user->balance);
 
             // Queue the email notification
             $mailService = new MailService();
