@@ -79,8 +79,8 @@ class TicketController extends Controller
 
         //tansfer
         $user = User::find($request->user['id']);
-        $transferEnable = $user->transfer_enable;
-        $transferUsed = $user->u + $user->d;
+        $transferEnable = ($user->transfer_enable) / (1024*1024*1024);
+        $transferUsed = ($user->u + $user->d) / (1024*1024*1024);
 
         //email
         $email = $user->email;
@@ -135,8 +135,8 @@ class TicketController extends Controller
 
         //tansfer
         $user = User::find($request->user['id']);
-        $transferEnable = $user->transfer_enable;
-        $transferUsed = $user->u + $user->d;
+        $transferEnable = ($user->transfer_enable) / (1024*1024*1024);
+        $transferUsed = ($user->u + $user->d) / (1024*1024*1024);
 
         //email
         $email = $user->email;
@@ -235,8 +235,8 @@ class TicketController extends Controller
 
         //tansfer
         $user = User::find($request->user['id']);
-        $transferEnable = $user->transfer_enable;
-        $transferUsed = $user->u + $user->d;
+        $transferEnable = ($user->transfer_enable) / (1024*1024*1024);
+        $transferUsed = ($user->u + $user->d) / (1024*1024*1024);
 
         //email
         $email = $user->email;
