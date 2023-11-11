@@ -77,18 +77,25 @@ class TicketController extends Controller
         //ISPInfo
         $ISPInfo = $this->getISPInfo($request->ip());
 
-        //planName
-        $planID = User::find($request->user['id'])->plan_id;
-        $plan = Plan::find($planID);
-        $planName = '';
-        if ($plan) {
-            $planName = $plan->name;
-        }
+        //tansfer
+        $user = User::find($request->user['id']);
+        $transferEnable = $user->transfer_enable;
+        $transferUsed = $user->u + $user->d;
 
         //email
-        $email = User::find($request->user['id'])->email;
+        $email = $user->email;
 
-        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $email);
+        //planName and expiredTime
+        $planID = $user->plan_id;
+        $plan = Plan::find($planID);
+        $planName = '';
+        $expiredTime = null;
+        if ($plan) {
+            $planName = $plan->name;
+            $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
+        }
+
+        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
         return response([
             'data' => true
         ]);
@@ -126,18 +133,25 @@ class TicketController extends Controller
         //ISPInfo
         $ISPInfo = $this->getISPInfo($request->ip());
 
-        //planName
-        $planID = User::find($request->user['id'])->plan_id;
-        $plan = Plan::find($planID);
-        $planName = '';
-        if ($plan) {
-            $planName = $plan->name;
-        }
+        //tansfer
+        $user = User::find($request->user['id']);
+        $transferEnable = $user->transfer_enable;
+        $transferUsed = $user->u + $user->d;
 
         //email
-        $email = User::find($request->user['id'])->email;
+        $email = $user->email;
 
-        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $email);
+        //planName and expiredTime
+        $planID = $user->plan_id;
+        $plan = Plan::find($planID);
+        $planName = '';
+        $expiredTime = null;
+        if ($plan) {
+            $planName = $plan->name;
+            $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
+        }
+
+        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
         return response([
             'data' => true
         ]);
@@ -219,31 +233,39 @@ class TicketController extends Controller
         //ISPInfo
         $ISPInfo = $this->getISPInfo($request->ip());
 
-        //planName
-        $planID = User::find($request->user['id'])->plan_id;
-        $plan = Plan::find($planID);
-        $planName = '';
-        if ($plan) {
-            $planName = $plan->name;
-        }
+        //tansfer
+        $user = User::find($request->user['id']);
+        $transferEnable = $user->transfer_enable;
+        $transferUsed = $user->u + $user->d;
 
         //email
-        $email = User::find($request->user['id'])->email;
+        $email = $user->email;
 
-        $this->sendNotify($ticket, $message, $ISPInfo, $planName, $email);
+        //planName and expiredTime
+        $planID = $user->plan_id;
+        $plan = Plan::find($planID);
+        $planName = '';
+        $expiredTime = null;
+        if ($plan) {
+            $planName = $plan->name;
+            $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
+        }
+
+        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
         return response([
             'data' => true
         ]);
     }
 
-    private function sendNotify(Ticket $ticket, string $message, $ISPInfo, $planName, $email)
+    private function sendNotify(Ticket $ticket, string $message, $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email)
     {
         $telegramService = new TelegramService();
         $notification = "📮工单提醒 #{$ticket->id}\n"
             . "———————————————\n"
             . "邮箱：\n`{$email}`\n"
             . "运营商：\n`{$ISPInfo}`\n"
-            . "套餐：\n`{$planName}`\n"
+            . "套餐及流量：\n`{$planName}` | `{$transferUsed}` of `{$transferEnable}`\n"
+            . "到期时间：\n`{$expiredTime}`\n"
             . "主题：\n`{$ticket->subject}`\n"
             . "内容：\n`{$message}`";
 
