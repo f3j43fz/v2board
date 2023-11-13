@@ -797,7 +797,7 @@
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 }), t.push({
                     title: "Clash Meta",
-                    href: "clash://install-config?url=" + encodeURIComponent(e) + "%26flag%3Dmeta" + "&name=" + window.settings.title
+                    href: "clash://install-config?url=" + encodeURIComponent(e) + "%26flag%3Dmeta&name=" + window.settings.title
                 }), t.push({
                     title: "NekoBox",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
@@ -13397,7 +13397,10 @@
             f = n("L12J"),
             p = n("/MKj"),
             d = n("t3Un"),
-            h = (n("E3Iv"), n("Td40"), n("yxnn")),
+            x = (n("Pwec"), n("CtXQ")),
+            q = (n("yxnn"), n("E4Iv")),
+            w = (n("+L6B"), n("2/Rp")),
+            h = (n("E4Iv"), n("Td40"), n("yxnn")),
             m = n("Y2fQ");
         n("v32e");
         class v extends l.a.Component {
@@ -13490,7 +13493,15 @@
                     }
                 }, Object(m["formatMessage"])({
                     id: "\u8d26\u6237\u4f59\u989d(\u4ec5\u6d88\u8d39)"
-                }))))))), l.a.createElement("div", {
+                })), l.a.createElement("div", {
+                    className: "pt-3"
+                }, l.a.createElement(q["a"], null, l.a.createElement(w["a"], {
+                    type: "primary mr-2"
+                }, l.a.createElement(x["a"], {
+                    type: "transaction"
+                }), " ", Object(m["formatMessage"])({
+                    id: "\u5145\u503c"
+                }))))))))), l.a.createElement("div", {
                     className: "row mb-3 mb-md-0"
                 }, l.a.createElement("div", {
                     className: "col-md-12"
@@ -14167,6 +14178,102 @@
                     }),
                     onChange: e => this.setState({
                         transferAmount: e.target.value
+                    })
+                }))))
+            }
+        }
+        t["a"] = Object(s["c"])(e => {
+            var t = e.user;
+            return {
+                user: t
+            }
+        })(u)
+    },
+    E4Iv: function(e, t, n) {
+        "use strict";
+        n("2qtc");
+        var r = n("kLXV"),
+            o = (n("5NDa"), n("5rEg")),
+            i = n("q1tI"),
+            a = n.n(i),
+            s = n("/MKj"),
+            c = n("Y2fQ");
+        class u extends a.a.Component {
+            constructor(e) {
+                super(e), this.state = {
+                    visible: !1,
+                    recharge_amount: void 0
+                }
+            }
+            show() {
+                this.setState({
+                    visible: !this.state.visible,
+                    recharge_amount: void 0
+                })
+            }
+            ok() {
+                this.props.dispatch({
+                    type: "user/recharge",
+                    recharge_amount: this.state.recharge_amount,
+                    callback: () => {
+                        this.show()
+                    }
+                })
+            }
+            render() {
+                var e = this.state.visible,
+                    t = this.props.user.userInfo;
+                return a.a.createElement(a.a.Fragment, null, a.a.cloneElement(this.props.children, {
+                    onClick: () => this.show()
+                }), a.a.createElement(r["a"], {
+                    title: Object(c["formatMessage"])({
+                        id: "\u5145\u503c\u5230\u4f59\u989d"
+                    }),
+                    visible: e,
+                    onOk: () => this.ok(),
+                    onCancel: () => this.show(),
+                    okText: Object(c["formatMessage"])({
+                        id: "\u786e\u8ba4"
+                    }),
+                    cancelText: Object(c["formatMessage"])({
+                        id: "\u53d6\u6d88"
+                    })
+                }, a.a.createElement("div", {
+                    className: "alert alert-danger d-flex align-items-center",
+                    role: "alert"
+                }, a.a.createElement("div", {
+                    className: "flex-00-auto"
+                }, a.a.createElement("i", {
+                    className: "fa fa-fw fa-info-circle"
+                })), a.a.createElement("div", {
+                    className: "flex-fill ml-3"
+                }, a.a.createElement("p", {
+                    className: "mb-0"
+                }, Object(c["formatMessage"])({
+                    id: "\u5145\u503c\u540e\u7684\u4f59\u989d\u4ec5\u7528\u4e8e\u6d88\u8d39\u4f7f\u7528"
+                }, {
+                    title: window.settings.title
+                })))), a.a.createElement("div", {
+                    className: "form-group"
+                }, a.a.createElement("label", null, Object(c["formatMessage"])({
+                    id: "\u5f53\u524d\u4f59\u989d"
+                })), a.a.createElement(o["a"], {
+                    disabled: !0,
+                    type: "text",
+                    className: "form-control",
+                    value: t.balance / 100
+                })), a.a.createElement("div", {
+                    className: "form-group"
+                }, a.a.createElement("label", null, Object(c["formatMessage"])({
+                    id: "\u5145\u503c\u91d1\u989d"
+                })), a.a.createElement(o["a"], {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: Object(c["formatMessage"])({
+                        id: "\u8bf7\u8f93\u5165\u9700\u8981\u5145\u503c\u5230\u4f59\u989d\u7684\u91d1\u989d"
+                    }),
+                    onChange: e => this.setState({
+                        recharge_amount: e.target.value
                     })
                 }))))
             }
@@ -22098,7 +22205,7 @@
                                     }, p))
                                 }
                             } else {
-                                V()(a.isSelectOption, "the children of `Select` should be `Select.Option` or `Select.OptGroup`, " + " instead of `".concat(a.name || a.displayName || e.type, "`."));
+                                V()(a.isSelectOption, "the children of `Select` should be `Select.Option` or `Select.OptGroup`,  instead of `".concat(a.name || a.displayName || e.type, "`."));
                                 var d = Y(e);
                                 if (fe(d, n.props), n.filterOption(s, e)) {
                                     var h = r["createElement"](N["b"], Fe({
@@ -25788,7 +25895,6 @@
                     writable: !0
                 }), e[t]
             }
-
             try {
                 c({}, "")
             } catch (e) {
@@ -25851,7 +25957,6 @@
                     }
                 }
             }
-
             e.wrap = u;
             var f = {};
 
@@ -25860,7 +25965,6 @@
             function d() {}
 
             function h() {}
-
             var m = {};
             c(m, o, function() {
                 return this
@@ -25896,7 +26000,6 @@
                     }
                     s(c.arg)
                 }
-
                 var o;
                 this._invoke = function(e, n) {
                     function i() {
@@ -25904,7 +26007,6 @@
                             r(e, n, t, o)
                         })
                     }
-
                     return o = o ? o.then(i, i) : i()
                 }
             }
@@ -25968,7 +26070,6 @@
                     done: !0
                 }
             }
-
             return d.prototype = h, c(g, "constructor", h), c(h, "constructor", d), d.displayName = c(h, s, "GeneratorFunction"), e.isGeneratorFunction = function(e) {
                 var t = "function" == typeof e && e.constructor;
                 return !!t && (t === d || "GeneratorFunction" === (t.displayName || t.name))
@@ -26020,7 +26121,6 @@
                     function r(n, r) {
                         return a.type = "throw", a.arg = e, t.next = n, r && (t.method = "next", t.arg = void 0), !!r
                     }
-
                     for (var o = this.tryEntries.length - 1; o >= 0; --o) {
                         var i = this.tryEntries[o],
                             a = i.completion;
@@ -26434,7 +26534,7 @@
                         dataIndex: "u",
                         key: "u",
                         align: "right",
-                        render: (e, t) => t.server_rate ? Object(p["b"])(parseInt(e) / t.server_rate) : 0
+                        render: (e, t) => t.server_rate ? Object(p["b"])(parseInt(e)) : 0
                     }, {
                         title: Object(v["formatMessage"])({
                             id: "\u5b9e\u9645\u4e0b\u884c"
@@ -26442,7 +26542,7 @@
                         dataIndex: "d",
                         key: "d",
                         align: "right",
-                        render: (e, t) => t.server_rate ? Object(p["b"])(parseInt(e) / t.server_rate) : 0
+                        render: (e, t) => t.server_rate ? Object(p["b"])(parseInt(e)) : 0
                     }, {
                         title: Object(v["formatMessage"])({
                             id: "\u6263\u8d39\u500d\u7387"
@@ -26473,7 +26573,7 @@
                         align: "right",
                         fixed: "right",
                         render: (e, t) => {
-                            return Object(p["b"])(parseInt(t.u) + parseInt(t.d))
+                            return Object(p["b"])((parseInt(t.u) + parseInt(t.d)) * t.server_rate)
                         }
                     }];
                 return l.a.createElement(f["a"], o()({}, this.props, {
@@ -26537,14 +26637,12 @@
             h = n.n(d),
             m = n("/MKj"),
             v = n("Y2fQ");
-
         class y extends l.a.Component {
             componentDidMount() {
                 this.props.dispatch({
                     type: "record/fetch"
                 })
             }
-
             render() {
                 var e = this.props.record,
                     t = e.records,
@@ -26578,64 +26676,57 @@
                         }
                     }];
                 return l.a.createElement(f["a"], o()({}, this.props, {
-                        title: Object(v["formatMessage"])({
-                            id: "\u8ba2\u9605\u8bf7\u6c42\u660e\u7ec6"
-                        })
-                    }),
-                    l.a.createElement("main", {
-                            id: "main-container"
-                        },
-                        l.a.createElement("div", {
-                                className: "content content-full"
-                            },
-                            l.a.createElement("div", {
-                                className: "block block-content block-content-full"
-                            }, l.a.createElement("div", {
-                                className: "description"
-                            }, l.a.createElement("p", {
-                                className: "sub-request-title"
-                            }, Object(v["formatMessage"])({
-                                id: "sub-request-title-1"
-                            })), l.a.createElement("p", {
-                                className: "badge-dot"
-                            }, l.a.createElement("i", {
-                                className: "bg-info"
-                            }), Object(v["formatMessage"])({
-                                id: "sub_request_info1"
-                            })), l.a.createElement("p", {
-                                className: "badge-dot"
-                            }, l.a.createElement("i", {
-                                className: "bg-info"
-                            }), Object(v["formatMessage"])({
-                                id: "sub_request_info2"
-                            })), l.a.createElement("p", {
-                                className: "badge-dot"
-                            }, l.a.createElement("i", {
-                                className: "bg-info"
-                            }), Object(v["formatMessage"])({
-                                id: "sub_request_info3"
-                            })))),
-                            l.a.createElement("div", {
-                                    className: "block block-rounded  ".concat(n ? "block-mode-loading" : "")
-                                },
-                                l.a.createElement("div", {
-                                        className: "bg-white"
-                                    },
-                                    l.a.createElement(i["a"], {
-                                        tableLayout: "auto",
-                                        style: {
-                                            borderTop: "1px solid #e8e8e8"
-                                        },
-                                        dataSource: t,
-                                        pagination: !1,
-                                        columns: r,
-                                        scroll: {
-                                            x: 800
-                                        }
-                                    }))))))
+                    title: Object(v["formatMessage"])({
+                        id: "\u8ba2\u9605\u8bf7\u6c42\u660e\u7ec6"
+                    })
+                }), l.a.createElement("main", {
+                    id: "main-container"
+                }, l.a.createElement("div", {
+                    className: "content content-full"
+                }, l.a.createElement("div", {
+                    className: "block block-content block-content-full"
+                }, l.a.createElement("div", {
+                    className: "description"
+                }, l.a.createElement("p", {
+                    className: "sub-request-title"
+                }, Object(v["formatMessage"])({
+                    id: "sub-request-title-1"
+                })), l.a.createElement("p", {
+                    className: "badge-dot"
+                }, l.a.createElement("i", {
+                    className: "bg-info"
+                }), Object(v["formatMessage"])({
+                    id: "sub_request_info1"
+                })), l.a.createElement("p", {
+                    className: "badge-dot"
+                }, l.a.createElement("i", {
+                    className: "bg-info"
+                }), Object(v["formatMessage"])({
+                    id: "sub_request_info2"
+                })), l.a.createElement("p", {
+                    className: "badge-dot"
+                }, l.a.createElement("i", {
+                    className: "bg-info"
+                }), Object(v["formatMessage"])({
+                    id: "sub_request_info3"
+                })))), l.a.createElement("div", {
+                    className: "block block-rounded  ".concat(n ? "block-mode-loading" : "")
+                }, l.a.createElement("div", {
+                    className: "bg-white"
+                }, l.a.createElement(i["a"], {
+                    tableLayout: "auto",
+                    style: {
+                        borderTop: "1px solid #e8e8e8"
+                    },
+                    dataSource: t,
+                    pagination: !1,
+                    columns: r,
+                    scroll: {
+                        x: 800
+                    }
+                }))))))
             }
         }
-
         t["default"] = Object(m["c"])(e => {
             var t = e.record;
             return {
@@ -28463,45 +28554,62 @@
                     i = o.userInfo.plan_id,
                     a = o.subscribe;
                 u["a"].confirm({
-                    title: Object(m["formatMessage"])({ id: "ios_confirm_title" }),
-                    content: Object(m["formatMessage"])({ id: "ios_confirm_info" }),
+                    title: Object(m["formatMessage"])({
+                        id: "ios_confirm_title"
+                    }),
+                    content: Object(m["formatMessage"])({
+                        id: "ios_confirm_info"
+                    }),
                     onOk: () => {
                         if (i && i !== e.id && !Object(v["h"])(a.expired_at)) {
                             u["a"].confirm({
-                                title: Object(m["formatMessage"])({ id: "\u6ce8\u610f" }),
-                                content: Object(m["formatMessage"])({ id: "\u53d8\u66f4\u8ba2\u9605\u4f1a\u5bfc\u81f4\u5f53\u524d\u8ba2\u9605\u88ab\u65b0\u8ba2\u9605\u8986\u76d6\uff0c\u8bf7\u6ce8\u610f\u3002" }),
+                                title: Object(m["formatMessage"])({
+                                    id: "\u6ce8\u610f"
+                                }),
+                                content: Object(m["formatMessage"])({
+                                    id: "\u53d8\u66f4\u8ba2\u9605\u4f1a\u5bfc\u81f4\u5f53\u524d\u8ba2\u9605\u88ab\u65b0\u8ba2\u9605\u8986\u76d6\uff0c\u8bf7\u6ce8\u610f\u3002"
+                                }),
                                 onOk: () => {
                                     this.order();
-                                    return null;
+                                    return null
                                 }
-                            });
+                            })
                         } else if (!n.length || (n[0].status !== 1 && n[0].status !== 0)) {
                             this.order();
-                            return null;
+                            return null
                         } else {
                             u["a"].confirm({
-                                title: Object(m["formatMessage"])({ id: "\u6ce8\u610f" }),
-                                content: Object(m["formatMessage"])({ id: "\u4f60\u8fd8\u6709\u672a\u5b8c\u6210\u7684\u8ba2\u5355\uff0c\u8d2d\u4e70\u524d\u9700\u8981\u5148\u8fdb\u884c\u53d6\u6d88\uff0c\u786e\u5b9a\u53d6\u6d88\u5148\u524d\u7684\u8ba2\u5355\u5417\uff1f" }),
+                                title: Object(m["formatMessage"])({
+                                    id: "\u6ce8\u610f"
+                                }),
+                                content: Object(m["formatMessage"])({
+                                    id: "\u4f60\u8fd8\u6709\u672a\u5b8c\u6210\u7684\u8ba2\u5355\uff0c\u8d2d\u4e70\u524d\u9700\u8981\u5148\u8fdb\u884c\u53d6\u6d88\uff0c\u786e\u5b9a\u53d6\u6d88\u5148\u524d\u7684\u8ba2\u5355\u5417\uff1f"
+                                }),
                                 onOk: () => {
                                     this.props.dispatch({
                                         type: "order/cancel",
                                         tradeNo: n[0].trade_no,
                                         complete: () => {
                                             this.order();
-                                            return null;
+                                            return null
                                         }
-                                    });
+                                    })
                                 },
-                                okText: Object(m["formatMessage"])({ id: "\u786e\u5b9a\u53d6\u6d88" }),
-                                okButtonProps: { loading: r },
-                                cancelText: Object(m["formatMessage"])({ id: "\u8fd4\u56de\u6211\u7684\u8ba2\u5355" }),
+                                okText: Object(m["formatMessage"])({
+                                    id: "\u786e\u5b9a\u53d6\u6d88"
+                                }),
+                                okButtonProps: {
+                                    loading: r
+                                },
+                                cancelText: Object(m["formatMessage"])({
+                                    id: "\u8fd4\u56de\u6211\u7684\u8ba2\u5355"
+                                }),
                                 onCancel: () => y["router"].push("/order")
-                            });
+                            })
                         }
                     }
                 });
-
-                return null;
+                return null
             }
             order() {
                 var e = this.props.coupon.coupon,
@@ -33991,7 +34099,7 @@
                                             id: "I_know_it_info"
                                         }),
                                         onOk() {
-                                            return o = e.sent, i = o.saveData, e.next = 7, Object(a["b"])("/user/ticket/save", i);
+                                            return o = e.sent, i = o.saveData, e.next = 7, Object(a["b"])("/user/ticket/save", i)
                                         },
                                         onCancel() {},
                                         okText: Object(m["formatMessage"])({
@@ -38675,6 +38783,30 @@
                             }
                         }, n)
                     })()
+                },
+                recharge(e, t) {
+                    return p().mark(function n() {
+                        var r, o, i, s;
+                        return p().wrap(function(n) {
+                            while (1) switch (n.prev = n.next) {
+                                case 0:
+                                    return r = e.recharge_amount, o = e.callback, i = t.put, n.next = 4, Object(a["b"])("/user/order/saveForRecharge", {
+                                        recharge_amount: 100 * r
+                                    });
+                                case 4:
+                                    if (s = n.sent, 200 === s.code) {
+                                        n.next = 7;
+                                        break
+                                    }
+                                    return n.abrupt("return");
+                                case 7:
+                                    c.a.push("/order/" + s.data);
+                                case 10:
+                                case "end":
+                                    return n.stop()
+                            }
+                        }, n)
+                    })()
                 }
             }
         }
@@ -38888,7 +39020,7 @@
                 path: "/traffic",
                 exact: !0,
                 component: n("TkWt").default
-            },{
+            }, {
                 path: "/record",
                 exact: !0,
                 component: n("Su3B").default
@@ -49144,7 +49276,6 @@
                                     }
                                     return n.abrupt("return");
                                 case 13:
-                                    // s.a.push("/login");
                                     window.localStorage.setItem("authorization", d.data.auth_data);
                                     s.a.push("/");
                                 case 14:
