@@ -40,6 +40,7 @@ class OrderHandleJob implements ShouldQueue
         if (!$this->order) return;
         $orderService = new OrderService($this->order);
         if($this->order->plan_id == 100){
+            // 购买套餐的逻辑
             switch ($this->order->status) {
                 // cancel
                 case 0:
@@ -52,6 +53,7 @@ class OrderHandleJob implements ShouldQueue
                     break;
             }
         } else {
+            // 充值的逻辑
             switch ($this->order->status) {
                 // cancel
                 case 0:
