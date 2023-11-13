@@ -93,14 +93,19 @@ class OrderService
 
     public function recharge()
     {
-        // 管理员在后台设置的充值优惠比例。如多送20%， 则该数值填 20 即可。 默认为0，即不赠送。
+        // 管理员在后台设置的 充值优惠比例 以及 活动门槛
         // 路径：/config/v2board.php
         // 之后，记得修改管理员前端，方便后续修改
-        $discount = config('v2board.recharge_discount', 0) * 0.01;
+
+        // 门槛： 200 元   不够200则没有优惠，即充多少是多少。
+        $discountThreshold = config('v2board.discount_threshold', 200 * 100);
+        // 优惠比例： 20%
+        $discount = config('v2board.recharge_discount', 20) * 0.01;
+
         $order = $this->order;
         $this->user = User::find($order->user_id);
         $rechargeAmount = $order->total_amount + $order->discount_amount + $order->balance_amount;
-        $rechargeAmountGotten = $rechargeAmount * (1 + $discount);
+        $rechargeAmountGotten = ($rechargeAmount >= $discountThreshold)? $rechargeAmount * (1 + $discount) : $rechargeAmount;
         $this->user->balance = $this->user->balance + $rechargeAmountGotten;
 
         DB::beginTransaction();

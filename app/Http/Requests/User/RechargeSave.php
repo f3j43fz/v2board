@@ -14,15 +14,15 @@ class RechargeSave extends FormRequest
     public function rules()
     {
         return [
-            'recharge_amount' => 'required|numeric|min:5|max:1000'
+            'recharge_amount' => 'required|numeric|min:300|max:100000'
         ];
     }
 
     public function messages()
     {
         return [
-            'recharge_amount.max' => __('The recharge amount exceeds the limit'),
-            'recharge_amount.min' => __('The recharge amount should larger than 5')
+            'recharge_amount.max' => __('The recharge amount exceeds the limit of 1000 yuan'),
+            'recharge_amount.min' => __('The recharge amount should larger than 3 yuan')
         ];
     }
 }
