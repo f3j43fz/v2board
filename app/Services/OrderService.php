@@ -103,6 +103,7 @@ class OrderService
         $rechargeAmountGotten = $rechargeAmount * (1 + $discount);
         $this->user->blance = $this->user->blance + $rechargeAmountGotten;
 
+        DB::beginTransaction();
         if (!$this->user->save()) {
             DB::rollBack();
             abort(500, '充值失败');
