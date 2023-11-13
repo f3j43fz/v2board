@@ -99,9 +99,9 @@ class OrderService
         $discount = config('v2board.recharge_discount', 0) * 0.01;
         $order = $this->order;
         $this->user = User::find($order->user_id);
-        $rechargeAmount = $order->total_amount + $order->discount_amount + $order->blance_amount;
+        $rechargeAmount = $order->total_amount + $order->discount_amount + $order->balance_amount;
         $rechargeAmountGotten = $rechargeAmount * (1 + $discount);
-        $this->user->blance = $this->user->blance + $rechargeAmountGotten;
+        $this->user->balance = $this->user->balance + $rechargeAmountGotten;
 
         DB::beginTransaction();
         if (!$this->user->save()) {
@@ -118,7 +118,7 @@ class OrderService
 
         ////调用邮件提醒
         $mailService = new MailService();
-        $mailService->remindRechargeDone($this->user, $rechargeAmount, $rechargeAmountGotten, $this->user->blance);//必须是这个参数
+        $mailService->remindRechargeDone($this->user, $rechargeAmount, $rechargeAmountGotten, $this->user->balance);//必须是这个参数
         ////调用邮件提醒
     }
 
