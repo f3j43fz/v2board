@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\OrderSave;
+use App\Http\Requests\User\RechargeSave;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Plan;
@@ -134,6 +135,65 @@ class OrderController extends Controller
         $orderService->setVipDiscount($user);
         $orderService->setOrderType($user);
         $orderService->setInvite($user);
+
+        if ($user->balance && $order->total_amount > 0) {
+            $remainingBalance = $user->balance - $order->total_amount;
+            $userService = new UserService();
+            if ($remainingBalance > 0) {
+                if (!$userService->addBalance($order->user_id, - $order->total_amount)) {
+                    DB::rollBack();
+                    abort(500, __('Insufficient balance'));
+                }
+                $order->balance_amount = $order->total_amount;
+                $order->total_amount = 0;
+            } else {
+                if (!$userService->addBalance($order->user_id, - $user->balance)) {
+                    DB::rollBack();
+                    abort(500, __('Insufficient balance'));
+                }
+                $order->balance_amount = $user->balance;
+                $order->total_amount = $order->total_amount - $user->balance;
+            }
+        }
+
+        if (!$order->save()) {
+            DB::rollback();
+            abort(500, __('Failed to create order'));
+        }
+
+        DB::commit();
+
+        return response([
+            'data' => $order->trade_no
+        ]);
+    }
+
+    public function saveForRecharge(RechargeSave $request)
+    {
+        $userService = new UserService();
+        if ($userService->isNotCompleteOrderByUserId($request->user['id'])) {
+            abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
+        }
+
+        $user = User::find($request->user['id']);
+
+        DB::beginTransaction();
+        $order = new Order();
+        $orderService = new OrderService($order);
+        $order->user_id = $request->user['id'];
+        // 管理员需要在后台新增一个套餐。
+        // 套餐名字可取为：充值
+        // 套餐价格随意填，因为订单金额不从套餐里获取，而是从前端提交的数据获取。
+        // 套餐ID需到数据库改一个大一点的，防止冲突，如 100
+        $order->plan_id = 100;
+        // 既然是充值，所以强制设置为 一次性套餐
+        $order->period = 'onetime_price';
+        $order->trade_no = Helper::generateOrderNo();
+        //把前端提交的金额 乘以 100，如充值 10 元， 实际是 1000
+        //注意：如果前端提交的数据已经乘以过100了，则下面不需要再乘以100，记得删掉
+        $order->total_amount = $request->input('recharge_amount');
+        // 直接设置成 续费，防止前端提示：您是否要更换套餐？ 从而防止增加不必要的误会
+        $order->type = 2;
 
         if ($user->balance && $order->total_amount > 0) {
             $remainingBalance = $user->balance - $order->total_amount;

@@ -31,6 +31,8 @@ class UserRoute
             $router->get ('/order/fetch', 'V1\\User\\OrderController@fetch');
             $router->get ('/order/getPaymentMethod', 'V1\\User\\OrderController@getPaymentMethod');
             $router->post('/order/cancel', 'V1\\User\\OrderController@cancel');
+            // Recharge
+            $router->post('/order/saveForRecharge', 'V1\\User\\OrderController@saveForRecharge');
             // Plan
             $router->get ('/plan/fetch', 'V1\\User\\PlanController@fetch');
             // Invite

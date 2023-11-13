@@ -30,6 +30,11 @@ class OrderService
 
     public function open()
     {
+        // 管理员在后台设置的充值优惠比例。如多送20%， 则该数值填 20 即可。 默认为0，即不赠送。
+        // 路径：/config/v2board.php
+        // 之后，记得修改管理员前端，方便后续修改
+        $discount = config('v2board.recharge_discount', 0) * 0.01;
+
         $order = $this->order;
         $this->user = User::find($order->user_id);
         $plan = Plan::find($order->plan_id);
@@ -50,7 +55,13 @@ class OrderService
         }
         switch ((string)$order->period) {
             case 'onetime_price':
-                $this->buyByOneTime($plan);
+                //正常购买套餐的情况
+                if($order->plan_id != 100){
+                    $this->buyByOneTime($plan);
+                } else{
+                    //充值下单的情况
+                    $this->buyForRecharge($order, $discount);
+                }
                 break;
             case 'reset_price':
                 $this->buyByResetTraffic();
@@ -292,6 +303,11 @@ class OrderService
         $this->user->plan_id = $plan->id;
         $this->user->group_id = $plan->group_id;
         $this->user->expired_at = NULL;
+    }
+
+    private function buyForRecharge(Order $order, $discount)
+    {
+        $this->user->blance = $this->user->blance + ($order->total_amount + $order->discount_amount + $order->blance_amount) * (1 + $discount);
     }
 
     private function getTime($str, $timestamp)
