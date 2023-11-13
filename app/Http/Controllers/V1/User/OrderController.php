@@ -195,26 +195,6 @@ class OrderController extends Controller
         // 直接设置成 续费，防止前端提示：您是否要更换套餐？ 从而防止增加不必要的误会
         $order->type = 2;
 
-        if ($user->balance && $order->total_amount > 0) {
-            $remainingBalance = $user->balance - $order->total_amount;
-            $userService = new UserService();
-            if ($remainingBalance > 0) {
-                if (!$userService->addBalance($order->user_id, - $order->total_amount)) {
-                    DB::rollBack();
-                    abort(500, __('Insufficient balance'));
-                }
-                $order->balance_amount = $order->total_amount;
-                $order->total_amount = 0;
-            } else {
-                if (!$userService->addBalance($order->user_id, - $user->balance)) {
-                    DB::rollBack();
-                    abort(500, __('Insufficient balance'));
-                }
-                $order->balance_amount = $user->balance;
-                $order->total_amount = $order->total_amount - $user->balance;
-            }
-        }
-
         if (!$order->save()) {
             DB::rollback();
             abort(500, __('Failed to create order'));
