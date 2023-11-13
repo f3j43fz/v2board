@@ -106,4 +106,23 @@ class MailService
             ]
         ]);
     }
+
+    // 充值成功提醒
+    public function remindRechargeDone(User $user, $rechargeAmount, $rechargeAmountGotten, $balance)
+    {
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('充值成功', [
+                'app_name' =>  config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'remindRechargeDone',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'rechargeAmount' => $rechargeAmount,
+                'rechargeAmountGotten' => $rechargeAmountGotten,
+                'balance' => $balance
+            ]
+        ]);
+    }
 }

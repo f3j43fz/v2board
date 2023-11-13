@@ -30,11 +30,6 @@ class OrderService
 
     public function open()
     {
-        // 管理员在后台设置的充值优惠比例。如多送20%， 则该数值填 20 即可。 默认为0，即不赠送。
-        // 路径：/config/v2board.php
-        // 之后，记得修改管理员前端，方便后续修改
-        $discount = config('v2board.recharge_discount', 0) * 0.01;
-
         $order = $this->order;
         $this->user = User::find($order->user_id);
         $plan = Plan::find($order->plan_id);
@@ -55,13 +50,7 @@ class OrderService
         }
         switch ((string)$order->period) {
             case 'onetime_price':
-                //正常购买套餐的情况
-                if($order->plan_id != 100){
-                    $this->buyByOneTime($plan);
-                } else{
-                    //充值下单的情况
-                    $this->buyForRecharge($order, $discount);
-                }
+                $this->buyByOneTime($plan);
                 break;
             case 'reset_price':
                 $this->buyByResetTraffic();
@@ -99,6 +88,36 @@ class OrderService
         ////调用邮件提醒
         $mailService = new MailService();
         $mailService->remindUpdateSub($this->user);//必须是这个参数
+        ////调用邮件提醒
+    }
+
+    public function recharge()
+    {
+        // 管理员在后台设置的充值优惠比例。如多送20%， 则该数值填 20 即可。 默认为0，即不赠送。
+        // 路径：/config/v2board.php
+        // 之后，记得修改管理员前端，方便后续修改
+        $discount = config('v2board.recharge_discount', 0) * 0.01;
+        $order = $this->order;
+        $this->user = User::find($order->user_id);
+        $rechargeAmount = $order->total_amount + $order->discount_amount + $order->blance_amount;
+        $rechargeAmountGotten = $rechargeAmount * (1 + $discount);
+        $this->user->blance = $this->user->blance + $rechargeAmountGotten;
+
+        if (!$this->user->save()) {
+            DB::rollBack();
+            abort(500, '充值失败');
+        }
+        $order->status = 3;
+        if (!$order->save()) {
+            DB::rollBack();
+            abort(500, '充值失败');
+        }
+
+        DB::commit();
+
+        ////调用邮件提醒
+        $mailService = new MailService();
+        $mailService->remindRechargeDone($this->user, $rechargeAmount, $rechargeAmountGotten, $this->user->blance);//必须是这个参数
         ////调用邮件提醒
     }
 
@@ -305,10 +324,6 @@ class OrderService
         $this->user->expired_at = NULL;
     }
 
-    private function buyForRecharge(Order $order, $discount)
-    {
-        $this->user->blance = $this->user->blance + ($order->total_amount + $order->discount_amount + $order->blance_amount) * (1 + $discount);
-    }
 
     private function getTime($str, $timestamp)
     {
