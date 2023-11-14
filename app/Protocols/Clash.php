@@ -5,6 +5,8 @@ namespace App\Protocols;
 use App\Utils\Helper;
 use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Yaml\Yaml;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Queue;
 
 class Clash
 {
@@ -21,6 +23,7 @@ class Clash
     public function handle()
     {
         $servers = $this->servers;
+        $servers = $this->domainToIP($servers);
         $user = $this->user;
         $appName = config('v2board.app_name', 'V2Board');
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
@@ -253,5 +256,26 @@ class Clash
     private function isRegex($exp)
     {
         return @preg_match($exp, null) !== false;
+    }
+
+    private function domainToIP($servers)
+    {
+        foreach ($servers as &$item) {
+            $domain = $item['host'];
+            $cacheKey = 'domain_ip_' . $domain;
+            $ip = Cache::get($cacheKey);
+
+            if (!$ip) {
+                Queue::push(function ($job) use (&$item, $domain, $cacheKey) {
+                    $ip = gethostbyname($domain);
+                    $item['host'] = $ip;
+                    Cache::put($cacheKey, $ip, 60); // 缓存结果，有效期为 60 分钟
+                    $job->delete();
+                });
+            } else {
+                $item['host'] = $ip;
+            }
+        }
+        return $servers;
     }
 }
