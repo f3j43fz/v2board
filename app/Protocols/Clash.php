@@ -24,7 +24,7 @@ class Clash
     public function handle()
     {
         $servers = $this->servers;
-        //$servers = $this->domainToIP($servers);
+        $servers = $this->domainToIP($servers);
         $user = $this->user;
         $appName = config('v2board.app_name', 'V2Board');
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
