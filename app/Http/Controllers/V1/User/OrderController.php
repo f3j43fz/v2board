@@ -181,11 +181,11 @@ class OrderController extends Controller
         //注意：前端提交的数据已经乘以过100了，如用户充值5元，下面获取到的是 500
         $rechargeAmount = $request->input('recharge_amount');
         $telegramService = new TelegramService();
-        $notification = "💲充值提醒\n"
+        $notification = "✍️记录充值历史\n"
             . "———————————————\n"
             . "邮箱： `{$user->email}`\n"
-            . "现有余额： `" . ($user->balance / 100) . "`\n"
-            . "充值金额： `" . ($rechargeAmount / 100) . "`\n";
+            . "原始余额： `" . ($user->balance / 100) . " 元`\n"
+            . "欲充值金额： `" . ($rechargeAmount / 100) . " 元`\n";
 
         $telegramService->sendMessageWithAdmin($notification, true);
 
@@ -321,7 +321,7 @@ class OrderController extends Controller
             . "———————————————\n"
             . "订单号： `{$request->input('trade_no')}`\n"
             . "邮箱： `{$user->email}`\n"
-            . "余额： `" . ($user->balance / 100) . "`\n";
+            . "余额： `" . ($user->balance / 100) . "` 元\n";
 
         $telegramService->sendMessageWithAdmin($notification, true);
 
