@@ -5,6 +5,7 @@ namespace App\Protocols;
 use App\Utils\CacheKey;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
+use App\Jobs\DomainToIPJob;
 use App\Utils\Helper;
 use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Yaml\Yaml;
@@ -24,7 +25,7 @@ class Clash
     public function handle()
     {
         $servers = $this->servers;
-        //$servers = $this->domainToIP($servers);
+        $servers = $this->domainToIP($servers);
         $user = $this->user;
         $appName = config('v2board.app_name', 'V2Board');
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
@@ -268,12 +269,7 @@ class Clash
             $ip = Cache::get($cacheKey);
 
             if (!$ip) {
-                Queue::push(function ($job) use (&$item, $domain, $cacheKey) {
-                    $ip = gethostbyname($domain);
-                    $item['host'] = $ip;
-                    Cache::put($cacheKey, $ip, 60); // 缓存结果，有效期为 60 分钟
-                    $job->delete();
-                });
+                Queue::push(new DomainToIPJob($item, $domain, $cacheKey));
             } else {
                 $item['host'] = $ip;
             }
