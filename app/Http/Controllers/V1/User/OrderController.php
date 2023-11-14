@@ -13,6 +13,7 @@ use App\Services\CouponService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
 use App\Services\PlanService;
+use App\Services\TelegramService;
 use App\Services\UserService;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
@@ -177,9 +178,20 @@ class OrderController extends Controller
 
         $user = User::find($request->user['id']);
 
+        //注意：前端提交的数据已经乘以过100了，如用户充值5元，下面获取到的是 500
+        $rechargeAmount = $request->input('recharge_amount');
+        $telegramService = new TelegramService();
+        $amountForTG =$rechargeAmount / 100;
+        $notification = "📮充值提醒\n"
+            . "———————————————\n"
+            . "邮箱： `{$user->email}`\n"
+            . "现有余额： `{$user->balance}`\n"
+            . "充值金额： `{$amountForTG}`\n";
+
+        $telegramService->sendMessageWithAdmin($notification, true);
+
         DB::beginTransaction();
         $order = new Order();
-        $orderService = new OrderService($order);
         $order->user_id = $request->user['id'];
         // 管理员需要在后台新增一个套餐。
         // 套餐名字可取为：充值
@@ -189,9 +201,7 @@ class OrderController extends Controller
         // 既然是充值，所以强制设置为 一次性套餐
         $order->period = 'onetime_price';
         $order->trade_no = Helper::generateOrderNo();
-        //把前端提交的金额 乘以 100，如充值 10 元， 实际是 1000
-        //注意：如果前端提交的数据已经乘以过100了，则下面不需要再乘以100，记得删掉
-        $order->total_amount = $request->input('recharge_amount');
+        $order->total_amount = $rechargeAmount;
         // 直接设置成 续费，防止前端提示：您是否要更换套餐？ 从而防止增加不必要的误会
         $order->type = 2;
 
