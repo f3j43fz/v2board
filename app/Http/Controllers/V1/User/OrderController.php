@@ -320,7 +320,7 @@ class OrderController extends Controller
         $notification = "❌订单取消\n"
             . "———————————————\n"
             . "订单号： `{$request->input('trade_no')}`\n"
-            . "邮箱： `{$user->eamil}`\n"
+            . "邮箱： `{$user->email}`\n"
             . "余额： `" . ($user->balance / 100) . "`\n";
 
         $telegramService->sendMessageWithAdmin($notification, true);
