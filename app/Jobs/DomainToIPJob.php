@@ -41,7 +41,6 @@ class DomainToIPJob implements ShouldQueue
     public function handle()
     {
         $ip = gethostbyname($this->domain);
-        $this->item['host'] = $ip;
         Cache::put($this->cacheKey, $ip, 60); // 缓存结果，有效期为 60 分钟
     }
 }
