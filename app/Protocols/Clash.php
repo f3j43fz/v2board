@@ -2,11 +2,12 @@
 
 namespace App\Protocols;
 
+use App\Utils\CacheKey;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Queue;
 use App\Utils\Helper;
 use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Yaml\Yaml;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Queue;
 
 class Clash
 {
@@ -23,7 +24,7 @@ class Clash
     public function handle()
     {
         $servers = $this->servers;
-        //$servers = $this->domainToIP($servers);
+        $servers = $this->domainToIP($servers);
         $user = $this->user;
         $appName = config('v2board.app_name', 'V2Board');
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
@@ -260,9 +261,10 @@ class Clash
 
     private function domainToIP($servers)
     {
+        ini_set('memory_limit', -1);
         foreach ($servers as &$item) {
             $domain = $item['host'];
-            $cacheKey = 'domain_ip_' . $domain;
+            $cacheKey = CacheKey::get('Domain_IP', $domain);
             $ip = Cache::get($cacheKey);
 
             if (!$ip) {
@@ -276,6 +278,7 @@ class Clash
                 $item['host'] = $ip;
             }
         }
+
         return $servers;
     }
 }
