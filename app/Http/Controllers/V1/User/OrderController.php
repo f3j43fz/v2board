@@ -181,12 +181,11 @@ class OrderController extends Controller
         //注意：前端提交的数据已经乘以过100了，如用户充值5元，下面获取到的是 500
         $rechargeAmount = $request->input('recharge_amount');
         $telegramService = new TelegramService();
-        $amountForTG =$rechargeAmount / 100;
-        $notification = "📮充值提醒\n"
+        $notification = "💲充值提醒\n"
             . "———————————————\n"
             . "邮箱： `{$user->email}`\n"
-            . "现有余额： `{$user->balance}`\n"
-            . "充值金额： `{$amountForTG}`\n";
+            . "现有余额： `" . ($user->balance / 100) . "`\n"
+            . "充值金额： `" . ($rechargeAmount / 100) . "`\n";
 
         $telegramService->sendMessageWithAdmin($notification, true);
 
@@ -315,6 +314,17 @@ class OrderController extends Controller
         if (!$orderService->cancel()) {
             abort(500, __('Cancel failed'));
         }
+
+        $user = User::find($order->user_id);
+        $telegramService = new TelegramService();
+        $notification = "❌订单取消\n"
+            . "———————————————\n"
+            . "订单号： `{$request->input('trade_no')}`\n"
+            . "邮箱： `{$user->eamil}`\n"
+            . "余额： `" . ($user->balance / 100) . "`\n";
+
+        $telegramService->sendMessageWithAdmin($notification, true);
+
         return response([
             'data' => true
         ]);
