@@ -11,7 +11,7 @@ class GuestRoute
             'prefix' => 'guest'
         ], function ($router) {
             // Plan
-            $router->get ('/plan/fetch', 'V1\\Guest\\PlanController@fetch');
+            //$router->get ('/plan/fetch', 'V1\\Guest\\PlanController@fetch');
             // Telegram
             $router->post('/telegram/webhook', 'V1\\Guest\\TelegramController@webhook');
             // Payment
