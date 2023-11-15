@@ -25,7 +25,12 @@ class Clash
     public function handle()
     {
         $servers = $this->servers;
-        $servers = $this->domainToIP($servers);
+
+        // 注释掉下面这一行表示：下发域名
+        // 保留下面这一行表示：下发IP
+        // 请管理员根据需求调整
+        //$servers = $this->domainToIP($servers);
+
         $user = $this->user;
         $appName = config('v2board.app_name', 'V2Board');
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
