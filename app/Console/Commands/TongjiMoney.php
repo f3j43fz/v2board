@@ -44,7 +44,9 @@ class TongjiMoney extends Command
     {
         ini_set('memory_limit', -1);
 
-
+        // 设置时区，这一步很重要！！
+        // 可以通过打开： /www/server/php/74/etc/php.ini 文件，搜索：date.timezone 来查看时区
+        // 查出来是中国，所以可以设置为上海
         $timezone = new DateTimeZone('Asia/Shanghai');
         $yesterday = new DateTime('yesterday', $timezone);
         $startOfDay = $yesterday->setTime(0, 0, 0)->getTimestamp();
@@ -56,11 +58,10 @@ class TongjiMoney extends Command
             ->get();
 
         $paymentTotals = []; // 存储每个支付方式的订单支付金额
+        $paymentCounts = []; // 存储每个支付方式的订单数量
 
         foreach ($orders as $order) {
             $money = $order->total_amount / 100;
-            $orderID = $order->id;
-            $this->info("订单{$orderID} 金额：{$money}\n");
             $paymentID = $order->payment_id;
             $payment = Payment::where('id', $paymentID)->first();
             if ($payment) {
@@ -72,13 +73,21 @@ class TongjiMoney extends Command
                 } else {
                     $paymentTotals[$paymentName] = $money;
                 }
+
+                // 累加每个支付方式的订单数量
+                if (isset($paymentCounts[$paymentName])) {
+                    $paymentCounts[$paymentName]++;
+                } else {
+                    $paymentCounts[$paymentName] = 1;
+                }
             }
         }
 
         // 构建消息内容
         $message = '';
         foreach ($paymentTotals as $paymentName => $totalMoney) {
-            $message .= "{$paymentName} 共收款： {$totalMoney} 元\n";
+            $paymentCount = $paymentCounts[$paymentName];
+            $message .= "通过【{$paymentName}】收款 {$paymentCount} 笔，共计： {$totalMoney} 元\n\n";
         }
 
         // 输出结果，通知 Telegram
