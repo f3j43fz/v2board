@@ -51,7 +51,7 @@ class TongjiMoney extends Command
 
         //获取前一天的成功支付的订单
         $orders = Order::whereIn('status', [3, 4])
-            ->whereBetween('updated_at', [$startOfDay, $endOfDay])
+            ->whereDate('updated_at', $yesterday->format('Y-m-d'))
             ->orderBy('created_at', 'ASC')
             ->get();
 
