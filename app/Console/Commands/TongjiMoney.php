@@ -52,13 +52,15 @@ class TongjiMoney extends Command
             $money = ($order->total_amount + $order->discount_amount + $order->balance_amount) / 100;
             $paymentID = $order->payment_id;
             $payment = Payment::where('id', $paymentID)->first();
-            $paymentName = $payment->name;
+            if ($payment) {
+                $paymentName = $payment->name;
 
-            // 累加每个支付方式的订单支付金额
-            if (isset($paymentTotals[$paymentName])) {
-                $paymentTotals[$paymentName] += $money;
-            } else {
-                $paymentTotals[$paymentName] = $money;
+                // 累加每个支付方式的订单支付金额
+                if (isset($paymentTotals[$paymentName])) {
+                    $paymentTotals[$paymentName] += $money;
+                } else {
+                    $paymentTotals[$paymentName] = $money;
+                }
             }
         }
 
