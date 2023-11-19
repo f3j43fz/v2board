@@ -58,7 +58,7 @@ class TongjiMoney extends Command
         $paymentTotals = []; // 存储每个支付方式的订单支付金额
 
         foreach ($orders as $order) {
-            $money = ($order->total_amount + $order->discount_amount + $order->balance_amount) / 100;
+            $money = $order->total_amount / 100;
             $orderID = $order->id;
             $this->info("订单{$orderID} 金额：{$money}\n");
             $paymentID = $order->payment_id;
