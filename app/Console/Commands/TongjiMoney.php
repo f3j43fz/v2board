@@ -51,7 +51,7 @@ class TongjiMoney extends Command
         $endOfDay = $yesterday->setTime(23, 59, 59)->getTimestamp();
 
         $orders = Order::whereIn('status', [3, 4])
-            ->whereBetween('updated_at', [$startOfDay, $endOfDay])
+            ->whereBetween('created_at', [$startOfDay, $endOfDay])
             ->orderBy('created_at', 'ASC')
             ->get();
 
