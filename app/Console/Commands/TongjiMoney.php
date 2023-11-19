@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use DateTime;
+use DateTimeZone;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Services\TelegramService;
@@ -42,7 +44,14 @@ class TongjiMoney extends Command
     {
         ini_set('memory_limit', -1);
 
+
+        $yesterday = new DateTime('yesterday', new DateTimeZone('UTC'));
+        $startOfDay = $yesterday->setTime(0, 0, 0)->getTimestamp();
+        $endOfDay = $yesterday->setTime(23, 59, 59)->getTimestamp();
+
+        //获取前一天的成功支付的订单
         $orders = Order::whereIn('status', [3, 4])
+            ->whereBetween('updated_at', [$startOfDay, $endOfDay])
             ->orderBy('created_at', 'ASC')
             ->get();
 
