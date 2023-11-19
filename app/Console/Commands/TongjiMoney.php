@@ -45,13 +45,13 @@ class TongjiMoney extends Command
         ini_set('memory_limit', -1);
 
 
-        $yesterday = new DateTime('yesterday', new DateTimeZone('UTC'));
+        $timezone = new DateTimeZone('Asia/Shanghai');
+        $yesterday = new DateTime('yesterday', $timezone);
         $startOfDay = $yesterday->setTime(0, 0, 0)->getTimestamp();
         $endOfDay = $yesterday->setTime(23, 59, 59)->getTimestamp();
 
-        //获取前一天的成功支付的订单
         $orders = Order::whereIn('status', [3, 4])
-            ->whereDate('updated_at', $yesterday->format('Y-m-d'))
+            ->whereBetween('updated_at', [$startOfDay, $endOfDay])
             ->orderBy('created_at', 'ASC')
             ->get();
 
