@@ -44,14 +44,17 @@ class Kernel extends ConsoleKernel
         // custom function
         $schedule->command('customFunction:replenish 2')->dailyAt('0:0'); //一次性套餐补货 2 个
         $schedule->command('clear:inviteCode')->dailyAt('2:25'); //删除邀请码
-        $schedule->command('changePort:vmess 1')->dailyAt('2:30'); //VMess节点ID 1 更换端口
+        //$schedule->command('changePort:vmess 1')->dailyAt('2:30'); //VMess节点ID 1 更换端口
         //$schedule->command('customFunction:addCoupon 108 3')->dailyAt('12:00'); // ID 108 优惠券补充 1-5 张
+        $schedule->command('customFunction:tongjiMoney')->dailyAt('0:11'); //推送前一天各支付商的订单情况
 
         //delete user token request more than one 6 hours ago
         $schedule->call(function () {
-            $hourAgo = time() - 21600; // 六小时前的时间
+            $hourAgo = time() - 86400 * 3; // 3天前前的时间
             TokenRequest::where('requested_at', '<', $hourAgo)->delete();
-        })->hourly();
+        })->everyFiveMinutes();
+
+
     }
 
     /**
