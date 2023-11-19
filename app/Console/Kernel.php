@@ -49,7 +49,7 @@ class Kernel extends ConsoleKernel
         //$schedule->command('customFunction:addCoupon 108 3')->dailyAt('12:00'); // ID 108 优惠券补充 1-5 张
         $schedule->command('customFunction:tongjiMoney')->dailyAt('0:11'); //推送前一天各支付商的订单情况
 
-        //delete user token request more than one 6 hours ago
+        //delete user token request more than 3 days ago
         $schedule->call(function () {
             $hourAgo = time() - 86400 * 3; // 3天前前的时间
             TokenRequest::where('requested_at', '<', $hourAgo)->delete();
