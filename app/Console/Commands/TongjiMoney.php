@@ -48,7 +48,7 @@ class TongjiMoney extends Command
         // 可以通过打开： /www/server/php/74/etc/php.ini 文件，搜索：date.timezone 来查看时区
         // 查出来是中国，所以可以设置为上海
         $timezone = new DateTimeZone('Asia/Shanghai');
-        $yesterday = new DateTime('first sat of november 2023', $timezone);
+        $yesterday = new DateTime('yesterday', $timezone);
         $startOfDay = $yesterday->setTime(0, 0, 0)->getTimestamp();
         $endOfDay = $yesterday->setTime(23, 59, 59)->getTimestamp();
 
