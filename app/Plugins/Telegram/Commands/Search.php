@@ -44,6 +44,6 @@ class Search extends Telegram {
         }
 
         $telegramService = $this->telegramService;
-        $telegramService->sendMessage($message->chat_id, '该UUID对应的邮箱是： ' . $user->mail);
+        $telegramService->sendMessage($message->chat_id, '该UUID对应的邮箱是： ' . $user->email);
     }
 }
