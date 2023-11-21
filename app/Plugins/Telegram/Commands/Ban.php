@@ -47,7 +47,7 @@ class Ban extends Telegram {
         // 获取对应的用户
         $user = null;
         if (isset($this->email)) {
-            $user = User::where('mail', $this->email)->first();
+            $user = User::where('email', $this->email)->first();
         } elseif (isset($this->UUID)) {
             $user = User::where('uuid', $this->UUID)->first();
         }
