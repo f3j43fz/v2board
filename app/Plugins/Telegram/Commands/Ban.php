@@ -55,6 +55,9 @@ class Ban extends Telegram {
         if (!$user) {
             abort(500, '用户不存在');
         }
+        if ($user->is_admin) {
+            abort(500, '不能封禁管理员');
+        }
         if ($user->banned) {
             abort(500, '该账号已经被封禁过了，无需重复操作');
         }
