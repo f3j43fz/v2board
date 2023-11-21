@@ -276,9 +276,9 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getPaymentMethod(Request $request)
+    public function getPaymentMethod()
     {
-        $origin = $request->headers->get('origin');
+        $origin = $_SERVER['HTTP_ORIGIN'];
         $excludePaymentId = ($origin == 'xn--h5qs36a.com') ? 16 : null;
 
         $methods = Payment::select([
