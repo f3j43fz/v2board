@@ -26,16 +26,18 @@ dns:
     - '*.lan'
     - localhost.ptlogin2.qq.com
   nameserver-policy:
-    'gh-proxy.com': '223.5.5.5'
+    'gh-proxy.com': https://doh.pub/dns-query
+    'geosite:private,cn': [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]
+    'geosite:geolocation-!cn': [tls://dns.google, tls://1dot1dot1dot1.cloudflare-dns.com]
   nameserver:
-    - https://doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
-    - https://rubyfish.cn
+    - tls://1dot1dot1dot1.cloudflare-dns.com
+    - tls://dns.google
   fallback:
     - 8.8.8.8
     - 1.1.1.1
   proxy-server-nameserver:
     - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
   fallback-filter:
     geoip: true
     geoip-code: CN
