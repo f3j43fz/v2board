@@ -276,8 +276,11 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getPaymentMethod()
+    public function getPaymentMethod(Request $request)
     {
+        $origin = $request->headers->get('origin');
+        $excludePaymentId = ($origin == 'xn--h5qs36a.com') ? 16 : null;
+
         $methods = Payment::select([
             'id',
             'name',
@@ -287,6 +290,9 @@ class OrderController extends Controller
             'handling_fee_percent'
         ])
             ->where('enable', 1)
+            ->when($excludePaymentId, function ($query) use ($excludePaymentId) {
+                return $query->where('id', '!=', $excludePaymentId);
+            })
             ->orderByRaw('RAND()')
             ->take(1)
             ->get();
