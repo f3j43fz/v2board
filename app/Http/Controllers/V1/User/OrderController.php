@@ -278,7 +278,7 @@ class OrderController extends Controller
 
     public function getPaymentMethod()
     {
-        $origin = $_SERVER['HTTP_ORIGIN'];
+        $origin = $_SERVER['HTTP_REFERER'];
         $excludePaymentId = ($origin == 'xn--h5qs36a.com') ? 16 : null;
 
         $methods = Payment::select([
