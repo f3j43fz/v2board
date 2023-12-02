@@ -67,6 +67,7 @@ class ConfigSave extends FormRequest
         'telegram_discuss_id' => '',
         'telegram_channel_id' => '',
         'telegram_discuss_link' => 'nullable|url',
+        'telegram_group_id' => '',
         // app
         'windows_version' => '',
         'windows_download_url' => '',

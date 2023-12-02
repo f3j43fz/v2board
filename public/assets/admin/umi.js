@@ -5064,6 +5064,15 @@
                     placeholder: "https://t.me/xxxxxx",
                     defaultValue: y.telegram_discuss_link,
                     onChange: e => this.set("telegram", "telegram_discuss_link", e.target.value)
+                })), f.a.createElement(m, {
+                    title: "Telegram\u7fa4\u7ec4\u0049\u0044",
+                    description: "Telegram\u7fa4\u7ec4\u7684\u0049\u0044"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "-XXXXXXXXXXXXX",
+                    defaultValue: y.telegram_group_id,
+                    onChange: e => this.set("telegram", "telegram_group_id", e.target.value)
                 })))), f.a.createElement(s["a"].TabPane, {
                     tab: "APP",
                     key: "app"
