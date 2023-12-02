@@ -44,14 +44,8 @@ class TelegramService {
 
     public function createChatInviteLink(int $chatId)
     {
-        // 获取当前群的成员数量
-        $response = $this->request('getChatMemberCount', [
-            'chat_id' => $chatId
-        ]);
-        $currentMembersCount = $response->result;
-
-        // 设置最大加入成员数量为现有成员数量加1
-        $memberLimit = $currentMembersCount + 1;
+        // 设置最大加入成员数量为1
+        $memberLimit = 1;
 
         // 设置失效时间为5分钟后
         $expireDate = time() + 300; // 300秒 = 5分钟
