@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Guest;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\TelegramService;
 use Illuminate\Http\Request;
 
@@ -51,6 +52,15 @@ class TelegramController extends Controller
                 if ($msg->message_type === 'message') {
                     if (!isset($instance->command)) continue;
                     if ($msg->command !== $instance->command) continue;
+
+                    if (!$msg->is_private) {
+                        $user = User::where('telegram_id', $msg->chat_id)->first();
+                        if ($user) {
+                            $user->balance += 1;
+                            $user->save();
+                        }
+                    }
+
                     $instance->handle($msg);
                     return;
                 }
@@ -97,7 +107,7 @@ class TelegramController extends Controller
         if (!isset($data['chat_join_request'])) return;
         if (!isset($data['chat_join_request']['from']['id'])) return;
         if (!isset($data['chat_join_request']['chat']['id'])) return;
-        $user = \App\Models\User::where('telegram_id', $data['chat_join_request']['from']['id'])
+        $user = User::where('telegram_id', $data['chat_join_request']['from']['id'])
             ->first();
         if (!$user) {
             $this->telegramService->declineChatJoinRequest(
