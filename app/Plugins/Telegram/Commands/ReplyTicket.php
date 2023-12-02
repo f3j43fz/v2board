@@ -27,10 +27,16 @@ class ReplyTicket extends Telegram {
         if (!($user->is_admin || $user->is_staff)) return;
         $telegramService = $this->telegramService;
         if ($msg->text === 'invite') {
-            $ticket = Ticket::where('id', $ticketId)
-                ->first();
-            $telegram_id = User::where('id', $ticket->user_id)->value('telegram_id');
-            $msg->text = ($telegram_id > 0) ? $telegramService->createChatInviteLink(config('v2board.telegram_group_id')) . " 请复制该链接，粘贴到浏览器，即可加入群聊。  注意事项：  1. 进群前请设置用户名，否则会被封禁；  2. 进群后请回答一个简单的数学问题，不要瞎回答，否则会被封禁；  3.邀请链接时效性为5分钟，超时后无法加入" : "您还没有绑定我们的机器人，请先到官网左侧的【个人中心】，绑定您的 Telegram 账号。";
+            $ticket = Ticket::where('id', $ticketId)->first();
+            $user = User::where('id', $ticket->user_id)->first();
+            if($user && $user->expired_at > time()){
+                $telegram_id = $user->telegram_id;
+                $msg->text = ($telegram_id > 0) ? $telegramService->createChatInviteLink(config('v2board.telegram_group_id')) . " 请复制该链接，粘贴到浏览器，即可加入群聊。  注意事项：  1. 进群前请设置用户名，否则会被封禁；  2. 进群后请回答一个简单的数学问题，不要瞎回答，否则会被封禁；  3.邀请链接时效性为5分钟，超时后无法加入" : "您还没有绑定我们的机器人，请先到官网左侧的【个人中心】，绑定您的 Telegram 账号。";
+
+            } else{
+                $msg->text = "您好，由于您的套餐过期无法入群，请先购买套餐。";
+            }
+
         }
         $ticketService = new TicketService();
         $ticketService->replyByAdmin(
