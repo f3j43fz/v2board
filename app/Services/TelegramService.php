@@ -100,15 +100,15 @@ class TelegramService {
 
     private function isUserActive(int $chatId, int $userId): bool
     {
-        $response = $this->request('getChatMember', [
+        $response = $this->request2('getChatMember', [
             'chat_id' => $chatId,
             'user_id' => $userId
         ]);
 
-        if (isset($response->status) && ($response->status == 'left' || $response->status == 'inactive')) {
-            return false;  // 用户已离开或已停用
-        } else {
+        if (isset($response->status) && $response->status == 'member' ) {
             return true;  // 用户存在且处于活动状态
+        } else {
+            return false;  // 用户已离开或已停用
         }
     }
 
@@ -135,6 +135,17 @@ class TelegramService {
         if (!$response->ok) {
             abort(500, '来自TG的错误：' . $response->description);
         }
+        return $response;
+    }
+
+
+    private function request2(string $method, array $params = [])
+    {
+        $curl = new Curl();
+        $curl->get($this->api . $method . '?' . http_build_query($params));
+        $response = $curl->response;
+        $curl->close();
+        if (!isset($response->ok)) abort(500, '请求失败');
         return $response;
     }
 
