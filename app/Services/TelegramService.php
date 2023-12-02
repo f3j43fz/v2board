@@ -73,7 +73,7 @@ class TelegramService {
             $tgId = $user->telegram_id;
 
             // 判断用户是否仍然有效
-            if (!$this->isUserActive($chatId, $tgId)) {
+            if (!$this->isUserActive($tgId)) {
                 // 用户已失效，无需移除
                 continue;
             }
