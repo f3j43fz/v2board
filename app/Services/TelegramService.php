@@ -72,11 +72,11 @@ class TelegramService {
         foreach ($users as $user) {
             $tgId = $user->telegram_id;
 
-            // 判断用户是否仍然有效
-            if (!$this->isUserActive($chatId, $tgId)) {
-                // 用户已失效，无需移除
-                continue;
-            }
+//            // 判断用户是否仍然有效
+//            if (!$this->isUserActive($chatId, $tgId)) {
+//                // 用户已失效，无需移除
+//                continue;
+//            }
 
             $this->request('kickChatMember', [
                 'chat_id' => $chatId,
