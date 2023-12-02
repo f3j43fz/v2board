@@ -42,6 +42,41 @@ class TelegramService {
         ]);
     }
 
+    public function createChatInviteLink(int $chatId)
+    {
+        // 获取当前群的成员数量
+        $response = $this->request('getChatMemberCount', [
+            'chat_id' => $chatId
+        ]);
+        $currentMembersCount = $response->result;
+
+        // 设置最大加入成员数量为现有成员数量加1
+        $memberLimit = $currentMembersCount + 1;
+
+        // 设置失效时间为5分钟后
+        $expireDate = time() + 300; // 300秒 = 5分钟
+
+        $response = $this->request('createChatInviteLink', [
+            'chat_id' => $chatId,
+            'expire_date' => $expireDate,
+            'member_limit' => $memberLimit
+        ]);
+
+        return $response->result->invite_link;
+    }
+
+    public function revokeChatInviteLink(int $chatId, string $inviteLink)
+    {
+        $response = $this->request('revokeChatInviteLink', [
+            'chat_id' => $chatId,
+            'invite_link' => $inviteLink
+        ]);
+        return $response->result;
+    }
+
+
+
+
     public function getMe()
     {
         return $this->request('getMe');
