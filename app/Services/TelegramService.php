@@ -72,11 +72,11 @@ class TelegramService {
         foreach ($users as $user) {
             $tgId = $user->telegram_id;
 
-            // 判断用户是否仍然有效
-            if (!$this->isUserActive($chatId, $tgId)) {
-                // 用户已失效，无需移除
-                continue;
-            }
+//            // 判断用户是否仍然有效
+//            if (!$this->isUserActive($chatId, $tgId)) {
+//                // 用户已失效，无需移除
+//                continue;
+//            }
 
 //            $this->request('banChatMember', [
 //                'chat_id' => $chatId,
@@ -131,29 +131,13 @@ class TelegramService {
         $curl->get($this->api . $method . '?' . http_build_query($params));
         $response = $curl->response;
         $curl->close();
-
-        if (!isset($response->ok)) {
-            throw new Exception('请求失败');
-        }
-
-        if (!$response->ok) {
-            throw new Exception('来自TG的错误：' . $response->description);
-        }
-
-        return $response;
-    }
-
-
-
-    private function request2(string $method, array $params = [])
-    {
-        $curl = new Curl();
-        $curl->get($this->api . $method . '?' . http_build_query($params));
-        $response = $curl->response;
-        $curl->close();
         if (!isset($response->ok)) abort(500, '请求失败');
+        if (!$response->ok) {
+            abort(500, '来自TG的错误：' . $response->description);
+        }
         return $response;
     }
+
 
     public function sendMessageWithAdmin($message, $isStaff = false)
     {
