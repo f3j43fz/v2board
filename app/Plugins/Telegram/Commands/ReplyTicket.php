@@ -28,7 +28,7 @@ class ReplyTicket extends Telegram {
         if ($msg->text === 'invite') {
             $text1 = $telegramService->createChatInviteLink(config('v2board.telegram_group_id')) . " 请复制该链接，粘贴到浏览器，即可加入群聊。  注意事项：  1. 进群前请设置用户名，否则会被封禁；  2. 进群后请回答一个简单的数学问题，不要瞎回答，否则会被封禁；  3.邀请链接时效性为5分钟，超时后无法加入";
             $text2 = "您还没有绑定我们的机器人，请先到官网左侧的【个人中心】，绑定您的 Telegram 账号。";
-            $msg->text = ($user->telegram_id)? $text1 : $text2;
+            $msg->text = ($user->telegram_id > 0)? $text1 : $text2;
         }
         $ticketService = new TicketService();
         $ticketService->replyByAdmin(
