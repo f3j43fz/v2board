@@ -78,7 +78,7 @@ class TelegramService {
                 continue;
             }
 
-            $this->request('kickChatMember', [
+            $this->request('banChatMember', [
                 'chat_id' => $chatId,
                 'user_id' => $tgId
             ]);
@@ -98,21 +98,19 @@ class TelegramService {
         return $deletedUsers;
     }
 
-    private function isUserActive(int $chatId, int $userId): bool
+    private function isUserActive(int $userId): bool
     {
-        try {
-            $response = $this->request('getChatMember', [
-                'chat_id' => $chatId,
-                'user_id' => $userId
-            ]);
+        $response = $this->request('sendMessage', [
+            'chat_id' => $userId,
+            'text' => 'Test'
+        ]);
 
-            return $response->ok;
-        } catch (Exception $e) {
-            // 错误处理代码
-            return false;
+        if (isset($response->ok) && $response->ok) {
+            return true;  // 用户存在
+        } else {
+            return false;  // 用户已注销
         }
     }
-
 
     public function getMe()
     {
