@@ -59,17 +59,32 @@ class TelegramService {
         return $response->result->invite_link;
     }
 
-    public function revokeChatInviteLink(int $chatId, string $inviteLink)
+
+    public function removeExpiredUsersFromGroup(int $chatId, int $expiredDaysAgo): array
     {
-        $response = $this->request('revokeChatInviteLink', [
-            'chat_id' => $chatId,
-            'invite_link' => $inviteLink
-        ]);
-        return $response->result;
+        $deletedUsers = [];
+        $expiredTime = time() - $expiredDaysAgo * 86400;
+
+        $users = User::whereNotNull('telegram_id')
+            ->where('expired_at', '<', $expiredTime)
+            ->get();
+
+        foreach ($users as $user) {
+            $tgId = $user->telegram_id;
+            $this->request('unbanChatMember', [
+                'chat_id' => $chatId,
+                'user_id' => $tgId
+            ]);
+            $deletedUsers[] = [
+                'id' => $user->id,
+                'telegram_id' => $tgId
+            ];
+            $message = "抱歉，由于您的套餐已过期超过 {$expiredDaysAgo} 天，管理员将您移除了群聊。您可以续费套餐，然后发工单获取入群链接。";
+            SendTelegramJob::dispatch($tgId, $message);
+        }
+
+        return $deletedUsers;
     }
-
-
-
 
     public function getMe()
     {
