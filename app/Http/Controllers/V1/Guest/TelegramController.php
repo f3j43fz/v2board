@@ -53,13 +53,13 @@ class TelegramController extends Controller
                     if (!isset($instance->command)) continue;
                     if ($msg->command !== $instance->command) continue;
 
-                    if (!$msg->is_private) {
-                        $user = User::where('telegram_id', $msg->chat_id)->first();
-                        if ($user) {
-                            $user->balance += 1;
-                            $user->save();
-                        }
-                    }
+//                    if (!$msg->is_private) {
+//                        $user = User::where('telegram_id', $msg->chat_id)->first();
+//                        if ($user) {
+//                            $user->balance += 1;
+//                            $user->save();
+//                        }
+//                    }
 
                     $instance->handle($msg);
                     return;
