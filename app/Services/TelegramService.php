@@ -78,7 +78,7 @@ class TelegramService {
                 continue;
             }
 
-            $this->request('banChatMember', [
+            $this->request('kickChatMember', [
                 'chat_id' => $chatId,
                 'user_id' => $tgId
             ]);
