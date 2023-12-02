@@ -91,7 +91,7 @@ class TelegramService {
                 'id' => $user->id,
                 'telegram_id' => $tgId
             ];
-            $message = "抱歉，由于您的套餐已过期超过 {$expiredDaysAgo} 天，管理员将您移除了群聊。您可以续费套餐，然后发工单获取入群链接。";
+            $message = "尊敬的用户您好，由于您的套餐已过期超过 {$expiredDaysAgo} 天，管理员将您移除了群聊。您可以续费套餐，然后发工单获取入群链接。";
             SendTelegramJob::dispatch($tgId, $message);
         }
 
