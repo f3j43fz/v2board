@@ -71,6 +71,13 @@ class TelegramService {
 
         foreach ($users as $user) {
             $tgId = $user->telegram_id;
+
+            // 判断用户是否仍然有效
+            if (!$this->isUserActive($chatId, $tgId)) {
+                // 用户已失效，无需移除
+                continue;
+            }
+
             $this->request('unbanChatMember', [
                 'chat_id' => $chatId,
                 'user_id' => $tgId
@@ -85,6 +92,22 @@ class TelegramService {
 
         return $deletedUsers;
     }
+
+    private function isUserActive(int $chatId, int $userId): bool
+    {
+        try {
+            $response = $this->request('getChatMember', [
+                'chat_id' => $chatId,
+                'user_id' => $userId
+            ]);
+
+            return $response->ok;
+        } catch (Exception $e) {
+            // 错误处理代码
+            return false;
+        }
+    }
+
 
     public function getMe()
     {
