@@ -73,7 +73,7 @@ class TelegramService {
             $tgId = $user->telegram_id;
 
             // 判断用户是否仍然有效
-            if (!$this->isUserActive($tgId)) {
+            if (!$this->isUserActive($chatId, $tgId)) {
                 // 用户已失效，无需移除
                 continue;
             }
@@ -98,22 +98,17 @@ class TelegramService {
         return $deletedUsers;
     }
 
-    private function isUserActive(int $userId): bool
+    private function isUserActive(int $chatId, int $userId): bool
     {
-        try {
-            $response = $this->request('sendMessage', [
-                'chat_id' => $userId,
-                'text' => 'Test'
-            ]);
+        $response = $this->request('getChatMember', [
+            'chat_id' => $chatId,
+            'user_id' => $userId
+        ]);
 
-            if (isset($response->ok) && $response->ok) {
-                return true;  // 用户存在
-            } else {
-                return false;  // 用户已注销
-            }
-        } catch (Exception $e) {
-            // 处理异常，例如记录日志或返回默认值
-            return false;
+        if (isset($response->status) && ($response->status == 'left' || $response->status == 'inactive')) {
+            return false;  // 用户已离开或已停用
+        } else {
+            return true;  // 用户存在且处于活动状态
         }
     }
 
