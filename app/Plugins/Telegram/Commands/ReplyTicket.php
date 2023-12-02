@@ -26,7 +26,7 @@ class ReplyTicket extends Telegram {
         if (!($user->is_admin || $user->is_staff)) return;
         if ($msg->text == 'invite'){
             $telegramService = $this->telegramService;
-            $msg->text = $telegramService->createChatInviteLink(config('v2board.telegram_group_id')) . '请点击链接加入群聊。注意事项：1. 进群前请设置用户名，否则会被封禁；2. 进群后请回答一个简单的数学问题，不要瞎回答，否则会被封禁';
+            $msg->text = $telegramService->createChatInviteLink(config('v2board.telegram_group_id')) . '  ' . '请点击链接加入群聊。  注意事项：  1. 进群前请设置用户名，否则会被封禁；  2. 进群后请回答一个简单的数学问题，不要瞎回答，否则会被封禁';
         }
         $ticketService = new TicketService();
         $ticketService->replyByAdmin(
