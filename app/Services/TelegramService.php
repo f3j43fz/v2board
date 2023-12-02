@@ -78,6 +78,11 @@ class TelegramService {
                 continue;
             }
 
+            $this->request('banChatMember', [
+                'chat_id' => $chatId,
+                'user_id' => $tgId
+            ]);
+
             $this->request('unbanChatMember', [
                 'chat_id' => $chatId,
                 'user_id' => $tgId
