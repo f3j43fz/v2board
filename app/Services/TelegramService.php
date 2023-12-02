@@ -83,10 +83,10 @@ class TelegramService {
                 'user_id' => $tgId
             ]);
 
-            $this->request('unbanChatMember', [
-                'chat_id' => $chatId,
-                'user_id' => $tgId
-            ]);
+//            $this->request('unbanChatMember', [
+//                'chat_id' => $chatId,
+//                'user_id' => $tgId
+//            ]);
             $deletedUsers[] = [
                 'id' => $user->id,
                 'telegram_id' => $tgId
