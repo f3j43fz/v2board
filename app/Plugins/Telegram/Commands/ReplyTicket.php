@@ -2,6 +2,7 @@
 
 namespace App\Plugins\Telegram\Commands;
 
+use App\Models\Ticket;
 use App\Models\User;
 use App\Plugins\Telegram\Telegram;
 use App\Services\TicketService;
