@@ -100,17 +100,23 @@ class TelegramService {
 
     private function isUserActive(int $userId): bool
     {
-        $response = $this->request('sendMessage', [
-            'chat_id' => $userId,
-            'text' => 'Test'
-        ]);
+        try {
+            $response = $this->request('sendMessage', [
+                'chat_id' => $userId,
+                'text' => 'Test'
+            ]);
 
-        if (isset($response->ok) && $response->ok) {
-            return true;  // 用户存在
-        } else {
-            return false;  // 用户已注销
+            if (isset($response->ok) && $response->ok) {
+                return true;  // 用户存在
+            } else {
+                return false;  // 用户已注销
+            }
+        } catch (Exception $e) {
+            // 处理异常，例如记录日志或返回默认值
+            return false;
         }
     }
+
 
     public function getMe()
     {
