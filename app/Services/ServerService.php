@@ -36,8 +36,8 @@ class ServerService
 
             // delete private_key
             if (isset($server[$key]['tls']) && (int)$server[$key]['tls'] === 2) {
-//                $server[$key]['tls_settings']=array_diff_key($server[$key]['tls_settings'],['private_key']);
-                unset($server[$key]['tls_settings']['private_key']);
+                $server[$key]['tls_settings']=array_diff_key($server[$key]['tls_settings'],['private_key']);
+//                unset($server[$key]['tls_settings']['private_key']);
             }
 
 //            if (isset($server[$key]['tls_settings'])) {
