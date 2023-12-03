@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Passport\CommSendEmailVerify;
 use App\Jobs\SendEmailJob;
 use App\Models\InviteCode;
-use App\Models\User;
 use App\Utils\CacheKey;
 use App\Utils\Dict;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -63,11 +62,6 @@ class CommController extends Controller
         $email = $request->input('email');
         if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
             abort(500, __('Email verification code has been sent, please request again later'));
-        }
-        if (!User::where('email', $email)->first()) {
-            return [
-                'data' => true
-            ];
         }
         $code = rand(100000, 999999);
         $subject = config('v2board.app_name', 'V2Board') . __('Email verification code');
