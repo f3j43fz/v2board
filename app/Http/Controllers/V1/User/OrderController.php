@@ -278,7 +278,7 @@ class OrderController extends Controller
 
     public function getPaymentMethod()
     {
-        $referer = $_SERVER['HTTP_REFERER'];
+        $referer = ($_SERVER['HTTP_REFERER'])?: 'null';
         $parsedUrl = parse_url($referer);
         $domain = $parsedUrl['host'];
 
