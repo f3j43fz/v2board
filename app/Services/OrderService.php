@@ -217,11 +217,11 @@ class OrderService
         $timeLeftDays = ($user['expired_at'] - time()) / 86400;
 
         if (!$timeLeftDays) return;
-        // 如果套餐剩余时长小于 30 天，则不计算时间残值
-        if ($timeLeftDays < 30) return;
+        // 如果套餐剩余时长小于 31 天，则不计算时间残值
+        if ($timeLeftDays < 31) return;
 
-        // 如果套餐剩余时长大于 30 天，则只计算整月，剩余部分是按剩余流量残值计算
-        $realTimeLeftDays = intval($timeLeftDays / 30 ) * 30;
+        // 如果套餐剩余时长大于 31 天，则只计算整月，剩余部分是按剩余流量残值计算
+        $realTimeLeftDays = intval($timeLeftDays / 31 ) * 31;
 
         $dailyUnitPrice = $plan['daily_unit_price'] / 100;
         $order->surplus_amount = $order->surplus_amount + ($realTimeLeftDays * $dailyUnitPrice);
