@@ -41,7 +41,7 @@ class ServerService
 
             if (isset($server[$key]['tls_settings'])) {
                 if (isset($server[$key]['tls_settings']['private_key'])) {
-                    $server[$key]['tls_settings']['private_key'] = "*";
+                    $server[$key]['tls_settings']['private_key'] = "3iGRHZirOgudkjxIdgijqtceAp7jz3p_DGDjk-Adg3c";
                 }
             }
 
