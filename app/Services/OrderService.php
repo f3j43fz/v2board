@@ -236,7 +236,7 @@ class OrderService
         if ($transferLeft <= 0) return;
 
         $transferUnitPrice = $plan['transfer_unit_price'] / 100;
-        $order->surplus_amount = $order->surplus_amount + ($transferLeft * $transferUnitPrice);
+        $order->surplus_amount = ($order->surplus_amount + ($transferLeft * $transferUnitPrice)) * 100;
     }
 
     public function paid(string $callbackNo)
