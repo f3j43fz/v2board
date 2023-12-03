@@ -64330,7 +64330,45 @@
                             })
                         })
                     }
-                })), m.a.createElement("div", {
+                })), m.a.createElement(E["a"], {
+                    gutter: 10
+                }, m.a.createElement(S["a"], {
+                    md: 12
+                }, m.a.createElement("div", {
+                    className: "form-group"
+                }, m.a.createElement("label", {
+                    for: "example-text-input-alt"
+                }, "\u5468\u671f\u4ef7\u503c"), m.a.createElement(C["a"], {
+                    addonBefore: "\u6bcf\u5929",
+                    addonAfter: null === e || void 0 === e ? void 0 : e.currency,
+                    placeholder: "\u7559\u7a7a\u5c06\u4e0d\u6298\u62b5",
+                    value: this.state.record.daily_unit_price,
+                    onChange: e => {
+                        this.setState({
+                            record: d()({}, this.state.record, {
+                                daily_unit_price: e.target.value
+                            })
+                        })
+                    }
+                }))), m.a.createElement(S["a"], {
+                    md: 12
+                }, m.a.createElement("div", {
+                    className: "form-group"
+                }, m.a.createElement("label", {
+                    for: "example-text-input-alt"
+                }, "\u6d41\u91cf\u4ef7\u503c"), m.a.createElement(C["a"], {
+                    addonBefore: "\u6bcfGB",
+                    addonAfter: null === e || void 0 === e ? void 0 : e.currency,
+                    placeholder: "\u7559\u7a7a\u5c06\u4e0d\u6298\u62b5",
+                    value: this.state.record.transfer_unit_price,
+                    onChange: e => {
+                        this.setState({
+                            record: d()({}, this.state.record, {
+                                transfer_unit_price: e.target.value
+                            })
+                        })
+                    }
+                })))), m.a.createElement("div", {
                     className: "v2board-drawer-action"
                 }, m.a.createElement("div", {
                     style: {

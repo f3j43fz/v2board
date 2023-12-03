@@ -197,65 +197,46 @@ class OrderService
 
     private function getSurplusValue(User $user, Order $order)
     {
+        $plan = Plan::find($user->plan_id);
+        if (!$plan) return;
+        // 如果套餐是按流量卖的，没有过期时间，则直接按照剩余流量残值计算
         if ($user->expired_at === NULL) {
-            $this->getSurplusValueByOneTime($user, $order);
-        } else {
-            $this->getSurplusValueByPeriod($user, $order);
+            $this->getSurplusValueByTransfer($user, $order, $plan);
+            return;
         }
+
+        // 如果套餐是按周期卖的，先计算剩余时间残值，然后加上剩余流量残值
+        $this->getSurplusValueByTime($user, $order, $plan);
+        $this->getSurplusValueByTransfer($user, $order, $plan);
     }
 
-
-    private function getSurplusValueByOneTime(User $user, Order $order)
+    private function getSurplusValueByTime(User $user, Order $order, Plan $plan)
     {
-        $lastOneTimeOrder = Order::where('user_id', $user->id)
-            ->where('period', 'onetime_price')
-            ->where('status', 3)
-            ->orderBy('id', 'DESC')
-            ->first();
-        if (!$lastOneTimeOrder) return;
-        $nowUserTraffic = $user->transfer_enable / 1073741824;
-        if (!$nowUserTraffic) return;
-        $paidTotalAmount = ($lastOneTimeOrder->total_amount + $lastOneTimeOrder->balance_amount);
-        if (!$paidTotalAmount) return;
-        $trafficUnitPrice = $paidTotalAmount / $nowUserTraffic;
-        $notUsedTraffic = $nowUserTraffic - (($user->u + $user->d) / 1073741824);
-        $result = $trafficUnitPrice * $notUsedTraffic;
-        $orderModel = Order::where('user_id', $user->id)->where('period', '!=', 'reset_price')->where('status', 3);
-        $order->surplus_amount = $result > 0 ? $result : 0;
-        $order->surplus_order_ids = array_column($orderModel->get()->toArray(), 'id');
+        if (!$plan['daily_unit_price']) return;
+
+        $timeLeftDays = ($user['expired_at'] - time()) / 86400;
+
+        if (!$timeLeftDays) return;
+        // 如果套餐剩余时长小于 30 天，则不计算时间残值
+        if ($timeLeftDays < 30) return;
+
+        // 如果套餐剩余时长大于 30 天，则只计算整月，剩余部分是按剩余流量残值计算
+        $realTimeLeftDays = intval($timeLeftDays / 30 ) * 30;
+
+        $dailyUnitPrice = $plan['daily_unit_price'] / 100;
+        $order->surplus_amount = $order->surplus_amount + ($realTimeLeftDays * $dailyUnitPrice);
     }
 
-    private function getSurplusValueByPeriod(User $user, Order $order)
+    private function getSurplusValueByTransfer(User $user, Order $order, Plan $plan)
     {
-        $orders = Order::where('user_id', $user->id)
-            ->where('period', '!=', 'reset_price')
-            ->where('period', '!=', 'onetime_price')
-            ->where('status', 3)
-            ->latest()
-            ->get()
-            ->toArray();
-        if (!$orders) return;
-        $orderAmountSum = 0;
-        $orderMonthSum = 0;
-        $lastValidateAt = 0;
-        $expiredTime = $user->expired_at;
-        foreach ($orders as $item) {
-            $period = self::STR_TO_TIME[$item['period']];
-            $lastValidateAt = $item['created_at'];
-            $orderMonthSum = $period + $orderMonthSum;
-            $orderAmountSum = $orderAmountSum + ($item['total_amount'] + $item['balance_amount'] + $item['surplus_amount'] - $item['refund_amount']);
-            $expiredTime = strtotime("-{$period} month", $expiredTime);
-            if ($expiredTime <= time()) break;
-        }
-        $expiredAtByOrder = $user->expired_at;
-        if ($expiredAtByOrder < time()) return;
-        $orderSurplusSecond = $expiredAtByOrder - time();
-        $orderRangeSecond = $expiredAtByOrder - $lastValidateAt;
-        $avgPrice = $orderAmountSum / $orderRangeSecond;
-        $orderSurplusAmount = $avgPrice * $orderSurplusSecond-10;
-        if (!$orderSurplusSecond || !$orderSurplusAmount) return;
-        $order->surplus_amount = $orderSurplusAmount > 0 ? $orderSurplusAmount : 0;
-        $order->surplus_order_ids = array_column($orders, 'id');
+        if (!$plan['transfer_unit_price']) return;
+        $transferLeft = ($user['transfer_enable'] - ($user['u'] + $user['d'])) / 1073741824;
+        if (!$transferLeft) return;
+        // 如果套餐剩余流量为 0 或者负数，则不计算剩余流量残值
+        if ($transferLeft <= 0) return;
+
+        $transferUnitPrice = $plan['transfer_unit_price'] / 100;
+        $order->surplus_amount = $order->surplus_amount + ($transferLeft * $transferUnitPrice);
     }
 
     public function paid(string $callbackNo)
