@@ -55,7 +55,7 @@ class ClientController extends Controller
 
 
         if($this->hasPlanButExpired($user) || $this->hasPlanButExhausted($user)){
-            $URL = config('v2board.app_url');
+            $URL = 'dfdsff.com';
             $commonArray = [
                 'type' => 'shadowsocks',
                 'server' => 'baidu.com',
