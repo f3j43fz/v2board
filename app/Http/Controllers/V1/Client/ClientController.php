@@ -21,10 +21,10 @@ class ClientController extends Controller
         $user = $request->user;
         $userService = new UserService();
 
-//        // UA过滤
-//        if(!$this->checkUA($request->header('User-Agent'))){
-//            return redirect('https://bilibili.com');
-//        }
+        // UA过滤
+        if(!$this->checkUA($request->header('User-Agent'))){
+            return redirect('https://bilibili.com');
+        }
 
         // 过滤封禁用户
         if ($userService->isBanned($user)){
@@ -58,8 +58,6 @@ class ClientController extends Controller
             $URL = config('v2board.app_url');
             $commonArray = [
                 'type' => 'shadowsocks',
-                'created_at' => (time() - 86400),
-                'last_check_at' => time(),
                 'host' => 'baidu.com',
                 'port' => '8888',
                 'cipher' => 'aes-128-gcm',
