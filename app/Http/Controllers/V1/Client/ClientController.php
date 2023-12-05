@@ -54,35 +54,39 @@ class ClientController extends Controller
         $flag = strtolower($flag);
 
 
-        if($this->hasPlanButExpired($user) || $this->hasPlanButExhausted($user)){
-            $URL = 'dfdsff.com';
-            $commonArray = [
-                'type' => 'shadowsocks',
-                'server' => 'baidu.com',
-                'port' => '8888',
-                'cipher' => 'aes-128-gcm',
-                'password' => '8888',
-                'udp' => true,
-            ];
+//        if($this->hasPlanButExpired($user) || $this->hasPlanButExhausted($user)){
+//            $URL = 'dfdsff.com';
+//            $commonArray = [
+//                'type' => 'shadowsocks',
+//                'server' => 'baidu.com',
+//                'port' => '8888',
+//                'cipher' => 'aes-128-gcm',
+//                'password' => '8888',
+//                'udp' => true,
+//            ];
+//
+//            $array1 = $commonArray;
+//            $array1['name'] = $this->hasPlanButExpired($user) ? '您的套餐已过期' : '您的流量已耗尽';
+//
+//            $array2 = $commonArray;
+//            $array2['name'] = "请到： {$URL} 续费";
+//
+//            $array3 = $commonArray;
+//            $array3['name'] = "如需帮助，可工单/邮件联系";
+//
+//            // 将 $array1 和 $array2 添加到 $servers 数组中
+//            $servers[] = $array1;
+//            $servers[] = $array2;
+//            $servers[] = $array3;
+//        }else{
+//            $serverService = new ServerService();
+//            $servers = $serverService->getAvailableServers($user);
+//            $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
+//        }
 
-            $array1 = $commonArray;
-            $array1['name'] = $this->hasPlanButExpired($user) ? '您的套餐已过期' : '您的流量已耗尽';
-
-            $array2 = $commonArray;
-            $array2['name'] = "请到： {$URL} 续费";
-
-            $array3 = $commonArray;
-            $array3['name'] = "如需帮助，可工单/邮件联系";
-
-            // 将 $array1 和 $array2 添加到 $servers 数组中
-            $servers[] = $array1;
-            $servers[] = $array2;
-            $servers[] = $array3;
-        }else{
-            $serverService = new ServerService();
-            $servers = $serverService->getAvailableServers($user);
-            $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
-        }
+        $serverService = new ServerService();
+        $servers = $serverService->getAvailableServers($user);
+        $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
 
 
         if ($flag) {
