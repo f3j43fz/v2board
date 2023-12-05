@@ -59,7 +59,7 @@ class ClientController extends Controller
             $commonArray = [
                 'type' => 'shadowsocks',
                 'host' => 'baidu.com',
-                'port' => '8888',
+                'port' => 8888,
                 'cipher' => 'aes-128-gcm',
             ];
 
