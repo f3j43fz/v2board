@@ -64,7 +64,7 @@ class ClientController extends Controller
             ];
 
             $array1 = $commonArray;
-            $array1['name'] = $userService->hasPlanButExpired($user) ? '您的套餐已过期' : '您的流量已耗尽';
+            $array1['name'] = $userService->hasPlanButExpired($user) ? "您的套餐已过期" : "您的流量已耗尽";
 
             $array2 = $commonArray;
             $array2['name'] = "请到： {$URL} 续费";
