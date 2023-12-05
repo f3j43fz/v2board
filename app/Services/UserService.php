@@ -117,7 +117,7 @@ class UserService
 
     public function hasPlanButExpired(User $user): bool
     {
-        if ($user->transfer_enable && ($user->expired_at < time())) {
+        if ($user->transfer_enable && $user->expired_at != NULL && ($user->expired_at < time())) {
             return true;
         }
         return false;
