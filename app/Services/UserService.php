@@ -107,6 +107,35 @@ class UserService
         return false;
     }
 
+    public function isBanned(User $user): bool
+    {
+        if ($user->banned) {
+            return true;
+        }
+        return false;
+    }
+
+    public function hasPlanButExpired(User $user): bool
+    {
+        if ($user->transfer_enable && ($user->expired_at < time())) {
+            return true;
+        }
+        return false;
+    }
+
+    public function hasPlanButExhausted(User $user): bool
+    {
+        $total = $user->u  + $user->d;
+
+        if ($user->transfer_enable && $user->expired_at === NULL && ($total > $user->transfer_enable)) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+
     public function getAvailableUsers()
     {
         return User::whereRaw('u + d < transfer_enable')

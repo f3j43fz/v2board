@@ -17,6 +17,7 @@ class ClientController extends Controller
 {
     public function subscribe(Request $request)
     {
+        $servers = [];
         $user = $request->user;
         $userService = new UserService();
 
@@ -25,10 +26,10 @@ class ClientController extends Controller
             return redirect('https://bilibili.com');
         }
 
-        // 过滤无效用户
-        if (!$userService->isAvailable($user)){
+        // 过滤封禁用户
+        if ($userService->isBanned($user)){
             $response = [
-                'error' => '您已被 Ban 或者套餐已过期'
+                'error' => '您已被封禁'
             ];
             return response()->json($response, Response::HTTP_FORBIDDEN);
         }
@@ -53,10 +54,37 @@ class ClientController extends Controller
         $flag = strtolower($flag);
 
 
+        if($this->hasPlanButExpired($user) || $this->hasPlanButExhausted($user)){
+            $URL = config('v2board.app_url');
+            $commonArray = [
+                'type' => 'shadowsocks',
+                'server' => 'baidu.com',
+                'port' => '8888',
+                'cipher' => 'aes-128-gcm',
+                'password' => '8888',
+                'udp' => true,
+            ];
 
-        $serverService = new ServerService();
-        $servers = $serverService->getAvailableServers($user);
-        $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
+            $array1 = $commonArray;
+            $array1['name'] = $this->hasPlanButExpired($user) ? '您的套餐已过期' : '您的流量已耗尽';
+
+            $array2 = $commonArray;
+            $array2['name'] = "请到： {$URL} 续费";
+
+            $array3 = $commonArray;
+            $array3['name'] = "如需帮助，可工单/邮件联系";
+
+            // 将 $array1 和 $array2 添加到 $servers 数组中
+            $servers[] = $array1;
+            $servers[] = $array2;
+            $servers[] = $array3;
+        }else{
+            $serverService = new ServerService();
+            $servers = $serverService->getAvailableServers($user);
+            $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
+        }
+
+
         if ($flag) {
             foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                 $file = 'App\\Protocols\\' . basename($file, '.php');
@@ -149,5 +177,4 @@ class ClientController extends Controller
             return "未知地区";
         }
     }
-
 }
