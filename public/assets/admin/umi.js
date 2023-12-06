@@ -35335,6 +35335,75 @@
                             }
                         }, e)
                     })()
+                },
+                getServerTodayRank(e) {
+                    var t = e.complete;
+                    return a().mark(function e() {
+                        var n;
+                        return a().wrap(function(e) {
+                            while (1) switch (e.prev = e.next) {
+                                case 0:
+                                    return e.next = 2, Object(o["a"])("/" + window.settings.secure_path + "/stat/getServerTodayRank");
+                                case 2:
+                                    if (n = e.sent, 200 === n.code) {
+                                        e.next = 5;
+                                        break
+                                    }
+                                    return e.abrupt("return");
+                                case 5:
+                                    t(n.data);
+                                case 6:
+                                case "end":
+                                    return e.stop()
+                            }
+                        }, e)
+                    })()
+                },
+                getUserTodayRank(e) {
+                    var t = e.complete;
+                    return a().mark(function e() {
+                        var n;
+                        return a().wrap(function(e) {
+                            while (1) switch (e.prev = e.next) {
+                                case 0:
+                                    return e.next = 2, Object(o["a"])("/" + window.settings.secure_path + "/stat/getUserTodayRank");
+                                case 2:
+                                    if (n = e.sent, 200 === n.code) {
+                                        e.next = 5;
+                                        break
+                                    }
+                                    return e.abrupt("return");
+                                case 5:
+                                    t(n.data);
+                                case 6:
+                                case "end":
+                                    return e.stop()
+                            }
+                        }, e)
+                    })()
+                },
+                getUserLastRank(e) {
+                    var t = e.complete;
+                    return a().mark(function e() {
+                        var n;
+                        return a().wrap(function(e) {
+                            while (1) switch (e.prev = e.next) {
+                                case 0:
+                                    return e.next = 2, Object(o["a"])("/" + window.settings.secure_path + "/stat/getUserLastRank");
+                                case 2:
+                                    if (n = e.sent, 200 === n.code) {
+                                        e.next = 5;
+                                        break
+                                    }
+                                    return e.abrupt("return");
+                                case 5:
+                                    t(n.data);
+                                case 6:
+                                case "end":
+                                    return e.stop()
+                            }
+                        }, e)
+                    })()
                 }
             }
         }
@@ -77084,7 +77153,7 @@
         m["a"]([v["a"], y["a"], b["a"], w["a"], x["a"], _["a"], E["a"], k["a"], S["a"]]);
         class O extends l.a.Component {
             constructor(e) {
-                super(e), this.state = {}, this.orderChart = l.a.createRef(), this.orderChartObj = void 0, this.serverLastRankChart = l.a.createRef(), this.serverLastRankChartObj = void 0
+                super(e), this.state = {}, this.orderChart = l.a.createRef(), this.orderChartObj = void 0, this.serverLastRankChart = l.a.createRef(), this.serverTodayRankChart = l.a.createRef(), this.userTodayRankChart = l.a.createRef(), this.userLastRankChart = l.a.createRef(), this.serverLastRankChartObj = void 0, this.serverTodayRankChartObj = void 0, this.userTodayRankChartObj = void 0, this.userLastRankChartObj = void 0
             }
             orderChartRender(e) {
                 var t;
@@ -77160,8 +77229,107 @@
                     n.yAxis.data.push(e.server_name), n.series[0].data.push(e.total)
                 }), this.serverLastRankChartObj.setOption(n)
             }
+            serverTodayRankChartRender(e) {
+                var t;
+                this.serverTodayRankChartObj = g["b"](null === (t = this.serverTodayRankChart) || void 0 === t ? void 0 : t.current);
+                var n = {
+                    tooltip: {
+                        trigger: "axis",
+                        formatter: e => {
+                            return "".concat(e[0].value, " GB")
+                        }
+                    },
+                    grid: {
+                        top: "1%",
+                        left: "1%",
+                        right: "1%",
+                        bottom: "3%",
+                        containLabel: !0
+                    },
+                    xAxis: {
+                        type: "value"
+                    },
+                    yAxis: {
+                        type: "category",
+                        data: []
+                    },
+                    series: [{
+                        data: [],
+                        type: "bar"
+                    }]
+                };
+                e.reverse().forEach(e => {
+                    n.yAxis.data.push(e.server_name), n.series[0].data.push(e.total)
+                }), this.serverTodayRankChartObj.setOption(n)
+            }
+            userTodayRankChartRender(e) {
+                var t;
+                this.userTodayRankChartObj = g["b"](null === (t = this.userTodayRankChart) || void 0 === t ? void 0 : t.current);
+                var n = {
+                    tooltip: {
+                        trigger: "axis",
+                        formatter: e => {
+                            return "".concat(e[0].value, " GB")
+                        }
+                    },
+                    grid: {
+                        top: "1%",
+                        left: "1%",
+                        right: "1%",
+                        bottom: "3%",
+                        containLabel: !0
+                    },
+                    xAxis: {
+                        type: "value"
+                    },
+                    yAxis: {
+                        type: "category",
+                        data: []
+                    },
+                    series: [{
+                        data: [],
+                        type: "bar"
+                    }]
+                };
+                e.reverse().forEach(e => {
+                    n.yAxis.data.push(e.email), n.series[0].data.push(e.total)
+                }), this.userTodayRankChartObj.setOption(n)
+            }
+            userLastRankChartRender(e) {
+                var t;
+                this.userLastRankChartObj = g["b"](null === (t = this.userLastRankChart) || void 0 === t ? void 0 : t.current);
+                var n = {
+                    tooltip: {
+                        trigger: "axis",
+                        formatter: e => {
+                            return "".concat(e[0].value, " GB")
+                        }
+                    },
+                    grid: {
+                        top: "1%",
+                        left: "1%",
+                        right: "1%",
+                        bottom: "3%",
+                        containLabel: !0
+                    },
+                    xAxis: {
+                        type: "value"
+                    },
+                    yAxis: {
+                        type: "category",
+                        data: []
+                    },
+                    series: [{
+                        data: [],
+                        type: "bar"
+                    }]
+                };
+                e.reverse().forEach(e => {
+                    n.yAxis.data.push(e.email), n.series[0].data.push(e.total)
+                }), this.userLastRankChartObj.setOption(n)
+            }
             chartResize() {
-                this.orderChartObj.resize(), this.serverLastRankChartObj.resize()
+                this.orderChartObj.resize(), this.serverLastRankChartObj.resize(), this.serverTodayRankChartObj.resize(), this.userTodayRankChartObj.resize(), this.userLastRankChartObj.resize()
             }
             componentDidMount() {
                 var e = this;
@@ -77186,6 +77354,21 @@
                     type: "stat/getServerLastRank",
                     complete: e => {
                         this.serverLastRankChartRender(e)
+                    }
+                }), this.props.dispatch({
+                    type: "stat/getServerTodayRank",
+                    complete: e => {
+                        this.serverTodayRankChartRender(e)
+                    }
+                }), this.props.dispatch({
+                    type: "stat/getUserTodayRank",
+                    complete: e => {
+                        this.userTodayRankChartRender(e)
+                    }
+                }), this.props.dispatch({
+                    type: "stat/getUserLastRank",
+                    complete: e => {
+                        this.userLastRankChartRender(e)
                     }
                 }), this.props.dispatch({
                     type: "config/fetch",
@@ -77398,12 +77581,30 @@
                     },
                     ref: this.orderChart
                 })))), l.a.createElement("div", {
-                    className: "row no-gutters mt-xl-3"
+                    className: "row mt-xl-3"
                 }, l.a.createElement("div", {
-                    className: "col-lg-12 js-appear-enabled animated",
+                    className: "col-lg-6 js-appear-enabled animated pr-xl-1",
                     "data-toggle": "appear"
                 }, l.a.createElement("div", {
-                    className: "block border-bottom mb-0"
+                    className: "block border-bottom"
+                }, l.a.createElement("div", {
+                    class: "block-header block-header-default"
+                }, l.a.createElement("h3", {
+                    class: "block-title"
+                }, "\u4eca\u65e5\u8282\u70b9\u6d41\u91cf\u6392\u884c")), l.a.createElement("div", {
+                    className: "block-content"
+                }, l.a.createElement("div", {
+                    className: "px-sm-3 pt-sm-3 py-3 clearfix",
+                    id: "serverTodayRankChart",
+                    style: {
+                        height: 400
+                    },
+                    ref: this.serverTodayRankChart
+                })))), l.a.createElement("div", {
+                    className: "col-lg-6 js-appear-enabled animated",
+                    "data-toggle": "appear"
+                }, l.a.createElement("div", {
+                    className: "block border-bottom"
                 }, l.a.createElement("div", {
                     class: "block-header block-header-default"
                 }, l.a.createElement("h3", {
@@ -77412,11 +77613,47 @@
                     className: "block-content"
                 }, l.a.createElement("div", {
                     className: "px-sm-3 pt-sm-3 py-3 clearfix",
-                    id: "serverRankChart",
+                    id: "serverLastRankChart",
                     style: {
                         height: 400
                     },
                     ref: this.serverLastRankChart
+                })))), l.a.createElement("div", {
+                    className: "col-lg-6 js-appear-enabled animated pr-xl-1",
+                    "data-toggle": "appear"
+                }, l.a.createElement("div", {
+                    className: "block border-bottom"
+                }, l.a.createElement("div", {
+                    class: "block-header block-header-default"
+                }, l.a.createElement("h3", {
+                    class: "block-title"
+                }, "\u4eca\u65e5\u7528\u6237\u6d41\u91cf\u6392\u884c")), l.a.createElement("div", {
+                    className: "block-content"
+                }, l.a.createElement("div", {
+                    className: "px-sm-3 pt-sm-3 py-3 clearfix",
+                    id: "userTodayRankChart",
+                    style: {
+                        height: 400
+                    },
+                    ref: this.userTodayRankChart
+                })))), l.a.createElement("div", {
+                    className: "col-lg-6 js-appear-enabled animated",
+                    "data-toggle": "appear"
+                }, l.a.createElement("div", {
+                    className: "block border-bottom"
+                }, l.a.createElement("div", {
+                    class: "block-header block-header-default"
+                }, l.a.createElement("h3", {
+                    class: "block-title"
+                }, "\u6628\u65e5\u7528\u6237\u6d41\u91cf\u6392\u884c")), l.a.createElement("div", {
+                    className: "block-content"
+                }, l.a.createElement("div", {
+                    className: "px-sm-3 pt-sm-3 py-3 clearfix",
+                    id: "userLastRankChart",
+                    style: {
+                        height: 400
+                    },
+                    ref: this.userLastRankChart
                 }))))))
             }
         }
