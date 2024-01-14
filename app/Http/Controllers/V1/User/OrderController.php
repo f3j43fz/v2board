@@ -278,7 +278,7 @@ class OrderController extends Controller
 
     public function getPaymentMethod()
     {
-        $method = Payment::select([
+        $methods = Payment::select([
             'id',
             'name',
             'payment',
@@ -287,11 +287,11 @@ class OrderController extends Controller
             'handling_fee_percent'
         ])
             ->where('enable', 1)
-            ->inRandomOrder()
-            ->first();
+            ->orderBy('sort', 'ASC')
+            ->get();
 
         return response([
-            'data' => $method
+            'data' => $methods
         ]);
     }
 
