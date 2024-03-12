@@ -794,7 +794,7 @@
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 }), t.push({
                     title: "Clash Nyanpasu",
-                    href: "clash-nyanpasu://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
+                    href: "clash-nyanpasu://subscribe-remote-profile?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 })), Object(u["g"])() && (t.push({
                     title: "Clash For Android",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
