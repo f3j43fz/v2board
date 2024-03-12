@@ -789,10 +789,13 @@
                 })), Object(u["k"])() && t.push({
                     title: "ClashX",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
-                }), Object(u["n"])() && t.push({
+                }), Object(u["n"])() && (t.push({
                     title: "Clash For Windows",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
-                }), Object(u["g"])() && (t.push({
+                }), t.push({
+                    title: "Clash Nyanpasu",
+                    href: "clash-nyanpasu://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
+                })), Object(u["g"])() && (t.push({
                     title: "Clash For Android",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 }), t.push({
