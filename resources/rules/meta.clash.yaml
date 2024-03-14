@@ -603,6 +603,7 @@ rules:
   - 'DOMAIN-SUFFIX,wwwjs01.com,REJECT'
   - 'DOMAIN-SUFFIX,cvpnss4.com,REJECT'
   - 'DOMAIN-SUFFIX,feijicloud.com,REJECT'
+  - 'DOMAIN-SUFFIX,cute-cloud.top,REJECT'
   #去广告
   - 'RULE-SET,ad_reject,REJECT'
   #icloud
