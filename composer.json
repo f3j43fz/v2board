@@ -27,6 +27,7 @@
         "paragonie/sodium_compat": "^1.20",
         "zoujingli/ip2region": "^2.0.3",
         "jenssegers/agent": "^2.6.4",
+        "foroco/php-browser-detection": "^2.7",
         "ext-json": "*"
     },
     "require-dev": {

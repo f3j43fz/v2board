@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use ReCaptcha\ReCaptcha;
 use Agent;
+use foroco\BrowserDetection;
 use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
@@ -257,18 +258,25 @@ class AuthController extends Controller
         if(!$user->is_admin){
             $userIP = $this->maskIpAddress($request->ip());
             $userISPInfo = $this->getUserISP($request->ip());
-//            $agent = new Agent();
-//            $device = $agent->device();
-//            $browser = $agent->browser();
-//            $browserVersion = $agent->version($browser);
-//            $platform = $agent->platform();
-//            $platformVersion = $agent->version($platform);
 
+            // 方式一
             $device = Agent::device(); // 使用 Agent Facade 调用设备信息
-            $browser = Agent::browser();
-            $browserVersion = Agent::version($browser);
-            $platform = Agent::platform();
-            $platformVersion = Agent::version($platform);
+//            $browser = Agent::browser();
+//            $browserVersion = Agent::version($browser);
+//            $platform = Agent::platform();
+//            $platformVersion = Agent::version($platform);
+
+
+            //方式二
+            $browserDetection = new BrowserDetection();
+            $userAgent = $request->header('User-Agent');
+            // 获取所有可能的环境数据
+            $result = $browserDetection->getAll($userAgent);
+            // 提取操作系统、浏览器和版本信息
+            $platform = $result['os_name'];
+            $platformVersion = $result['os_version'];
+            $browser = $result['browser_name'];
+            $browserVersion = $result['browser_version'];
 
 
             SendEmailJob::dispatch([
@@ -289,6 +297,8 @@ class AuthController extends Controller
                     'browserVersion' => $browserVersion
                 ]
             ]);
+
+
         }
 
         $authService = new AuthService($user);
