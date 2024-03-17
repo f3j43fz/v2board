@@ -218,29 +218,29 @@ class AuthController extends Controller
     public function login(AuthLogin $request)
     {
 
-        if ((int)config('v2board.recaptcha_enable', 0)) {
-            $userIP = $request->ip();
-            $secret = config('v2board.recaptcha_key');
-            $response = $request->input('recaptcha_data');
-
-            $response = Http::post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-                'secret' => $secret,
-                'response' => $response,
-                'ip' => $userIP,
-            ]);
-
-            if ($response->failed()) {
-                abort(500, __('Failed to verify captcha'));
-            }
-
-            $responseData = $response->json();
-
-            if (isset($responseData['success']) && $responseData['success'] === true) {
-                // Verification successful
-            } else {
-                abort(500, __('Invalid code is incorrect'));
-            }
-        }
+//        if ((int)config('v2board.recaptcha_enable', 0)) {
+//            $userIP = $request->ip();
+//            $secret = config('v2board.recaptcha_key');
+//            $response = $request->input('recaptcha_data');
+//
+//            $response = Http::post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+//                'secret' => $secret,
+//                'response' => $response,
+//                'ip' => $userIP,
+//            ]);
+//
+//            if ($response->failed()) {
+//                abort(500, __('Failed to verify captcha'));
+//            }
+//
+//            $responseData = $response->json();
+//
+//            if (isset($responseData['success']) && $responseData['success'] === true) {
+//                // Verification successful
+//            } else {
+//                abort(500, __('Invalid code is incorrect'));
+//            }
+//        }
 
         $email = $request->input('email');
         $password = $request->input('password');
