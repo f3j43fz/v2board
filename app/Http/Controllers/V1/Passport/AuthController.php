@@ -17,7 +17,7 @@ use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use ReCaptcha\ReCaptcha;
-use Jenssegers\Agent\Facades\Agent;
+//use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
