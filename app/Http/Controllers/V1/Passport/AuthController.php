@@ -260,7 +260,7 @@ class AuthController extends Controller
             $userISPInfo = $this->getUserISP($request->ip());
 
             // 方式一
-//            $device = Agent::device(); // 使用 Agent Facade 调用设备信息
+            $device = Agent::device(); // 使用 Agent Facade 调用设备信息
 //            $browser = Agent::browser();
 //            $browserVersion = Agent::version($browser);
 //            $platform = Agent::platform();
@@ -271,14 +271,11 @@ class AuthController extends Controller
             $browserDetection = new BrowserDetection();
             $userAgent = $request->header('User-Agent');
             // 提取操作系统、浏览器和版本信息
-            $result1 = $browserDetection->getDevice($userAgent);
-            $device = $result1['device_type'];
-            $result2 = $browserDetection->getBrowser($userAgent);
-            $browser = $result2['browser_name'];
-            $browserVersion = $result2['browser_version'];
-            $result3 = $browserDetection->getOS($userAgent);
-            $platform = $result3['os_name'];
-            $platformVersion = $result3['os_version'];
+            $result = $browserDetection->getAll($userAgent);
+            $browser = $result['browser_name'];
+            $browserVersion = $result['browser_version'];
+            $platform = $result['os_name'];
+            $platformVersion = $result['os_version'];
 
 
             SendEmailJob::dispatch([
