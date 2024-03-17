@@ -17,7 +17,7 @@ use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use ReCaptcha\ReCaptcha;
-//use Jenssegers\Agent\Facades\Agent;
+use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
@@ -253,36 +253,36 @@ class AuthController extends Controller
         }
 
 
-        // 登录提醒逻辑
-//        if(!$user->is_admin){
-//            $userIP = $this->maskIpAddress($request->ip());
-//            $userISPInfo = $this->getUserISP($request->ip());
-//            $agent = new Agent();
-//            $agent->setUserAgent($request->header('User-Agent'));
-//            $device = $agent->device();
-//            $browser = $agent->browser();
-//            $browserVersion = $agent->version($browser);
-//            $platform = $agent->platform();
-//            $platformVersion = $agent->version($platform);
-//            SendEmailJob::dispatch([
-//                'email' => $user->email,
-//                'subject' => __('You are logging into our website', [
-//                    'app_name' => config('v2board.app_name', 'V2board')
-//                ]),
-//                'template_name' => 'remindLogin',
-//                'template_value' => [
-//                    'name' => config('v2board.app_name', 'V2Board'),
-//                    'url' => config('v2board.app_url'),
-//                    'ip' => $userIP,
-//                    'ipInfo' => $userISPInfo,
-//                    'device' => $device,
-//                    'platform' => $platform,
-//                    'platformVersion' => $platformVersion,
-//                    'browser' => $browser,
-//                    'browserVersion' => $browserVersion
-//                ]
-//            ]);
-//        }
+         //登录提醒逻辑
+        if(!$user->is_admin){
+            $userIP = $this->maskIpAddress($request->ip());
+            $userISPInfo = $this->getUserISP($request->ip());
+            $agent = new Agent();
+            //$agent->setUserAgent($request->header('User-Agent'));
+            $device = $agent->device();
+            $browser = $agent->browser();
+            $browserVersion = $agent->version($browser);
+            $platform = $agent->platform();
+            $platformVersion = $agent->version($platform);
+            SendEmailJob::dispatch([
+                'email' => $user->email,
+                'subject' => __('You are logging into our website', [
+                    'app_name' => config('v2board.app_name', 'V2board')
+                ]),
+                'template_name' => 'remindLogin',
+                'template_value' => [
+                    'name' => config('v2board.app_name', 'V2Board'),
+                    'url' => config('v2board.app_url'),
+                    'ip' => $userIP,
+                    'ipInfo' => $userISPInfo,
+                    'device' => $device,
+                    'platform' => $platform,
+                    'platformVersion' => $platformVersion,
+                    'browser' => $browser,
+                    'browserVersion' => $browserVersion
+                ]
+            ]);
+        }
 
         $authService = new AuthService($user);
         return response([
