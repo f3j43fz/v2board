@@ -19,7 +19,17 @@
                                 尊敬的用户您好！
                                 <br />
                                 <br />
-                                您的验证码是：{{$code}}，请在 5 分钟内进行验证。如果该验证码不为您本人申请，请无视。
+                                请注意以下验证码：
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:28px;color:#FF0000;padding:0 40px 0 40px">
+                                {{$code}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:14px;color:#333;padding:0 40px 0 40px">
+                                请在5分钟内验证此验证码。如果您没有请求此验证码，请忽略此消息。
                             </td>
                         </tr>
                         <tr style="padding:40px;display:table-cell">
@@ -35,7 +45,8 @@
                         </tr>
                         </tbody>
                     </table>
-                </div></td>
+                </div>
+            </td>
         </tr>
         </tbody>
     </table>
