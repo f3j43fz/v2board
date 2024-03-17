@@ -31,19 +31,54 @@ class MailService
 
     public function remindExpire(User $user)
     {
-        if (!($user->expired_at !== NULL && ($user->expired_at - 86400) < time() && $user->expired_at > time())) return;
-        SendEmailJob::dispatch([
-            'email' => $user->email,
-            'subject' => __('The service in :app_name is about to expire', [
-               'app_name' =>  config('v2board.app_name', 'V2board')
-            ]),
-            'template_name' => 'remindExpire',
-            'template_value' => [
-                'name' => config('v2board.app_name', 'V2Board'),
-                'url' => config('v2board.app_url')
-            ]
-        ]);
+        $currentTime = time();
+
+        // 提醒过期不足一天
+        if ($user->expired_at !== NULL && ($user->expired_at - 86400) < $currentTime && $user->expired_at > $currentTime) {
+            SendEmailJob::dispatch([
+                'email' => $user->email,
+                'subject' => __('The service in :app_name is about to expire', [
+                    'app_name' => config('v2board.app_name', 'V2board')
+                ]),
+                'template_name' => 'remindExpire',
+                'template_value' => [
+                    'name' => config('v2board.app_name', 'V2Board'),
+                    'url' => config('v2board.app_url')
+                ]
+            ]);
+        }
+
+        // 提醒过期超过3天
+        if ($user->expired_at !== NULL && ($user->expired_at - 3 * 86400) < $currentTime && $user->expired_at > $currentTime) {
+            SendEmailJob::dispatch([
+                'email' => $user->email,
+                'subject' => __('The service in :app_name has expired more than 3 days ago', [
+                    'app_name' => config('v2board.app_name', 'V2board')
+                ]),
+                'template_name' => 'remindExpire3',
+                'template_value' => [
+                    'name' => config('v2board.app_name', 'V2Board'),
+                    'url' => config('v2board.app_url')
+                ]
+            ]);
+        }
+
+        // 提醒过期超过7天
+        if ($user->expired_at !== NULL && ($user->expired_at - 7 * 86400) < $currentTime && $user->expired_at > $currentTime) {
+            SendEmailJob::dispatch([
+                'email' => $user->email,
+                'subject' => __('The service in :app_name has expired more than 7 days ago', [
+                    'app_name' => config('v2board.app_name', 'V2board')
+                ]),
+                'template_name' => 'remindExpire7',
+                'template_value' => [
+                    'name' => config('v2board.app_name', 'V2Board'),
+                    'url' => config('v2board.app_url')
+                ]
+            ]);
+        }
     }
+
 
     private function remindTrafficIsWarnValue($u, $d, $transfer_enable)
     {

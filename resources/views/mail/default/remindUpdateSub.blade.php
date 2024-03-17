@@ -25,7 +25,10 @@
                                 为保证服务质量，请您按照官网【使用文档】-【手动更新丁阅方法汇总】的指示，定期更新丁阅。
                                 <br />
                                 <br />
-                                ----{{$name}} 敬上
+                                -----------------
+                                <br />
+                                <br />
+                                {{$name}} 团队敬上 祝您生活愉快
                             </td>
                         </tr>
                         <tr style="padding:40px;display:table-cell">
@@ -37,7 +40,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                         <tr>
-                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">返回{{$name}}</a></td>
+                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">点我返回最新官网{{$name}}</a></td>
                         </tr>
                         </tbody>
                     </table>

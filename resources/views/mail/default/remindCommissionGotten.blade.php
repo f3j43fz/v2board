@@ -22,10 +22,13 @@
                                 您的受邀用户购买了套餐，您获得了 {{$rate}}% 的佣金：{{$commission}}元，感谢您与朋友的支持。
                                 <br />
                                 <br />
-                                佣金已自动进入余额，可在官网左侧的【个人中心】- 我的钱包处查看。
+                                佣金可在官网左侧的【我的邀请】处查看。佣金可以：划转到余额使用 或者 满100元后提现。
                                 <br />
                                 <br />
-                                ----{{$name}} 敬上
+                                -----------------
+                                <br />
+                                <br />
+                                {{$name}} 团队敬上 祝您生活愉快
                             </td>
                         </tr>
                         <tr style="padding:40px;display:table-cell">
@@ -37,7 +40,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                         <tr>
-                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">返回{{$name}}</a></td>
+                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">点我返回最新官网{{$name}}</a></td>
                         </tr>
                         </tbody>
                     </table>
