@@ -280,7 +280,7 @@ class AuthController extends Controller
 
             SendEmailJob::dispatch([
                 'email' => $user->email,
-                'subject' => __('You are logging into our website', [
+                'subject' => __('You are logging into :app_name', [
                     'app_name' => config('v2board.app_name', 'V2board')
                 ]),
                 'template_name' => 'remindLogin',
