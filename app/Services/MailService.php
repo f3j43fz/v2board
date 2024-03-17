@@ -49,7 +49,7 @@ class MailService
         }
 
         // 提醒过期超过3天
-        if ($user->expired_at !== NULL && ($user->expired_at - 3 * 86400) < $currentTime && $user->expired_at > $currentTime) {
+        if ($user->expired_at !== NULL && ($currentTime - 3 * 86400) > $user->expired_at && $user->expired_at < $currentTime) {
             SendEmailJob::dispatch([
                 'email' => $user->email,
                 'subject' => __('The service in :app_name has expired more than 3 days ago', [
@@ -64,7 +64,7 @@ class MailService
         }
 
         // 提醒过期超过7天
-        if ($user->expired_at !== NULL && ($user->expired_at - 7 * 86400) < $currentTime && $user->expired_at > $currentTime) {
+        if ($user->expired_at !== NULL && ($currentTime - 7 * 86400) > $user->expired_at  && $user->expired_at < $currentTime) {
             SendEmailJob::dispatch([
                 'email' => $user->email,
                 'subject' => __('The service in :app_name has expired more than 7 days ago', [
