@@ -87,6 +87,7 @@
     "The service in :app_name is about to expire": "在 :app_name 的服务即将到期",
     "The service in :app_name has expired more than 3 days ago": "在 :app_name 的服务过期超过 3 天",
     "The service in :app_name has expired more than 7 days ago": "在 :app_name 的服务过期超过 7 天",
+    "You are logging into :app_name": "您正在登录 :app_name",
     "The coupon can only be used :limit_use_with_user per person": "该优惠券每人只能用 :limit_use_with_user 次",
     "The coupon code cannot be used for this period": "此优惠券无法用于该付款周期",
     "Request failed, please try again later": "请求失败，请稍后再试",

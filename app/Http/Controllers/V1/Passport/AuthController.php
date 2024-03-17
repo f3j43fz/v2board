@@ -17,6 +17,7 @@ use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use ReCaptcha\ReCaptcha;
+use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
@@ -251,6 +252,38 @@ class AuthController extends Controller
             abort(500, __('Your account has been suspended'));
         }
 
+
+        // 登录提醒逻辑
+        if(!$user->is_admin){
+            $userIP = $this->maskIpAddress($request->ip());
+            $userISPInfo = $this->getUserISP($request->ip());
+            $agent = new Agent();
+            $agent->setUserAgent($request->header('User-Agent'));
+            $device = $agent->device();
+            $browser = $agent->browser();
+            $browserVersion = $agent->version($browser);
+            $platform = $agent->platform();
+            $platformVersion = $agent->version($platform);
+            SendEmailJob::dispatch([
+                'email' => $user->email,
+                'subject' => __('You are logging into our website', [
+                    'app_name' => config('v2board.app_name', 'V2board')
+                ]),
+                'template_name' => 'remindLogin',
+                'template_value' => [
+                    'name' => config('v2board.app_name', 'V2Board'),
+                    'url' => config('v2board.app_url'),
+                    'ip' => $userIP,
+                    'ipInfo' => $userISPInfo,
+                    'device' => $device,
+                    'platform' => $platform,
+                    'platformVersion' => $platformVersion,
+                    'browser' => $browser,
+                    'browserVersion' => $browserVersion
+                ]
+            ]);
+        }
+
         $authService = new AuthService($user);
         return response([
             'data' => $authService->generateAuthData($request)
@@ -335,5 +368,77 @@ class AuthController extends Controller
         return response([
             'data' => true
         ]);
+    }
+
+    private function getUserISP($userIP){
+        $ip2region = new \Ip2Region();
+        try {
+            return $ip2region->simple($userIP);
+        } catch (\Exception $e) {
+            // 处理异常情况
+            // 可以输出错误信息或执行其他逻辑
+            return "未知地区";
+        }
+    }
+
+    private function expandIPv6Address($ip)
+    {
+        // Check if the input is a valid IPv6 address
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return false;
+        }
+
+        // Split the IPv6 address into groups
+        $groups = explode(':', $ip);
+
+        // Count the number of groups
+        $groupCount = count($groups);
+
+        // Find the index of the compressed group (::)
+        $compressedGroupIndex = array_search('', $groups);
+
+        // Calculate the number of groups needed to expand the address
+        $expandedGroupCount = 8 - $groupCount;
+
+        // Expand the compressed group (::) with zeros
+        if ($compressedGroupIndex !== false) {
+            $expandedGroups = array_merge(
+                array_slice($groups, 0, $compressedGroupIndex),
+                array_fill(0, $expandedGroupCount, '0000'),
+                array_slice($groups, $compressedGroupIndex + 1)
+            );
+        } else {
+            $expandedGroups = $groups;
+        }
+
+        // Pad each group with zeros to ensure four hexadecimal digits
+        $expandedGroups = array_map(function ($group) {
+            return str_pad($group, 4, '0', STR_PAD_LEFT);
+        }, $expandedGroups);
+
+        // Join the expanded groups and format the IPv6 address
+        $expandedIp = implode(':', $expandedGroups);
+
+        return $expandedIp;
+    }
+
+    private function maskIpAddress($ipAddress)
+    {
+        // Check if the IP address is IPv4
+        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $parts = explode('.', $ipAddress);
+            $parts[1] = '*';
+            $parts[2] = '*';
+            return implode('.', $parts);
+        }
+
+        // expand ipv6
+        $ipv6 = $this->expandIPv6Address($ipAddress);
+        $parts = explode(':', $ipv6);
+        $parts[count($parts) - 4] = '*';
+        $parts[count($parts) - 3] = '*';
+        $parts[count($parts) - 2] = '*';
+        $parts[count($parts) - 1] = '*';
+        return implode(':', $parts);
     }
 }
