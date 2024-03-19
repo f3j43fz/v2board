@@ -102,19 +102,25 @@ class CheckCommission extends Command
 
             $invalidInvite = false;
             foreach ($requestedIPs as $requestedIP) {
-                // 判断IP是否来自中国，这里假设有一个函数 isFromChina() 可以判断IP是否来自中国
+                // 判断IP是否相同且来自中国
                 if ($requestedIP === $orderIp && $this->isFromChina($requestedIP)) {
                     $invalidInvite = true;
                     break;
                 }
             }
 
-            $order->commission_status = $invalidInvite ? 3 : 2;
-
-
-            if (!$this->payHandle($inviteUserId, $order)) {
-                DB::rollBack();
-                continue;
+            if ($invalidInvite) {
+                //佣金无效
+                //跳过发放佣金
+                $order->commission_status = 3;
+            } else {
+                $order->commission_status = 2;
+                //有效
+                //发放佣金
+                if (!$this->payHandle($inviteUserId, $order)) {
+                    DB::rollBack();
+                    continue;
+                }
             }
 
             if (!$order->save()) {
