@@ -143,10 +143,12 @@ class CheckCommission extends Command
             if ($record->country->isoCode === 'CN') {
                 //输出 “有人白嫖”
                 dump("有人白嫖");
+                echo "有人白嫖\n";
                 return true;
             } else {
                 //输出 “没人白嫖”
                 dump("没人白嫖");
+                echo "没人白嫖\n";
                 return false;
             }
         } catch (GeoIp2\Exception\AddressNotFoundException $e) {
