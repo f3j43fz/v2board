@@ -109,11 +109,8 @@ class CheckCommission extends Command
                 }
             }
 
-            if ($invalidInvite) {
-                $order->commission_status = 3;
-            } else {
-                $order->commission_status = 2;
-            }
+            $order->commission_status = $invalidInvite ? 3 : 2;
+
 
             if (!$this->payHandle($inviteUserId, $order)) {
                 DB::rollBack();
