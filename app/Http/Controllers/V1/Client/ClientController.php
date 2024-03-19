@@ -148,7 +148,7 @@ class ClientController extends Controller
 
     private function checkTokenRequest($userID, $userIP, $userISPInfo): bool
     {
-        $hourAgo = time() - 3600; // 6小时前的时间
+        $hourAgo = time() - 6 * 3600; // 6小时前的时间
         $tokenRequest = Tokenrequest::firstOrCreate(
             ['user_id' => strval($userID), 'ip' => strval($userIP)],
             ['requested_at' => time(), 'location' => $userISPInfo]
@@ -159,7 +159,7 @@ class ClientController extends Controller
             ->distinct('ip')
             ->count('ip');
 
-        if ($requests > 16) {
+        if ($requests >= 12) {
             // 禁止该Token请求
             // 可以在这里记录禁止请求的日志或执行其他逻辑
 
