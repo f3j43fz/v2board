@@ -60,11 +60,15 @@ class KnowledgeController extends Controller
         ]);
     }
 
+    private function getBetween($input, $start, $end)
+    {
+        $substr = substr($input, strlen($start) + strpos($input, $start), (strlen($input) - strpos($input, $end)) * (-1));
+        return $start . $substr . $end;
+    }
     private function formatAccessData(&$body)
     {
-        function getBetween($input, $start, $end){$substr = substr($input, strlen($start)+strpos($input, $start),(strlen($input) - strpos($input, $end))*(-1));return $start . $substr . $end;}
         while (strpos($body, '<!--access start-->') !== false) {
-            $accessData = getBetween($body, '<!--access start-->', '<!--access end-->');
+            $accessData = $this->getBetween($body, '<!--access start-->', '<!--access end-->');
             if ($accessData) {
                 $body = str_replace($accessData, '<div class="v2board-no-access">'. __("您必须拥有有效的订阅才可以查看该区域的内容，请到左侧购买订阅") .'</div>', $body);
             }
