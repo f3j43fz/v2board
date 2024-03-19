@@ -143,11 +143,11 @@ class CheckCommission extends Command
             // 判断是否来自中国
             if ($record->country->isoCode === 'CN') {
                 //输出 “有人白嫖”
-                $output->write('有人白嫖');
+                var_dump('有人白嫖');
                 return true;
             } else {
                 //输出 “没人白嫖”
-                $output->write('没人白嫖');
+                var_dump('没人白嫖');
                 return false;
             }
         } catch (GeoIp2\Exception\AddressNotFoundException $e) {
