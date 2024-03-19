@@ -123,7 +123,6 @@ class OrderController extends Controller
         $order->period = $request->input('period');
         $order->trade_no = Helper::generateOrderNo();
         $order->total_amount = $plan[$request->input('period')];
-        $order->user_ip = $request->ip();
 
         if ($request->input('coupon_code')) {
             $couponService = new CouponService($request->input('coupon_code'));
@@ -254,7 +253,6 @@ class OrderController extends Controller
             'trade_no' => $tradeNo,
             'total_amount' => isset($order->handling_amount) ? ($order->total_amount + $order->handling_amount) : $order->total_amount,
             'user_id' => $order->user_id,
-            'clientip' => $order->user_ip,
             'stripe_token' => $request->input('token'),
             'origin' => $origin
         ]);
