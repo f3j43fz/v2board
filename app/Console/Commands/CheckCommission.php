@@ -87,6 +87,50 @@ class CheckCommission extends Command
             ->where('invite_user_id', '!=', NULL)
             ->get();
 
+//        foreach ($orders as $order) {
+//            DB::beginTransaction();
+//
+//            $inviteUserId = $order->invite_user_id;
+//            $orderIp = $order->user_ip;
+//
+//            // 查询邀请人最近的请求订阅IP，按照 id 字段降序排序
+//            $requestedIPs = Tokenrequest::where('user_id', $inviteUserId)
+//                ->orderBy('id', 'desc')
+//                ->take(5)
+//                ->pluck('ip')
+//                ->toArray();
+//
+//            $invalidInvite = false;
+//            foreach ($requestedIPs as $requestedIP) {
+//                // 判断IP是否相同且来自中国
+//                if ($requestedIP === $orderIp && $this->isFromChina($requestedIP)) {
+//                    $invalidInvite = true;
+//                    break;
+//                }
+//            }
+//
+//            if ($invalidInvite) {
+//                //佣金无效
+//                //跳过发放佣金
+//                $order->commission_status = 3;
+//            } else {
+//                $order->commission_status = 2;
+//                //有效
+//                //发放佣金
+//                if (!$this->payHandle($inviteUserId, $order)) {
+//                    DB::rollBack();
+//                    continue;
+//                }
+//            }
+//
+//            if (!$order->save()) {
+//                DB::rollBack();
+//                continue;
+//            }
+//
+//            DB::commit();
+//        }
+
         foreach ($orders as $order) {
             DB::beginTransaction();
 
@@ -109,14 +153,28 @@ class CheckCommission extends Command
                 }
             }
 
+            if (!$invalidInvite) {
+                // 查询下单用户最近的请求订阅IP，按照 id 字段降序排序
+                $userRequestedIPs = Tokenrequest::where('user_id', $order->user_id)
+                    ->orderBy('id', 'desc')
+                    ->take(5)
+                    ->pluck('ip')
+                    ->toArray();
+
+                // 检查下单用户的订阅IP是否与邀请人的订阅IP有重复
+                foreach ($userRequestedIPs as $userRequestedIP) {
+                    if (in_array($userRequestedIP, $requestedIPs) && $this->isFromChina($userRequestedIP)) {
+                        $invalidInvite = true;
+                        break;
+                    }
+                }
+            }
+
             if ($invalidInvite) {
-                //佣金无效
-                //跳过发放佣金
                 $order->commission_status = 3;
             } else {
                 $order->commission_status = 2;
-                //有效
-                //发放佣金
+
                 if (!$this->payHandle($inviteUserId, $order)) {
                     DB::rollBack();
                     continue;
@@ -130,6 +188,8 @@ class CheckCommission extends Command
 
             DB::commit();
         }
+
+
     }
 
     private function isFromChina($ip): bool
