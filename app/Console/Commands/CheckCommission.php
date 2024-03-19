@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use GeoIp2\Database\Reader;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class CheckCommission extends Command
 {
@@ -131,7 +132,7 @@ class CheckCommission extends Command
 
     private function isFromChina($ip): bool
     {
-
+        $output = new ConsoleOutput();
         // 创建一个Reader对象，用于查询IP地址的地理位置
         $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
 
@@ -142,13 +143,11 @@ class CheckCommission extends Command
             // 判断是否来自中国
             if ($record->country->isoCode === 'CN') {
                 //输出 “有人白嫖”
-                dump("有人白嫖");
-                echo "有人白嫖\n";
+                $output->writeln('有人白嫖');
                 return true;
             } else {
                 //输出 “没人白嫖”
-                dump("没人白嫖");
-                echo "没人白嫖\n";
+                $output->writeln('没人白嫖');
                 return false;
             }
         } catch (GeoIp2\Exception\AddressNotFoundException $e) {
