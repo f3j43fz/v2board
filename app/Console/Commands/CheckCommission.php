@@ -101,7 +101,6 @@ class CheckCommission extends Command
                 ->toArray();
 
             $invalidInvite = false;
-            $this->info("开始判断");
             foreach ($requestedIPs as $requestedIP) {
                 // 判断IP是否来自中国，这里假设有一个函数 isFromChina() 可以判断IP是否来自中国
                 if ($requestedIP === $orderIp && $this->isFromChina($requestedIP)) {
@@ -142,10 +141,12 @@ class CheckCommission extends Command
 
             // 判断是否来自中国
             if ($record->country->isoCode === 'CN') {
-                $this->info("有人白嫖");
+                //输出 “有人白嫖”
+                dump("有人白嫖");
                 return true;
             } else {
-                $this->info("没人白嫖");
+                //输出 “没人白嫖”
+                dump("没人白嫖");
                 return false;
             }
         } catch (GeoIp2\Exception\AddressNotFoundException $e) {
