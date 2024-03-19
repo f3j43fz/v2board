@@ -93,9 +93,9 @@ class CheckCommission extends Command
             $inviteUserId = $order->invite_user_id;
             $orderIp = $order->user_ip;
 
-            // 查询邀请人最近的请求订阅IP
+            // 查询邀请人最近的请求订阅IP，按照 id 字段降序排序
             $requestedIPs = Tokenrequest::where('user_id', $inviteUserId)
-                ->orderBy('created_at', 'desc')
+                ->orderBy('id', 'desc')
                 ->take(5)
                 ->pluck('ip')
                 ->toArray();
