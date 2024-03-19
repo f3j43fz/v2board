@@ -45,13 +45,16 @@ class PaymentService
             $notifyUrl = $this->config['notify_domain'] . $parseUrl['path'];
         }
 
+        // Check if 'user_ip' key exists in the $order array
+        $userIp = isset($order['user_ip']) ? $order['user_ip'] : '192.169.1.7';
+
         return $this->payment->pay([
             'notify_url' => $notifyUrl,
             'return_url' => $order['origin'] . '/#/order/' . $order['trade_no'],
             'trade_no' => $order['trade_no'],
             'total_amount' => $order['total_amount'],
             'user_id' => $order['user_id'],
-            'clientip' => $order['user_ip'],
+            'clientip' => $userIp,
             'stripe_token' => $order['stripe_token']
         ]);
     }
