@@ -3,11 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Models\CommissionLog;
+use App\Models\Tokenrequest;
 use App\Services\MailService;
 use Illuminate\Console\Command;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use GeoIp2\Database\Reader;
 
 class CheckCommission extends Command
 {
@@ -59,25 +61,101 @@ class CheckCommission extends Command
         }
     }
 
+//    public function autoPayCommission()
+//    {
+//        $orders = Order::where('commission_status', 1)
+//            ->where('invite_user_id', '!=', NULL)
+//            ->get();
+//        foreach ($orders as $order) {
+//            DB::beginTransaction();
+//            if (!$this->payHandle($order->invite_user_id, $order)) {
+//                DB::rollBack();
+//                continue;
+//            }
+//            $order->commission_status = 2;
+//            if (!$order->save()) {
+//                DB::rollBack();
+//                continue;
+//            }
+//            DB::commit();
+//        }
+//    }
+
     public function autoPayCommission()
     {
         $orders = Order::where('commission_status', 1)
             ->where('invite_user_id', '!=', NULL)
             ->get();
+
         foreach ($orders as $order) {
             DB::beginTransaction();
-            if (!$this->payHandle($order->invite_user_id, $order)) {
+
+            $inviteUserId = $order->invite_user_id;
+            $orderIp = $order->user_ip;
+
+            // 查询邀请人最近的请求订阅IP
+            $requestedIPs = Tokenrequest::where('user_id', $inviteUserId)
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->pluck('ip')
+                ->toArray();
+
+            $invalidInvite = false;
+
+            foreach ($requestedIPs as $requestedIP) {
+                // 判断IP是否来自中国，这里假设有一个函数 isFromChina() 可以判断IP是否来自中国
+                if ($requestedIP === $orderIp && $this->isFromChina($requestedIP)) {
+                    $invalidInvite = true;
+                    break;
+                }
+            }
+
+            if ($invalidInvite) {
+                $order->commission_status = 3;
+            } else {
+                $order->commission_status = 2;
+            }
+
+            if (!$this->payHandle($inviteUserId, $order)) {
                 DB::rollBack();
                 continue;
             }
-            $order->commission_status = 2;
+
             if (!$order->save()) {
                 DB::rollBack();
                 continue;
             }
+
             DB::commit();
         }
     }
+
+    private function isFromChina($ip): bool
+    {
+
+        // 创建一个Reader对象，用于查询IP地址的地理位置
+        $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
+
+        try {
+            // 查询IP地址的地理位置信息
+            $record = $reader->country($ip);
+
+            // 判断是否来自中国
+            if ($record->country->isoCode === 'CN') {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (GeoIp2\Exception\AddressNotFoundException $e) {
+            // 处理IP地址未找到的情况
+            return false;
+        } catch (GeoIp2\Exception\GeoIp2Exception $e) {
+            // 处理其他异常
+            return false;
+        }
+    }
+
+
 
     public function payHandle($inviteUserId, Order $order)
     {

@@ -28,6 +28,7 @@
         "zoujingli/ip2region": "^2.0.3",
         "jenssegers/agent": "^2.6.4",
         "foroco/php-browser-detection": "^2.7",
+        "geoip2/geoip2": "^2.0",
         "ext-json": "*"
     },
     "require-dev": {
