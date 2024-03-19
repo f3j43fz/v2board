@@ -75193,6 +75193,13 @@
                     style: n
                 }, g.a.createElement(S["a"], {
                     span: 6
+                }, "\u4e0b\u5355\u0049\u0050"), g.a.createElement(S["a"], {
+                    span: 18
+                }, this.state.order.user_ip)), g.a.createElement(E["a"], {
+                    gutter: [16, 16],
+                    style: n
+                }, g.a.createElement(S["a"], {
+                    span: 6
                 }, "\u8ba2\u5355\u5468\u671f"), g.a.createElement(S["a"], {
                     span: 18
                 }, y["a"].periodText[this.state.order.period])), g.a.createElement(E["a"], {

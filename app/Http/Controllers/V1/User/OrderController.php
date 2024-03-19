@@ -119,6 +119,8 @@ class OrderController extends Controller
         $order = new Order();
         $orderService = new OrderService($order);
         $order->user_id = $request->user['id'];
+        //记录下单IP
+        $order->user_ip = $request->ip();
         $order->plan_id = $plan->id;
         $order->period = $request->input('period');
         $order->trade_no = Helper::generateOrderNo();
@@ -192,6 +194,8 @@ class OrderController extends Controller
         DB::beginTransaction();
         $order = new Order();
         $order->user_id = $request->user['id'];
+        //记录下单IP
+        $order->user_ip = $request->ip();
         // 管理员需要在后台新增一个套餐。
         // 套餐名字可取为：充值
         // 套餐价格随意填，因为订单金额不从套餐里获取，而是从前端提交的数据获取。

@@ -24,7 +24,7 @@ class OrderSave extends FormRequest
         return [
             'plan_id.required' => __('Plan ID cannot be empty'),
             'period.required' => __('Plan period cannot be empty'),
-            'period.in' => __('Wrong plan period'),
+            'period.in' => __('Wrong plan period')
         ];
     }
 }
