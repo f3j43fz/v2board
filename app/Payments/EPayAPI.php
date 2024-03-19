@@ -36,6 +36,10 @@ class EPayAPI {
 
     public function pay($order)
     {
+
+        // Check if 'user_ip' key exists in the $order array
+        $userIp = isset($order['user_ip']) ? $order['user_ip'] : '192.169.1.7';
+
         $params = [
             'money' => $order['total_amount'] / 100,
             'name' => $order['trade_no'],
@@ -43,7 +47,7 @@ class EPayAPI {
             'out_trade_no' => $order['trade_no'],
             'pid' => $this->config['pid'],
             'type' => $this->config['type'],
-            'clientip' => $order['user_ip']
+            'clientip' => $userIp
         ];
 
         ksort($params);
