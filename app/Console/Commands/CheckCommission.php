@@ -195,7 +195,8 @@ class CheckCommission extends Command
         if (!$invalidInvite) {
 
             $allRequestedIPs = array_reduce($requestedIPs, function ($carry, $ips) {
-                return array_merge($carry, $ips);
+                $ipArray = explode(' ', $ips); // 将IP地址字符串转换为数组
+                return array_merge($carry, $ipArray);
             }, []);
 
             foreach ($userRequestedIPs as $userId => $userRequestedIP) {
