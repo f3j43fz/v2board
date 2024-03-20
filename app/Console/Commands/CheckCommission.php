@@ -66,27 +66,7 @@ class CheckCommission extends Command
 //        $orders = Order::where('commission_status', 1)
 //            ->where('invite_user_id', '!=', NULL)
 //            ->get();
-//        foreach ($orders as $order) {
-//            DB::beginTransaction();
-//            if (!$this->payHandle($order->invite_user_id, $order)) {
-//                DB::rollBack();
-//                continue;
-//            }
-//            $order->commission_status = 2;
-//            if (!$order->save()) {
-//                DB::rollBack();
-//                continue;
-//            }
-//            DB::commit();
-//        }
-//    }
-
-    public function autoPayCommission()
-    {
-        $orders = Order::where('commission_status', 1)
-            ->where('invite_user_id', '!=', NULL)
-            ->get();
-
+//
 //        foreach ($orders as $order) {
 //            DB::beginTransaction();
 //
@@ -109,14 +89,28 @@ class CheckCommission extends Command
 //                }
 //            }
 //
+//            if (!$invalidInvite) {
+//                // 查询下单用户最近的请求订阅IP，按照 id 字段降序排序
+//                $userRequestedIPs = Tokenrequest::where('user_id', $order->user_id)
+//                    ->orderBy('id', 'desc')
+//                    ->take(5)
+//                    ->pluck('ip')
+//                    ->toArray();
+//
+//                // 检查下单用户的订阅IP是否与邀请人的订阅IP有重复
+//                foreach ($userRequestedIPs as $userRequestedIP) {
+//                    if (in_array($userRequestedIP, $requestedIPs) && $this->isFromChina($userRequestedIP)) {
+//                        $invalidInvite = true;
+//                        break;
+//                    }
+//                }
+//            }
+//
 //            if ($invalidInvite) {
-//                //佣金无效
-//                //跳过发放佣金
 //                $order->commission_status = 3;
 //            } else {
 //                $order->commission_status = 2;
-//                //有效
-//                //发放佣金
+//
 //                if (!$this->payHandle($inviteUserId, $order)) {
 //                    DB::rollBack();
 //                    continue;
@@ -130,6 +124,34 @@ class CheckCommission extends Command
 //
 //            DB::commit();
 //        }
+//
+//
+//    }
+
+
+    public function autoPayCommission()
+    {
+        $orders = Order::where('commission_status', 1)
+            ->where('invite_user_id', '!=', NULL)
+            ->get();
+
+        // 一次性获取所有订单的【邀请人】和【下单用户】的ID
+        $inviteUserIds = $orders->pluck('invite_user_id')->toArray();
+        $userIds = $orders->pluck('user_id')->toArray();
+
+        // 一次性获取所有订单的订阅IP信息
+        // 【邀请人】的订阅IP记录
+        $requestedIPs = Tokenrequest::whereIn('user_id', $inviteUserIds)
+            ->orderBy('id', 'desc')
+            ->take(5)
+            ->pluck('ip', 'user_id')
+            ->toArray();
+        // 【下单用户】的订阅IP记录
+        $userRequestedIPs = Tokenrequest::whereIn('user_id', $userIds)
+            ->orderBy('id', 'desc')
+            ->take(5)
+            ->pluck('ip', 'user_id')
+            ->toArray();
 
         foreach ($orders as $order) {
             DB::beginTransaction();
@@ -137,38 +159,7 @@ class CheckCommission extends Command
             $inviteUserId = $order->invite_user_id;
             $orderIp = $order->user_ip;
 
-            // 查询邀请人最近的请求订阅IP，按照 id 字段降序排序
-            $requestedIPs = Tokenrequest::where('user_id', $inviteUserId)
-                ->orderBy('id', 'desc')
-                ->take(5)
-                ->pluck('ip')
-                ->toArray();
-
-            $invalidInvite = false;
-            foreach ($requestedIPs as $requestedIP) {
-                // 判断IP是否相同且来自中国
-                if ($requestedIP === $orderIp && $this->isFromChina($requestedIP)) {
-                    $invalidInvite = true;
-                    break;
-                }
-            }
-
-            if (!$invalidInvite) {
-                // 查询下单用户最近的请求订阅IP，按照 id 字段降序排序
-                $userRequestedIPs = Tokenrequest::where('user_id', $order->user_id)
-                    ->orderBy('id', 'desc')
-                    ->take(5)
-                    ->pluck('ip')
-                    ->toArray();
-
-                // 检查下单用户的订阅IP是否与邀请人的订阅IP有重复
-                foreach ($userRequestedIPs as $userRequestedIP) {
-                    if (in_array($userRequestedIP, $requestedIPs) && $this->isFromChina($userRequestedIP)) {
-                        $invalidInvite = true;
-                        break;
-                    }
-                }
-            }
+            $invalidInvite = $this->checkIPs($requestedIPs, $userRequestedIPs, $orderIp);
 
             if ($invalidInvite) {
                 $order->commission_status = 3;
@@ -188,8 +179,34 @@ class CheckCommission extends Command
 
             DB::commit();
         }
+    }
 
+    private function checkIPs($requestedIPs, $userRequestedIPs, $orderIp): bool
+    {
+        $invalidInvite = false;
 
+        foreach ($requestedIPs as $userId => $requestedIP) {
+            if ($requestedIP === $orderIp && $this->isFromChina($requestedIP)) {
+                $invalidInvite = true;
+                break;
+            }
+        }
+
+        if (!$invalidInvite) {
+
+            $allRequestedIPs = array_reduce($requestedIPs, function ($carry, $ips) {
+                return array_merge($carry, $ips);
+            }, []);
+
+            foreach ($userRequestedIPs as $userId => $userRequestedIP) {
+                if (in_array($userRequestedIP, $allRequestedIPs) && $this->isFromChina($userRequestedIP)) {
+                    $invalidInvite = true;
+                    break;
+                }
+            }
+        }
+
+        return $invalidInvite;
     }
 
     private function isFromChina($ip): bool
