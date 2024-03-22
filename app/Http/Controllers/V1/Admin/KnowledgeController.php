@@ -54,10 +54,11 @@ class KnowledgeController extends Controller
         $telegramService = new TelegramService();
         $chatID =config('v2board.telegram_group_id');
         $title = Knowledge::find($request->input('id'))->title ?? '未找到标题';
-        $text = "🌞操作通知\n"
+        $text = "⏺操作日志\n"
             . "———————————————\n"
-            . "文档： {$title}\n"
-            . "已被管理员修改，如有需求请到官网查看\n";
+            . "下述【使用文档】有更新：\n"
+            . "`{$title}`\n"
+            . "请到官网查看\n";
         $telegramService->sendMessage($chatID, $text,'markdown');
 
         return response([
