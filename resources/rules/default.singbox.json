@@ -196,6 +196,13 @@
                 "download_detour": "V2Pass"
             },
             {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
+                "download_detour": "V2Pass"
+            },
+            {
                 "tag": "geosite-geolocation-!cn",
                 "type": "remote",
                 "format": "binary",
