@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin\Server;
 
 use App\Http\Controllers\Controller;
 use App\Models\ServerVless;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use ParagonIE_Sodium_Compat as SodiumCompat;
 use App\Utils\Helper;
@@ -55,6 +56,7 @@ class VlessController extends Controller
             } catch (\Exception $e) {
                 abort(500, '保存失败');
             }
+            $this->notify($server->name);
             return response([
                 'data' => true
             ]);
@@ -98,7 +100,7 @@ class VlessController extends Controller
         } catch (\Exception $e) {
             abort(500, '保存失败');
         }
-
+        $this->notify($server->name);
         return response([
             'data' => true
         ]);
@@ -118,5 +120,16 @@ class VlessController extends Controller
         return response([
             'data' => true
         ]);
+    }
+
+    private function notify($nodeName){
+        $telegramService = new TelegramService();
+        $chatID =config('v2board.telegram_group_id');
+        $text = "🛠 #操作日志\n"
+            . "———————————————\n"
+            . "下述【节点】有更新：\n"
+            . "`{$nodeName}`\n"
+            . "请您更新订阅\n";
+        $telegramService->sendMessage($chatID, $text,'markdown');
     }
 }
