@@ -259,6 +259,8 @@ class CheckCommission extends Command
             if (!$commissionBalance) continue;
             if ((int)config('v2board.withdraw_close_enable', 0)) {
                 $inviter->balance = $inviter->balance + $commissionBalance;
+            } else {
+                $inviter->commission_balance = $inviter->commission_balance + $commissionBalance;
                 //TG通知
                 if(!$inviter->is_admin == 1){
                     $this->notify($inviteUserId,$commissionBalance/100);
@@ -266,8 +268,6 @@ class CheckCommission extends Command
                 //发邮件给 inviter //blance是余额 commission_balance是佣金
                 $mailService = new MailService();
                 $mailService->remindCommissionGotten($inviter,$commissionBalance/100);
-            } else {
-                $inviter->commission_balance = $inviter->commission_balance + $commissionBalance;
             }
             if (!$inviter->save()) {
                 DB::rollBack();
