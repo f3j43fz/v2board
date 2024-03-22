@@ -114,11 +114,9 @@ class HysteriaController extends Controller
     private function notify($nodeName){
         $telegramService = new TelegramService();
         $chatID =config('v2board.telegram_group_id');
-        $text = "🛠 #操作日志\n"
-            . "———————————————\n"
-            . "下述【节点】有更新：\n"
-            . "`{$nodeName}`\n"
-            . "请您更新订阅\n";
+        $text = "#节点变动\n\n"
+            . "`{$nodeName}`\n\n"
+            . "更新订阅可获取\n";
         $telegramService->sendMessage($chatID, $text,'markdown');
     }
 }
