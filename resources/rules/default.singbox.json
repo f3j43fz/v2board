@@ -76,65 +76,182 @@
                 "outbound": "全局"
             },
             {
-                "geoip": "google",
-                "geosite": "google",
+                "rule_set": "geoip-google",
                 "outbound": "谷歌系"
             },
             {
-                "geosite": "openai",
+                "rule_set": "geosite-google",
+                "outbound": "谷歌系"
+            },
+            {
+                "rule_set": "geosite-openai",
                 "outbound": "OpenAI"
             },
             {
-                "geosite": "bahamut",
+                "rule_set": "geosite-bahamut",
                 "outbound": "动画疯"
             },
             {
-                "geosite": "instagram",
+                "rule_set": "geosite-instagram",
                 "outbound": "Instagram"
             },
             {
-                "geosite": "twitch",
+                "rule_set": "geosite-twitch",
                 "outbound": "Twitch"
             },
             {
-                "geosite": "spotify",
+                "rule_set": "geosite-spotify",
                 "outbound": "Spotify"
             },
             {
-                "geoip": "netflix",
-                "geosite": "netflix",
+                "rule_set": "geoip-netflix",
                 "outbound": "Netflix"
             },
             {
-                "geoip": "disney",
-                "geosite": "disney",
+                "rule_set": "geosite-netflix",
+                "outbound": "Netflix"
+            },
+            {
+                "rule_set": "geoip-disney",
                 "outbound": "Disney"
             },
             {
-                "geoip": "hbo",
-                "geosite": "hbo",
+                "rule_set": "geosite-disney",
+                "outbound": "Disney"
+            },
+            {
+                "rule_set": "geoip-hbo",
                 "outbound": "HBO"
             },
             {
-                "geoip": "cn",
-                "geosite": "cn",
+                "rule_set": "geosite-hbo",
+                "outbound": "HBO"
+            },
+            {
+                "rule_set": "geoip-cn",
                 "outbound": "国内服务"
             },
             {
-                "geosite": "geolocation-!cn",
+                "rule_set": "geosite-cn",
+                "outbound": "国内服务"
+            },
+            {
+                "rule_set": "geosite-geolocation-!cn",
                 "outbound": "V2Pass"
+            }
+        ],
+        "rule_set": [
+            {
+                "tag": "geoip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geoip-hbo",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-hbo.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geoip-disney",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-disney.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geoip-netflix",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-netflix.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geoip-google",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-google.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-google",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-openai",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-openai.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-bahamut",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-bahamut.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-hbo",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-hbo.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-disney",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-disney.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-netflix",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-spotify",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-spotify.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-twitch",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-twitch.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-instagram",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-instagram.srs",
+                "download_detour": "V2Pass"
+            },
+            {
+                "tag": "geosite-geolocation-!cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-!cn.srs",
+                "download_detour": "V2Pass"
             }
         ],
         "final": "兜底",
         "auto_detect_interface": true,
-        "geoip": {
-            "download_url": "https://mirror.ghproxy.com/https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
-            "download_detour": "直连"
-        },
-        "geosite": {
-            "download_url": "https://mirror.ghproxy.com/https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
-            "download_detour": "直连"
-        }
+        "override_android_vpn": false,
+        "default_interface": "en0",
+        "default_mark": 233
     },
     "outbounds": [
         {
@@ -313,11 +430,19 @@
         }
     ],
     "experimental": {
+        "cache_file": {
+            "enabled": true,
+            "path": "cache.db",
+            "cache_id": "my_profile2",
+            "store_fakeip": true
+        },
         "clash_api": {
             "external_controller": "127.0.0.1:9090",
-            "external_ui_download_detour": "V2Pass",
-            "external_ui": "ui",
-            "secret": ""
+            "external_ui": "",
+            "external_ui_download_url": "",
+            "external_ui_download_detour": "",
+            "secret": "",
+            "default_mode": ""
         }
     },
     "log": {
