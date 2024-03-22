@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\CommissionLog;
 use App\Models\Tokenrequest;
 use App\Services\MailService;
+use App\Services\TelegramService;
 use Illuminate\Console\Command;
 use App\Models\Order;
 use App\Models\User;
@@ -258,6 +259,10 @@ class CheckCommission extends Command
             if (!$commissionBalance) continue;
             if ((int)config('v2board.withdraw_close_enable', 0)) {
                 $inviter->balance = $inviter->balance + $commissionBalance;
+                //TG通知
+                if(!$inviter->is_admin == 1){
+                    $this->notify($inviteUserId,$commissionBalance/100);
+                }
                 //发邮件给 inviter //blance是余额 commission_balance是佣金
                 $mailService = new MailService();
                 $mailService->remindCommissionGotten($inviter,$commissionBalance/100);
@@ -283,6 +288,16 @@ class CheckCommission extends Command
             $order->actual_commission_balance = $order->actual_commission_balance + $commissionBalance;
         }
         return true;
+    }
+
+    private function notify($userID,$commissionBalance){
+        $telegramService = new TelegramService();
+        $chatID =config('v2board.telegram_group_id');
+        $rate=config('v2board.invite_commission');
+        $text = "#佣金发放\n\n"
+            . "用户 #$userID 邀请朋友购买订阅，获得佣金：`{$commissionBalance}`元\n\n"
+            . "本站佣金比例：`{$rate}%`\n";
+        $telegramService->sendMessage($chatID, $text,'markdown');
     }
 
 }
