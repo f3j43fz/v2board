@@ -29,19 +29,22 @@ class ShadowsocksController extends Controller
             ]);
         }
 
-        if (!ServerShadowsocks::create($params)) {
-            abort(500, '创建失败');
-        }
-
         $telegramService = new TelegramService();
         $chatID =config('v2board.telegram_group_id');
-        $nodeName = ServerShadowsocks::find($request->input('id'))->name ?? '未找到节点标题';
+        $server = ServerShadowsocks::find($request->input('id'));
+        $nodeName = $server->name;
         $text = "🛠 #操作日志\n"
             . "———————————————\n"
             . "下述【节点】有更新：\n"
             . "`{$nodeName}`\n"
             . "请更新订阅\n";
         $telegramService->sendMessage($chatID, $text,'markdown');
+
+        if (!ServerShadowsocks::create($params)) {
+            abort(500, '创建失败');
+        }
+
+
 
         return response([
             'data' => true
