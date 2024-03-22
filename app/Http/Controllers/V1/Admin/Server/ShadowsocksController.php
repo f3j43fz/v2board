@@ -24,27 +24,27 @@ class ShadowsocksController extends Controller
             } catch (\Exception $e) {
                 abort(500, '保存失败');
             }
+
+            $telegramService = new TelegramService();
+            $chatID =config('v2board.telegram_group_id');
+            $nodeName = $server->name;
+            $text = "🛠 #操作日志\n"
+                . "———————————————\n"
+                . "下述【节点】有更新：\n"
+                . "`{$nodeName}`\n"
+                . "请更新订阅\n";
+            $telegramService->sendMessage($chatID, $text,'markdown');
+
+
+
             return response([
                 'data' => true
             ]);
         }
 
-        $telegramService = new TelegramService();
-        $chatID =config('v2board.telegram_group_id');
-        $server = ServerShadowsocks::find($request->input('id'));
-        $nodeName = $server->name;
-        $text = "🛠 #操作日志\n"
-            . "———————————————\n"
-            . "下述【节点】有更新：\n"
-            . "`{$nodeName}`\n"
-            . "请更新订阅\n";
-        $telegramService->sendMessage($chatID, $text,'markdown');
-
         if (!ServerShadowsocks::create($params)) {
             abort(500, '创建失败');
         }
-
-
 
         return response([
             'data' => true
