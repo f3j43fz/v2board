@@ -76,10 +76,6 @@
                 "outbound": "全局"
             },
             {
-                "rule_set": "geoip-google",
-                "outbound": "谷歌系"
-            },
-            {
                 "rule_set": "geosite-google",
                 "outbound": "谷歌系"
             },
@@ -104,24 +100,12 @@
                 "outbound": "Spotify"
             },
             {
-                "rule_set": "geoip-netflix",
-                "outbound": "Netflix"
-            },
-            {
                 "rule_set": "geosite-netflix",
                 "outbound": "Netflix"
             },
             {
-                "rule_set": "geoip-disney",
-                "outbound": "Disney"
-            },
-            {
                 "rule_set": "geosite-disney",
                 "outbound": "Disney"
-            },
-            {
-                "rule_set": "geoip-hbo",
-                "outbound": "HBO"
             },
             {
                 "rule_set": "geosite-hbo",
@@ -146,34 +130,6 @@
                 "type": "remote",
                 "format": "binary",
                 "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
-                "download_detour": "V2Pass"
-            },
-            {
-                "tag": "geoip-hbo",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-hbo.srs",
-                "download_detour": "V2Pass"
-            },
-            {
-                "tag": "geoip-disney",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-disney.srs",
-                "download_detour": "V2Pass"
-            },
-            {
-                "tag": "geoip-netflix",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-netflix.srs",
-                "download_detour": "V2Pass"
-            },
-            {
-                "tag": "geoip-google",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-google.srs",
                 "download_detour": "V2Pass"
             },
             {
