@@ -295,8 +295,9 @@ class CheckCommission extends Command
         $chatID =config('v2board.telegram_group_id');
         $rate=config('v2board.invite_commission');
         $text = "#佣金发放\n\n"
-            . "用户 #$userID 邀请朋友购买订阅，获得佣金：`{$commissionBalance}` 元\n\n"
-            . "本站佣金比例：`{$rate}%`\n";
+            . "🎉用户 #$userID 邀请朋友购买订阅，获得佣金：`{$commissionBalance}` 元\n\n"
+            . "当前佣金比例：`{$rate}%`\n\n"
+            . "满 `100` 元可提现";
         $telegramService->sendMessage($chatID, $text,'markdown');
     }
 
