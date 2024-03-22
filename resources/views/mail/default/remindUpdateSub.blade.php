@@ -40,7 +40,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                         <tr>
-                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">点我返回最新官网{{$name}}</a></td>
+                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">点我返回最新{{$name}}官网</a></td>
                         </tr>
                         </tbody>
                     </table>
