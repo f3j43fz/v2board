@@ -78,6 +78,16 @@ class ShadowsocksController extends Controller
             abort(500, '保存失败');
         }
 
+        $telegramService = new TelegramService();
+        $chatID =config('v2board.telegram_group_id');
+        $nodeName = ServerShadowsocks::find($request->input('id'))->name ?? '未找到节点标题';
+        $text = "🛠 #操作日志\n"
+            . "———————————————\n"
+            . "下述【节点】有更新：\n"
+            . "`{$nodeName}`\n"
+            . "请更新订阅\n";
+        $telegramService->sendMessage($chatID, $text,'markdown');
+
         return response([
             'data' => true
         ]);
