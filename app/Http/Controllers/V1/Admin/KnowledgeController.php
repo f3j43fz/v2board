@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\KnowledgeSave;
 use App\Http\Requests\Admin\KnowledgeSort;
 use App\Models\Knowledge;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -49,6 +50,15 @@ class KnowledgeController extends Controller
                 abort(500, '保存失败');
             }
         }
+
+        $telegramService = new TelegramService();
+        $chatID =config('v2board.telegram_group_id');
+        $title = Knowledge::find($request->input('id'))->title ?? '未找到标题';
+        $text = "🌞操作通知\n"
+            . "———————————————\n"
+            . "文档： {$title}\n"
+            . "已被管理员修改，如有需求请到官网查看\n";
+        $telegramService->sendMessage($chatID, $text,'markdown');
 
         return response([
             'data' => true
