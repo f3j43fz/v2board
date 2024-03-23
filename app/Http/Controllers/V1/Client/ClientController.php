@@ -42,7 +42,7 @@ class ClientController extends Controller
 
 
         // 禁止多IP更新，管理员除外
-        $user = User::find($userID);
+//        $user = User::find($userID);
         if(!$user->is_admin){
             if (!$this->checkTokenRequest($userID, $userIP, $userISPInfo)) {
                 return redirect('https://bilibili.com');
