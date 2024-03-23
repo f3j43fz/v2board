@@ -227,7 +227,7 @@ class ClientController extends Controller
             } elseif (stripos($isp, 'CNIC-CAS') !== false) {
                 $translatedISP = "【科技网】";
             } else {
-                $translatedISP = "$isp";
+                $translatedISP = "|$isp";
             }
 
             $result = "{$country}{$region}{$city}{$translatedISP}";
