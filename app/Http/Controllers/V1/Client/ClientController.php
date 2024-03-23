@@ -169,14 +169,59 @@ class ClientController extends Controller
         return true;
     }
 
+//    private function getUserISP($userIP){
+//        $ip2region = new \Ip2Region();
+//        try {
+//            return $ip2region->simple($userIP);
+//        } catch (\Exception $e) {
+//            // 处理异常情况
+//            // 可以输出错误信息或执行其他逻辑
+//            return "未知地区";
+//        }
+//    }
+
     private function getUserISP($userIP){
-        $ip2region = new \Ip2Region();
-        try {
-            return $ip2region->simple($userIP);
-        } catch (\Exception $e) {
-            // 处理异常情况
-            // 可以输出错误信息或执行其他逻辑
-            return "未知地区";
+        // Check if the IP address is IPv6
+        if (filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp";
+            $response = file_get_contents($url);
+            $ipinfo_json = json_decode($response, true);
+
+            if ($ipinfo_json["status"] == "fail") {
+                return "未知地区";
+            } elseif ($ipinfo_json["status"] == "success") {
+                $country = $ipinfo_json["country"];
+                $region = $ipinfo_json["regionName"];
+                $city = $ipinfo_json["city"];
+                $isp = $ipinfo_json["isp"];
+
+                // Translate ISP keywords
+                if (stripos($isp, 'Unicom') !== false) {
+                    $translatedISP = "【联通】";
+                } elseif (stripos($isp, 'Telecom') !== false) {
+                    $translatedISP = "电信";
+                } elseif (stripos($isp, 'Mobile') !== false) {
+                    $translatedISP = "移动";
+                } else {
+                    $translatedISP = "未知";
+                }
+
+                $result = "{$country} - {$region} - {$city}{$translatedISP}";
+                return $result;
+            } else {
+                return "未知地区";
+            }
+        } else {
+            // Handle IPv4 addresses using Ip2Region
+            $ip2region = new \Ip2Region();
+            try {
+                return $ip2region->simple($userIP);
+            } catch (\Exception $e) {
+                // Handle exceptions for IPv4 addresses
+                return "未知地区";
+            }
         }
     }
+
+
 }
