@@ -195,7 +195,18 @@ class ClientController extends Controller
                 $city = $ipinfo_json["city"];
                 $isp = $ipinfo_json["isp"];
 
-                $result = "{$country}{$region}{$city}{$isp}";
+                // Translate ISP keywords
+                if (stripos($isp, 'Unicom') !== false) {
+                    $translatedISP = "【联通】";
+                } elseif (stripos($isp, 'Telecom') !== false) {
+                    $translatedISP = "电信";
+                } elseif (stripos($isp, 'Mobile') !== false) {
+                    $translatedISP = "移动";
+                } else {
+                    $translatedISP = "未知";
+                }
+
+                $result = "{$country}{$region}{$city}{$translatedISP}";
                 return $result;
             } else {
                 return "未知地区";
