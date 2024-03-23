@@ -188,7 +188,13 @@ class ClientController extends Controller
             // Handle IPv4 addresses using Ip2Region
             $ip2region = new \Ip2Region();
             try {
-                return $ip2region->simple($userIP);
+                $text =  $ip2region->simple($userIP);
+                // 检查字符串中是否包含“中国”二字
+                if (strpos($text, "中国") !== false) {
+                    // 如果包含，则去掉“中国”二字
+                    $text = str_replace("中国", "", $text);
+                }
+                return $text;
             } catch (\Exception $e) {
                 // Handle exceptions for IPv4 addresses
                 return "未知地区";
@@ -196,7 +202,7 @@ class ClientController extends Controller
         }
 
         // 其他情况
-
+        // 请求频率： 45次/min/单IP
         $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp&lang=zh-CN";
         $response = file_get_contents($url);
         $ipinfo_json = json_decode($response, true);
