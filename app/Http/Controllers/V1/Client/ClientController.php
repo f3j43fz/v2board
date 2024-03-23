@@ -183,7 +183,7 @@ class ClientController extends Controller
     private function getUserISP($userIP){
         // Check if the IP address is IPv6
         if (filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp";
+            $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp&lang=zh-CN";
             $response = file_get_contents($url);
             $ipinfo_json = json_decode($response, true);
 
@@ -195,18 +195,7 @@ class ClientController extends Controller
                 $city = $ipinfo_json["city"];
                 $isp = $ipinfo_json["isp"];
 
-                // Translate ISP keywords
-                if (stripos($isp, 'Unicom') !== false) {
-                    $translatedISP = "【联通】";
-                } elseif (stripos($isp, 'Telecom') !== false) {
-                    $translatedISP = "电信";
-                } elseif (stripos($isp, 'Mobile') !== false) {
-                    $translatedISP = "移动";
-                } else {
-                    $translatedISP = "未知";
-                }
-
-                $result = "{$country} - {$region} - {$city}{$translatedISP}";
+                $result = "{$country}{$region}{$city}{$isp}";
                 return $result;
             } else {
                 return "未知地区";
