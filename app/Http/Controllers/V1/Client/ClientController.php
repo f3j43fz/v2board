@@ -213,15 +213,15 @@ class ClientController extends Controller
             if (stripos($isp, 'Unicom') !== false) {
                 $translatedISP = "【联通】";
             } elseif (stripos($isp, 'Telecom') !== false) {
-                $translatedISP = "电信";
+                $translatedISP = "【电信】";
             } elseif (stripos($isp, 'Mobile') !== false) {
-                $translatedISP = "移动";
+                $translatedISP = "【移动】";
             } elseif (stripos($isp, 'CERNET2') !== false) {
-                $translatedISP = "教育网";
+                $translatedISP = "【教育网】";
             } elseif (stripos($isp, 'CNIC-CAS') !== false) {
-                $translatedISP = "科技网";
+                $translatedISP = "【科技网】";
             } else {
-                $translatedISP = "未知";
+                $translatedISP = "【未知】";
             }
 
             $result = "{$country}{$region}{$city}{$translatedISP}";
