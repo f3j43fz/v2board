@@ -12,6 +12,7 @@ use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Ip2Region;
+use GeoIp2\Database\Reader;
 
 class ClientController extends Controller
 {
@@ -181,37 +182,9 @@ class ClientController extends Controller
 //    }
 
     private function getUserISP($userIP){
-        // Check if the IP address is IPv6
-        if (filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp&lang=zh-CN";
-            $response = file_get_contents($url);
-            $ipinfo_json = json_decode($response, true);
 
-            if ($ipinfo_json["status"] == "fail") {
-                return "未知地区";
-            } elseif ($ipinfo_json["status"] == "success") {
-                $country = $ipinfo_json["country"];
-                $region = $ipinfo_json["regionName"];
-                $city = $ipinfo_json["city"];
-                $isp = $ipinfo_json["isp"];
-
-                // Translate ISP keywords
-                if (stripos($isp, 'Unicom') !== false) {
-                    $translatedISP = "【联通】";
-                } elseif (stripos($isp, 'Telecom') !== false) {
-                    $translatedISP = "电信";
-                } elseif (stripos($isp, 'Mobile') !== false) {
-                    $translatedISP = "移动";
-                } else {
-                    $translatedISP = "未知";
-                }
-
-                $result = "{$country}{$region}{$city}{$translatedISP}";
-                return $result;
-            } else {
-                return "未知地区";
-            }
-        } else {
+        // 中国 && IPV4
+        if($this->isFromChina($userIP) && filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
             // Handle IPv4 addresses using Ip2Region
             $ip2region = new \Ip2Region();
             try {
@@ -220,6 +193,66 @@ class ClientController extends Controller
                 // Handle exceptions for IPv4 addresses
                 return "未知地区";
             }
+        }
+
+        // 其他情况
+
+        $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp&lang=zh-CN";
+        $response = file_get_contents($url);
+        $ipinfo_json = json_decode($response, true);
+
+        if ($ipinfo_json["status"] == "fail") {
+            return "未知地区";
+        } elseif ($ipinfo_json["status"] == "success") {
+            $country = $ipinfo_json["country"];
+            $region = $ipinfo_json["regionName"];
+            $city = $ipinfo_json["city"];
+            $isp = $ipinfo_json["isp"];
+
+            // Translate ISP keywords
+            if (stripos($isp, 'Unicom') !== false) {
+                $translatedISP = "【联通】";
+            } elseif (stripos($isp, 'Telecom') !== false) {
+                $translatedISP = "电信";
+            } elseif (stripos($isp, 'Mobile') !== false) {
+                $translatedISP = "移动";
+            } elseif (stripos($isp, 'CERNET2') !== false) {
+                $translatedISP = "教育网";
+            } elseif (stripos($isp, 'CNIC-CAS') !== false) {
+                $translatedISP = "科技网";
+            } else {
+                $translatedISP = "未知";
+            }
+
+            $result = "{$country}{$region}{$city}{$translatedISP}";
+            return $result;
+        } else {
+            return "未知地区";
+        }
+
+    }
+
+    private function isFromChina($ip): bool
+    {
+        // 创建一个Reader对象，用于查询IP地址的地理位置
+        $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
+
+        try {
+            // 查询IP地址的地理位置信息
+            $record = $reader->country($ip);
+
+            // 判断是否来自中国
+            if ($record->country->isoCode === 'CN') {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (GeoIp2\Exception\AddressNotFoundException $e) {
+            // 处理IP地址未找到的情况
+            return false;
+        } catch (GeoIp2\Exception\GeoIp2Exception $e) {
+            // 处理其他异常
+            return false;
         }
     }
 
