@@ -183,9 +183,9 @@ class ClientController extends Controller
 
     private function getUserISP($userIP){
 
-        // 中国 && IPV4
-        if($this->isFromChina($userIP) && filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
-            // Handle IPv4 addresses using Ip2Region
+        // 中国IP ，则优先掉用 Ip2Region 库
+        if($this->isFromChina($userIP)){
+            // 大多数情况 ipv4 以及少量 ipv6
             $ip2region = new \Ip2Region();
             try {
                 $text =  $ip2region->simple($userIP);
@@ -196,11 +196,41 @@ class ClientController extends Controller
                 }
                 return $text;
             } catch (\Exception $e) {
-                // Handle exceptions for IPv4 addresses
-                return "未知地区";
+                // 查不到的情况，主要是 ipv6，调用在线 API
+                return $this->getUserISPException($userIP);
             }
+        } else {
+            // 国外ip，调用在线 API
+            return $this->getUserISPException($userIP);
         }
 
+    }
+
+    private function isFromChina($ip): bool
+    {
+        // 创建一个Reader对象，用于查询IP地址的地理位置
+        $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
+
+        try {
+            // 查询IP地址的地理位置信息
+            $record = $reader->country($ip);
+
+            // 判断是否来自中国
+            if ($record->country->isoCode === 'CN') {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (GeoIp2\Exception\AddressNotFoundException $e) {
+            // 处理IP地址未找到的情况
+            return false;
+        } catch (GeoIp2\Exception\GeoIp2Exception $e) {
+            // 处理其他异常
+            return false;
+        }
+    }
+
+    private function getUserISPException($userIP){
         // 其他情况
         // 请求频率： 45次/min/单IP
         $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp&lang=zh-CN";
@@ -235,32 +265,6 @@ class ClientController extends Controller
         } else {
             return "未知地区";
         }
-
     }
-
-    private function isFromChina($ip): bool
-    {
-        // 创建一个Reader对象，用于查询IP地址的地理位置
-        $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
-
-        try {
-            // 查询IP地址的地理位置信息
-            $record = $reader->country($ip);
-
-            // 判断是否来自中国
-            if ($record->country->isoCode === 'CN') {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (GeoIp2\Exception\AddressNotFoundException $e) {
-            // 处理IP地址未找到的情况
-            return false;
-        } catch (GeoIp2\Exception\GeoIp2Exception $e) {
-            // 处理其他异常
-            return false;
-        }
-    }
-
 
 }
