@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 class TrafficFetchJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
 //    protected $u;
 //    protected $d;
 //    protected $userId;
@@ -35,7 +36,7 @@ class TrafficFetchJob implements ShouldQueue
 //        $this->u = $u;
 //        $this->d = $d;
 //        $this->userId = $userId;
-        $this->data =$data;
+        $this->data = $data;
         $this->server = $server;
         $this->protocol = $protocol;
     }
@@ -52,7 +53,7 @@ class TrafficFetchJob implements ShouldQueue
         while ($attempt < $maxAttempts) {
             try {
                 DB::beginTransaction();
-                foreach(array_keys($this->data) as $userId){
+                foreach (array_keys($this->data) as $userId) {
                     $user = User::lockForUpdate()->find($userId);
                     if (!$user) continue;
 
@@ -62,7 +63,7 @@ class TrafficFetchJob implements ShouldQueue
                     if (!$user->save()) {
                         info("流量更新失败\n未记录用户ID:{$userId}\n未记录上行:{$user->u}\n未记录下行:{$user->d}");
                     }
-            }
+                }
                 DB::commit();
                 return;
             } catch (\Exception $e) {
@@ -74,7 +75,8 @@ class TrafficFetchJob implements ShouldQueue
                         continue;
                     }
                 }
-                abort(500, '用户流量更新失败'. $e->getMessage());
+                abort(500, '用户流量更新失败' . $e->getMessage());
+            }
         }
     }
 }
