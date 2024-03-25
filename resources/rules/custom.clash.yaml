@@ -114,6 +114,7 @@ proxy-groups:
     - { name: 🌎谷歌系, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🤖OpenAI, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🤖Gemini, type: select, proxies: [自动选择, 故障转移]}
+    - { name: 🤖Claude, type: select, proxies: [自动选择, 故障转移]}
     - { name: 😻动画疯, type: select, proxies: [/TW/,故障转移]}
     - { name: 🎴Instagram, type: select, proxies: [自动选择, 故障转移]}
     - { name: ✈️Telegram, type: select, proxies: [自动选择, 故障转移]}
