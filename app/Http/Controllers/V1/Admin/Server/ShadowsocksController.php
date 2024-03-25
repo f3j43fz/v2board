@@ -24,7 +24,7 @@ class ShadowsocksController extends Controller
             } catch (\Exception $e) {
                 abort(500, '保存失败');
             }
-            if(!$server->parent_id === null) $this->notify($server->name);
+            if($server->parent_id != null) $this->notify($server->name);
             return response([
                 'data' => true
             ]);
@@ -68,7 +68,7 @@ class ShadowsocksController extends Controller
         } catch (\Exception $e) {
             abort(500, '保存失败');
         }
-        if(!$server->parent_id === null) $this->notify($server->name);
+        if($server->parent_id != null) $this->notify($server->name);
         return response([
             'data' => true
         ]);
