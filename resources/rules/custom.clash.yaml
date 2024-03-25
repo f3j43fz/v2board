@@ -113,6 +113,7 @@ proxy-groups:
     - { name: $app_name, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🌎谷歌系, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🤖OpenAI, type: select, proxies: [自动选择, 故障转移]}
+    - { name: 🤖Gemini, type: select, proxies: [自动选择, 故障转移]}
     - { name: 😻动画疯, type: select, proxies: [/TW/,故障转移]}
     - { name: 🎴Instagram, type: select, proxies: [自动选择, 故障转移]}
     - { name: ✈️Telegram, type: select, proxies: [自动选择, 故障转移]}
@@ -249,6 +250,13 @@ rule-providers:
     behavior: domain
     url: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/google.txt"
     path: ./ruleset/google.yaml
+    interval: 86400
+
+  gemini:
+    type: http
+    behavior: classical
+    url: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml"
+    path: ./ruleset/gemini.yaml
     interval: 86400
 
 rules:
@@ -670,6 +678,8 @@ rules:
     - 'RULE-SET,icloud,DIRECT'
     #apple
     - 'RULE-SET,apple,DIRECT'
+    # Gemini
+    - 'RULE-SET,gemini,🤖Gemini'
     #Youtube
     - 'RULE-SET,YouTube,🌎谷歌系'
     #Google 可直连服务
