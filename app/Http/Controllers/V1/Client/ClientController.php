@@ -250,6 +250,8 @@ class ClientController extends Controller
                 $translatedISP = "【联通】";
             } elseif (stripos($isp, 'Telecom') !== false) {
                 $translatedISP = "【电信】";
+            } elseif (stripos($isp, 'CHINANET') !== false) {
+                $translatedISP = "【电信】";
             } elseif (stripos($isp, 'Mobile') !== false) {
                 $translatedISP = "【移动】";
             } elseif (stripos($isp, 'CERNET2') !== false) {
