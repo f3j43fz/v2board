@@ -786,10 +786,16 @@
                 }), t.push({
                     title: "Stash",
                     href: "stash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
-                })), Object(u["k"])() && t.push({
-                    title: "ClashX",
+                })), Object(u["k"])() && (t.push({
+                    title: "Clash For Windows",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
-                }), Object(u["n"])() && (t.push({
+                }), t.push({
+                    title: "Clash Nyanpasu",
+                    href: "clash-nyanpasu://subscribe-remote-profile?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
+                }), t.push({
+                    title: "Hiddify",
+                    href: "hiddify://import/" + e + "&flag=hiddify#" + window.settings.title
+                })), Object(u["n"])() && (t.push({
                     title: "Clash For Windows",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 }), t.push({
