@@ -102,7 +102,6 @@ class TicketController extends Controller
         ]);
     }
 
-
     public function reply(Request $request)
     {
         if (empty($request->input('id'))) {
