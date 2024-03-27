@@ -797,7 +797,7 @@
                     href: "clash-nyanpasu://subscribe-remote-profile?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
                 }), t.push({
                     title: "Hiddify",
-                    href: "hiddify://import/" + encodeURIComponent(e) + "%26flag%3Dhiddify#" + window.settings.title
+                    href: "hiddify://import/" + e.toString() + "%26flag%3Dhiddify#" + window.settings.title
                 })), Object(u["g"])() && (t.push({
                     title: "Clash For Android",
                     href: "clash://install-config?url=" + encodeURIComponent(e) + "&name=" + window.settings.title
@@ -812,7 +812,7 @@
                     href: "sing-box://import-remote-profile?url=" + encodeURIComponent(e) + "%26flag%3Dsing#" + window.settings.title
                 }), t.push({
                     title: "Hiddify",
-                    href: "hiddify://import/" + encodeURIComponent(e) + "%26flag%3Dhiddify#" + window.settings.title
+                    href: "hiddify://import/" + e.toString() + "%26flag%3Dhiddify#" + window.settings.title
                 })), c.a.createElement("div", {
                     className: v.a.oneClickSubscribe,
                     ref: "subscribeBox"
