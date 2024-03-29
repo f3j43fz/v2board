@@ -59,7 +59,7 @@ class RankUserCommission extends Command
         $maxUserIdLength = max(array_map('strlen', $users->pluck('id')->toArray()));
 
         foreach ($users as $user) {
-            $userId = "用户 #" . "`" . str_pad($user->id, $maxUserIdLength, ' ', STR_PAD_RIGHT). "`";
+            $userId = "用户 #" . str_pad($user->id, $maxUserIdLength, ' ', STR_PAD_RIGHT);
             $spaces = str_repeat(' ', $maxUserIdLength - strlen($user->id) + 1); // Calculate the number of spaces needed
             $commissionFormatted = number_format($user->commission_balance/100, 2); // Format commission balance with 2 decimal places
             $text .= "{$userId}{$spaces}， 佣金：" . $commissionFormatted . " 元\n";
