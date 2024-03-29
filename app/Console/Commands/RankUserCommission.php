@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Services\TelegramService;
+use Illuminate\Console\Command;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
+class RankUserCommission extends Command
+{
+    protected $builder;
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'customFunction:gerUserCommission';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = '获取用户佣金排行';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        ini_set('memory_limit', -1);
+        $users = User::where('is_admin', '!=', 1)
+            ->orderBy('commission_balance', 'desc')
+            ->take(10)
+            ->get();
+
+        $this->notify($users);
+    }
+
+    private function notify($users)
+    {
+        $telegramService = new TelegramService();
+        $chatID = config('v2board.telegram_group_id');
+
+        $text = "当前佣金排行榜：\n";
+
+        foreach ($users as $key => $user) {
+            $text .= "用户 #" . ($key + 1) . "， 佣金：" . $user->commission_balance . " 元\n";
+        }
+
+        $telegramService->sendMessage($chatID, $text, 'markdown');
+    }
+
+}
