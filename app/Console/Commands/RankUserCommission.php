@@ -60,10 +60,12 @@ class RankUserCommission extends Command
 
         foreach ($users as $user) {
             $userId = "用户 #" . str_pad($user->id, $maxUserIdLength, ' ', STR_PAD_RIGHT);
-            $text .= "{$userId}， 佣金：" . $user->commission_balance/100 . " 元\n";
+            $spaces = str_repeat(' ', $maxUserIdLength - strlen($user->id) + 1); // Calculate the number of spaces needed
+            $text .= "{$userId}{$spaces}， 佣金：" . $user->commission_balance/100 . " 元\n";
         }
 
         $telegramService->sendMessage($chatID, $text, 'markdown');
     }
+
 
 }
