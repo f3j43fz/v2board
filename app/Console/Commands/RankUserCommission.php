@@ -54,9 +54,7 @@ class RankUserCommission extends Command
     {
         $telegramService = new TelegramService();
         $chatID = config('v2board.telegram_group_id');
-
-        $date = now()->format('Y年m月d日');
-        $text = "$date\n\n佣金排行榜：\n";
+        $text = "\n\n🪘今日佣金排行榜：\n\n";
 
         foreach ($users as $user) {
             $text .= "用户 #" . $user->id . "， 佣金：" . $user->commission_balance/100 . " 元\n";
