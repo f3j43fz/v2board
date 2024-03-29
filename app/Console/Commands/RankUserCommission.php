@@ -55,10 +55,10 @@ class RankUserCommission extends Command
         $telegramService = new TelegramService();
         $chatID = config('v2board.telegram_group_id');
 
-        $text = "当前佣金排行榜：\n";
+        $text = "佣金排行榜：\n";
 
-        foreach ($users as $key => $user) {
-            $text .= "用户 #" . ($key + 1) . "， 佣金：" . $user->commission_balance . " 元\n";
+        foreach ($users as $user) {
+            $text .= "用户 #" . $user->id . "， 佣金：" . $user->commission_balance/100 . " 元\n";
         }
 
         $telegramService->sendMessage($chatID, $text, 'markdown');
