@@ -61,7 +61,8 @@ class RankUserCommission extends Command
         foreach ($users as $user) {
             $userId = "用户 #" . str_pad($user->id, $maxUserIdLength, ' ', STR_PAD_RIGHT);
             $spaces = str_repeat(' ', $maxUserIdLength - strlen($user->id) + 1); // Calculate the number of spaces needed
-            $text .= "{$userId}{$spaces}， 佣金：" . $user->commission_balance/100 . " 元\n";
+            $commissionFormatted = number_format($user->commission_balance/100, 2); // Format commission balance with 2 decimal places
+            $text .= "{$userId}{$spaces}， 佣金：" . $commissionFormatted . " 元\n";
         }
 
         $telegramService->sendMessage($chatID, $text, 'markdown');
