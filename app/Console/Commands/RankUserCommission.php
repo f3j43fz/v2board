@@ -44,7 +44,7 @@ class RankUserCommission extends Command
         ini_set('memory_limit', -1);
         $users = User::where('is_admin', '!=', 1)
             ->orderBy('commission_balance', 'desc')
-            ->take(10)
+            ->take(20)
             ->get();
 
         $this->notify($users);
@@ -55,7 +55,8 @@ class RankUserCommission extends Command
         $telegramService = new TelegramService();
         $chatID = config('v2board.telegram_group_id');
 
-        $text = "佣金排行榜：\n";
+        $date = now()->format('Y年m月d日');
+        $text = "$date\n\n佣金排行榜：\n";
 
         foreach ($users as $user) {
             $text .= "用户 #" . $user->id . "， 佣金：" . $user->commission_balance/100 . " 元\n";
