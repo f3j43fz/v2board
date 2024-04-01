@@ -4454,7 +4454,7 @@
                     type: "text",
                     className: "form-control",
                     placeholder: "\u53ea\u9700\u8f93\u5165\u57df\u540d\u5373\u53ef\uff0c\u5982\u0020\u0061\u0062\u0063\u002e\u0063\u006f\u006d\u0020\u3002\u591a\u4e2a\u57df\u540d\u7528\u0020\u002c\u0020\u5206\u9694",
-                    defaultValue: t.app_url,
+                    defaultValue: t.admin_safe_domain,
                     onChange: e => this.set("site", "admin_safe_domain", e.target.value)
                 })), f.a.createElement(m, {
                     title: "\u5f3a\u5236HTTPS",
