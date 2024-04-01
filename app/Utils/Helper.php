@@ -115,7 +115,6 @@ class Helper
         if ($subscribeUrl) return $subscribeUrl . $path;
         return url($path);
     }
-
     public static function randomPort($range) {
         $portRange = explode('-', $range);
         return rand($portRange[0], $portRange[1]);

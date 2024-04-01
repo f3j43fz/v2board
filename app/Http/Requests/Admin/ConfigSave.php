@@ -28,6 +28,7 @@ class ConfigSave extends FormRequest
         'app_name' => '',
         'app_description' => '',
         'app_url' => 'nullable|url',
+        'admin_safe_domain' => 'nullable',
         'subscribe_url' => 'nullable',
         'try_out_enable' => 'in:0,1',
         'try_out_plan_id' => 'integer',

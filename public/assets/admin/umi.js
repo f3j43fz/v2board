@@ -4448,6 +4448,15 @@
                     defaultValue: t.app_url,
                     onChange: e => this.set("site", "app_url", e.target.value)
                 })), f.a.createElement(m, {
+                    title: "\u7ba1\u7406\u5458\u5730\u5740",
+                    description: "\u4ec5\u5141\u8bb8\u901a\u8fc7\u4ee5\u4e0b\u5730\u5740\u8bbf\u95ee\u7ba1\u7406\u5458\u540e\u53f0"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "\u53ea\u9700\u8f93\u5165\u57df\u540d\u5373\u53ef\uff0c\u5982\u0020\u0061\u0062\u0063\u002e\u0063\u006f\u006d\u0020\u3002\u591a\u4e2a\u57df\u540d\u7528\u0020\u002c\u0020\u5206\u9694",
+                    defaultValue: t.app_url,
+                    onChange: e => this.set("site", "admin_safe_domain", e.target.value)
+                })), f.a.createElement(m, {
                     title: "\u5f3a\u5236HTTPS",
                     description: "\u5f53\u7ad9\u70b9\u6ca1\u6709\u4f7f\u7528HTTPS\uff0cCDN\u6216\u53cd\u4ee3\u5f00\u542f\u5f3a\u5236HTTPS\u65f6\u9700\u8981\u5f00\u542f\u3002"
                 }, f.a.createElement(l["a"], {
