@@ -4453,7 +4453,7 @@
                 }, f.a.createElement("input", {
                     type: "text",
                     className: "form-control",
-                    placeholder: "\u53ea\u9700\u8f93\u5165\u57df\u540d\u5373\u53ef\uff0c\u5982\u0020\u0061\u0062\u0063\u002e\u0063\u006f\u006d\u0020\u3002\u591a\u4e2a\u57df\u540d\u7528\u0020\u002c\u0020\u5206\u9694",
+                    placeholder: "\u53ea\u9700\u8f93\u5165\u57df\u540d\u5373\u53ef\uff0c\u5982\u0020\u0061\u0062\u0063\u002e\u0063\u006f\u006d\u0020\u3002\u591a\u4e2a\u57df\u540d\u7528\u0020\u002c\u0020\u5206\u9694\u3002\u7559\u7a7a\u5219\u4e0d\u68c0\u67e5\u767d\u540d\u5355\u3002",
                     defaultValue: t.admin_safe_domain,
                     onChange: e => this.set("site", "admin_safe_domain", e.target.value)
                 })), f.a.createElement(m, {
