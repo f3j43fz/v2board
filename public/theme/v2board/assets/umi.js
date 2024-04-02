@@ -15191,7 +15191,7 @@
                     return !this.state.tabs ||
                         (1 === this.state.tabs && (e.month_price || e.quarter_price || e.half_year_price || e.year_price || e.two_year_price || e.three_year_price)) ||
                         (2 === this.state.tabs && e.onetime_price) ||
-                        (3 === this.state.tabs && e.setup_fee);
+                        (3 === this.state.tabs && e.setup_price);
                 }).map(e => {
                     var n = this.getUnitPriceTag(e),
                         r = Object(d["c"])(e.content),
@@ -45229,7 +45229,7 @@
                 reset_price: () => Object(r["formatMessage"])({
                     id: "\u6d41\u91cf\u91cd\u7f6e\u5305"
                 }),
-                setup_fee: () => Object(r["formatMessage"])({
+                setup_price: () => Object(r["formatMessage"])({
                     id: "\u8bbe\u7f6e\u8d39"
                 })
             },

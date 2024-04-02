@@ -64141,7 +64141,7 @@
                         three_year_price: null,
                         onetime_price: null,
                         reset_price: null,
-                        setup_fee: null,
+                        setup_price: null,
                         daily_unit_price: null,
                         transfer_unit_price: null
                     }
@@ -64316,8 +64316,8 @@
                     for: "example-text-input-alt"
                 }, "\u8bbe\u7f6e\u8d39"), m.a.createElement(C["a"], {
                     addonAfter: e.currency_symbol,
-                    value: null !== this.state.record.setup_fee ? this.state.record.setup_fee : void 0,
-                    onChange: e => this.priceOnChange("setup_fee", e.target.value)
+                    value: null !== this.state.record.setup_price ? this.state.record.setup_price : void 0,
+                    onChange: e => this.priceOnChange("setup_price", e.target.value)
                 })))), m.a.createElement(k["a"], null), m.a.createElement("div", {
                     className: "form-group"
                 }, m.a.createElement("label", {
@@ -64669,8 +64669,8 @@
                         }
                     }, {
                         title: "\u8bbe\u7f6e\u8d39",
-                        dataIndex: "setup_fee",
-                        key: "setup_fee",
+                        dataIndex: "setup_price",
+                        key: "setup_price",
                         render: e => {
                             return null !== e ? e.toFixed(2) : "-"
                         }
@@ -79413,7 +79413,7 @@
                 three_year_price: "\u4e09\u5e74\u4ed8",
                 onetime_price: "\u4e00\u6b21\u6027",
                 reset_price: "\u6d41\u91cf\u91cd\u7f6e\u5305",
-                setup_fee: "\u8bbe\u7f6e\u8d39",
+                setup_price: "\u8bbe\u7f6e\u8d39",
                 daily_unit_price: "\u5468\u671f\u4ef7\u503c",
                 transfer_unit_price: "\u6d41\u91cf\u4ef7\u503c"
             },
