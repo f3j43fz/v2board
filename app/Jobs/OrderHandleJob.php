@@ -40,7 +40,7 @@ class OrderHandleJob implements ShouldQueue
         if (!$this->order) return;
         $orderService = new OrderService($this->order);
         if($this->order->plan_id == 100){
-            // 购买套餐的逻辑
+            // id等于100，为充值的逻辑
             switch ($this->order->status) {
                 // cancel
                 case 0:
@@ -53,7 +53,7 @@ class OrderHandleJob implements ShouldQueue
                     break;
             }
         } else {
-            // 充值的逻辑
+            // id不等于100，则为购买套餐的逻辑
             switch ($this->order->status) {
                 // cancel
                 case 0:
@@ -62,7 +62,11 @@ class OrderHandleJob implements ShouldQueue
                     }
                     break;
                 case 1:
-                    $orderService->open();
+                    if ($this->order->period == "setup_price"){
+                        $orderService->openPayAsYouGo();
+                    } else {
+                        $orderService->open();
+                    }
                     break;
             }
         }

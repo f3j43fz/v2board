@@ -57,12 +57,30 @@ class TrafficFetchJob implements ShouldQueue
                     $user = User::lockForUpdate()->find($userId);
                     if (!$user) continue;
 
+                    // 获取用户的套餐 ID
+                    $planId = $user->plan_id;
+                    // 利用 Plan 模型查找对应的套餐
+                    $plan = Plan::find($planId);
+
+                    // 更新用户的时间戳和流量数据
                     $user->t = time();
-                    $user->u = $user->u + ($this->data[$userId][0] * $this->server['rate']);
-                    $user->d = $user->d + ($this->data[$userId][1] * $this->server['rate']);
+                    $user->u += $this->data[$userId][0] * $this->server['rate'];
+                    $user->d += $this->data[$userId][1] * $this->server['rate'];
+
+                    // 如果套餐的 setup_price 字段不为空，则执行额外的扣费逻辑
+                    if (!is_null($plan->setup_price)) {
+                        $totalData = $this->data[$userId][0] + $this->data[$userId][1];
+                        $rate = $this->server['rate'];
+                        $cost = $totalData * $rate / (1024 * 1024 * 1024) * ($plan->transfer_unit_price / 100);
+                        $user->balance -= $cost;
+                    }
+
+                    // 保存用户数据，如果失败则记录日志
                     if (!$user->save()) {
                         info("流量更新失败\n未记录用户ID:{$userId}\n未记录上行:{$user->u}\n未记录下行:{$user->d}");
                     }
+
+
                 }
                 DB::commit();
                 return;

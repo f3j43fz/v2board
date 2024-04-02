@@ -127,6 +127,36 @@ class OrderService
         ////调用邮件提醒
     }
 
+    public function openPayAsYouGo()
+    {
+        $order = $this->order;
+        $this->user = User::find($order->user_id);
+        $plan = Plan::find($order->plan_id);
+
+        DB::beginTransaction();
+
+        $this->buyByPayAsYouGo($plan, $this->user);
+        $this->setSpeedLimit($plan->speed_limit);
+
+        if (!$this->user->save()) {
+            DB::rollBack();
+            abort(500, '开通失败');
+        }
+        $order->status = 3;
+        if (!$order->save()) {
+            DB::rollBack();
+            abort(500, '开通失败');
+        }
+
+        DB::commit();
+
+        ////调用邮件提醒
+        $mailService = new MailService();
+        $mailService->remindUpdateSub($this->user);//必须是这个参数
+        ////调用邮件提醒
+
+    }
+
 
     public function setOrderType(User $user)
     {
@@ -311,6 +341,14 @@ class OrderService
         $this->user->expired_at = NULL;
     }
 
+    private function buyByPayAsYouGo(Plan $plan, User $user)
+    {
+        $this->buyByResetTraffic();
+        $this->user->transfer_enable = $user->balance / $plan->transfer_unit_price * 1024 * 1024 * 1024;
+        $this->user->plan_id = $plan->id;
+        $this->user->group_id = $plan->group_id;
+        $this->user->expired_at = NULL;
+    }
 
     private function getTime($str, $timestamp)
     {
