@@ -64668,27 +64668,6 @@
                             return null !== e ? e.toFixed(2) : "-"
                         }
                     }, {
-                        title: "\u8bbe\u7f6e\u8d39",
-                        dataIndex: "setup_fee",
-                        key: "setup_fee",
-                        render: e => {
-                            return null !== e ? e.toFixed(2) : "-"
-                        }
-                    }, {
-                        title: "\u5468\u671f\u4ef7\u503c",
-                        dataIndex: "daily_unit_price",
-                        key: "daily_unit_price",
-                        render: e => {
-                            return null !== e ? e.toFixed(2) : "-"
-                        }
-                    }, {
-                        title: "\u6d41\u91cf\u4ef7\u503c",
-                        dataIndex: "transfer_unit_price",
-                        key: "transfer_unit_price",
-                        render: e => {
-                            return null !== e ? e.toFixed(2) : "-"
-                        }
-                    }, {
                         title: "\u6743\u9650\u7ec4",
                         dataIndex: "group_id",
                         key: "group_id",
