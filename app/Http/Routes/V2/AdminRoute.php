@@ -9,7 +9,7 @@ class AdminRoute
     {
         $router->group([
             'prefix' => config('v2board.secure_path', config('v2board.frontend_admin_path', hash('crc32b', config('app.key')))),
-            'middleware' => ['admin', 'log'],
+            'middleware' => ['admin', 'log', 'check.admin.domain'],
         ], function ($router) {
             // Stat
             $router->get ('/stat/override', 'V2\\Admin\\StatController@override');
