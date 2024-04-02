@@ -15179,7 +15179,7 @@
                         tabs: 3
                     })
                 }, Object(p["formatMessage"])({
-                    id: "pay as you go"
+                    id: "Pay as you go"
                 })))), e.length <= 0 ? a.a.createElement("div", {
                     className: "spinner-grow text-primary",
                     role: "status"
