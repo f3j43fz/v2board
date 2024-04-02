@@ -45228,6 +45228,9 @@
                 }),
                 reset_price: () => Object(r["formatMessage"])({
                     id: "\u6d41\u91cf\u91cd\u7f6e\u5305"
+                }),
+                setup_fee: () => Object(r["formatMessage"])({
+                    id: "\u8bbe\u7f6e\u8d39"
                 })
             },
             tutorialCategoryText: {
