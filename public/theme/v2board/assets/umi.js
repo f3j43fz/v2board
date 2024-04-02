@@ -15173,6 +15173,13 @@
                     })
                 }, Object(p["formatMessage"])({
                     id: "\u6309\u6d41\u91cf"
+                })), a.a.createElement("span", {
+                    className: 3 === this.state.tabs && "active bg-primary",
+                    onClick: () => this.setState({
+                        tabs: 3
+                    })
+                }, Object(p["formatMessage"])({
+                    id: "pay as you go"
                 })))), e.length <= 0 ? a.a.createElement("div", {
                     className: "spinner-grow text-primary",
                     role: "status"
@@ -15181,7 +15188,10 @@
                 }, "Loading...")) : a.a.createElement("div", {
                     className: "row"
                 }, e.filter(e => {
-                    return !this.state.tabs || (!(1 !== this.state.tabs || !(e.month_price || e.quarter_price || e.half_year_price || e.year_price || e.two_year_price || e.three_year_price)) || (!(2 !== this.state.tabs || !e.onetime_price) || void 0))
+                    return !this.state.tabs ||
+                        (1 === this.state.tabs && (e.month_price || e.quarter_price || e.half_year_price || e.year_price || e.two_year_price || e.three_year_price)) ||
+                        (2 === this.state.tabs && e.onetime_price) ||
+                        (3 === this.state.tabs && e.setup_fee);
                 }).map(e => {
                     var n = this.getUnitPriceTag(e),
                         r = Object(d["c"])(e.content),
