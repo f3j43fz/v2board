@@ -64666,6 +64666,13 @@
                             return null !== e ? e.toFixed(2) : "-"
                         }
                     }, {
+                        title: "\u8bbe\u7f6e\u8d39",
+                        dataIndex: "setup_fee",
+                        key: "setup_fee",
+                        render: e => {
+                            return null !== e ? e.toFixed(2) : "-"
+                        }
+                    }, {
                         title: "\u6743\u9650\u7ec4",
                         dataIndex: "group_id",
                         key: "group_id",
@@ -64706,13 +64713,6 @@
                             }, "\u64cd\u4f5c ", m.a.createElement(h["a"], {
                                 type: "caret-down"
                             }))))
-                        }
-                    }, {
-                        title: "\u8bbe\u7f6e\u8d39",
-                        dataIndex: "setup_fee",
-                        key: "setup_fee",
-                        render: e => {
-                            return null !== e ? e.toFixed(2) : "-"
                         }
                     }],
                     p = this;
@@ -79396,7 +79396,7 @@
                 two_year_price: "\u4e24\u5e74\u4ed8",
                 three_year_price: "\u4e09\u5e74\u4ed8",
                 onetime_price: "\u4e00\u6b21\u6027",
-                reset_price: "\u6d41\u91cf\u91cd\u7f6e\u5305"
+                reset_price: "\u6d41\u91cf\u91cd\u7f6e\u5305",
                 setup_fee: "\u8bbe\u7f6e\u8d39"
             },
             tutorialCategoryText: {
