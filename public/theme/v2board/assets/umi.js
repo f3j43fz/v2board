@@ -15179,7 +15179,7 @@
                         tabs: 3
                     })
                 }, Object(p["formatMessage"])({
-                    id: "Pay as you go"
+                    id: "\u968f\u7528\u968f\u4ed8"
                 })))), e.length <= 0 ? a.a.createElement("div", {
                     className: "spinner-grow text-primary",
                     role: "status"
