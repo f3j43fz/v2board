@@ -64140,7 +64140,8 @@
                         two_year_price: null,
                         three_year_price: null,
                         onetime_price: null,
-                        reset_price: null
+                        reset_price: null,
+                        setup_fee: null
                     }
                 }, this.show = (() => {
                     this.setState({
@@ -64661,6 +64662,13 @@
                         title: "\u91cd\u7f6e\u5305",
                         dataIndex: "reset_price",
                         key: "reset_price",
+                        render: e => {
+                            return null !== e ? e.toFixed(2) : "-"
+                        }
+                    }, {
+                        title: "\u8bbe\u7f6e\u8d39",
+                        dataIndex: "setup_fee",
+                        key: "setup_fee",
                         render: e => {
                             return null !== e ? e.toFixed(2) : "-"
                         }
@@ -79389,6 +79397,7 @@
                 three_year_price: "\u4e09\u5e74\u4ed8",
                 onetime_price: "\u4e00\u6b21\u6027",
                 reset_price: "\u6d41\u91cf\u91cd\u7f6e\u5305"
+                setup_fee: "\u8bbe\u7f6e\u8d39"
             },
             tutorialCategoryText: {
                 1: "Windows",
