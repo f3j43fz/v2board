@@ -64141,7 +64141,9 @@
                         three_year_price: null,
                         onetime_price: null,
                         reset_price: null,
-                        setup_fee: null
+                        setup_fee: null,
+                        daily_unit_price: null,
+                        transfer_unit_price: null
                     }
                 }, this.show = (() => {
                     this.setState({
@@ -64669,6 +64671,20 @@
                         title: "\u8bbe\u7f6e\u8d39",
                         dataIndex: "setup_fee",
                         key: "setup_fee",
+                        render: e => {
+                            return null !== e ? e.toFixed(2) : "-"
+                        }
+                    }, {
+                        title: "\u5468\u671f\u4ef7\u503c",
+                        dataIndex: "daily_unit_price",
+                        key: "daily_unit_price",
+                        render: e => {
+                            return null !== e ? e.toFixed(2) : "-"
+                        }
+                    }, {
+                        title: "\u6d41\u91cf\u4ef7\u503c",
+                        dataIndex: "transfer_unit_price",
+                        key: "transfer_unit_price",
                         render: e => {
                             return null !== e ? e.toFixed(2) : "-"
                         }
@@ -79397,7 +79413,9 @@
                 three_year_price: "\u4e09\u5e74\u4ed8",
                 onetime_price: "\u4e00\u6b21\u6027",
                 reset_price: "\u6d41\u91cf\u91cd\u7f6e\u5305",
-                setup_fee: "\u8bbe\u7f6e\u8d39"
+                setup_fee: "\u8bbe\u7f6e\u8d39",
+                daily_unit_price: "\u5468\u671f\u4ef7\u503c",
+                transfer_unit_price: "\u6d41\u91cf\u4ef7\u503c"
             },
             tutorialCategoryText: {
                 1: "Windows",
