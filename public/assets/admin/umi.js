@@ -64305,6 +64305,16 @@
                     addonAfter: e.currency_symbol,
                     value: null !== this.state.record.reset_price ? this.state.record.reset_price : void 0,
                     onChange: e => this.priceOnChange("reset_price", e.target.value)
+                }))), m.a.createElement(S["a"], {
+                    md: 12
+                }, m.a.createElement("div", {
+                    className: "form-group"
+                }, m.a.createElement("label", {
+                    for: "example-text-input-alt"
+                }, "\u8bbe\u7f6e\u8d39"), m.a.createElement(C["a"], {
+                    addonAfter: e.currency_symbol,
+                    value: null !== this.state.record.setup_fee ? this.state.record.setup_fee : void 0,
+                    onChange: e => this.priceOnChange("setup_fee", e.target.value)
                 })))), m.a.createElement(k["a"], null), m.a.createElement("div", {
                     className: "form-group"
                 }, m.a.createElement("label", {
