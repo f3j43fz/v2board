@@ -64666,13 +64666,6 @@
                             return null !== e ? e.toFixed(2) : "-"
                         }
                     }, {
-                        title: "\u8bbe\u7f6e\u8d39",
-                        dataIndex: "setup_fee",
-                        key: "setup_fee",
-                        render: e => {
-                            return null !== e ? e.toFixed(2) : "-"
-                        }
-                    }, {
                         title: "\u6743\u9650\u7ec4",
                         dataIndex: "group_id",
                         key: "group_id",
@@ -64713,6 +64706,13 @@
                             }, "\u64cd\u4f5c ", m.a.createElement(h["a"], {
                                 type: "caret-down"
                             }))))
+                        }
+                    }, {
+                        title: "\u8bbe\u7f6e\u8d39",
+                        dataIndex: "setup_fee",
+                        key: "setup_fee",
+                        render: e => {
+                            return null !== e ? e.toFixed(2) : "-"
                         }
                     }],
                     p = this;
