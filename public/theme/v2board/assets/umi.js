@@ -27018,7 +27018,7 @@
                 }, l.a.createElement("span", {
                     className: "font-w700"
                 }, Object(b["formatMessage"])({
-                    id: "\u5df2\u7528 {used} / \u603b\u8ba1 {total}"
+                    id: "\u5df2\u7528 {used} / \u53ef\u7528 {total}"
                 }, {
                     used: Object(p["b"])(d.u + d.d),
                     total: Object(p["b"])(d.transfer_enable)
