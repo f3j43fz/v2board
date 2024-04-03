@@ -52,6 +52,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('customFunction:tongjiMoney')->dailyAt('0:11'); //推送前一天各支付商的订单情况
         $schedule->command('customFunction:kick 7')->dailyAt('23:45'); //移除过期超过 7 天的用户
         $schedule->command('customFunction:gerUserCommission')->dailyAt('0:05'); //群通知：统计佣金
+        $schedule->command('customFunction:sendTrafficStatistics')->dailyAt('0:11'); //推送流量排行
 
         //delete user token request more than 3 days ago
         $schedule->call(function () {
