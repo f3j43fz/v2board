@@ -71,9 +71,30 @@ class TrafficFetchJob implements ShouldQueue
                     // 如果套餐的 setup_price 字段不为空，则执行额外的扣费逻辑
                     if (!is_null($plan->setup_price)) {
                         $totalData = $this->data[$userId][0] + $this->data[$userId][1];
-                        $rate = $this->server['rate'];
-                        $cost = $totalData * $rate / (1024 * 1024 * 1024) * ($plan->transfer_unit_price / 100);
-                        $user->balance -= $cost * 100;
+                        $rate = floatval($this->server['rate']);
+                        $transferUnitPriceInCents = $plan->transfer_unit_price; // 每GB的流量单价，单位为分
+
+                        // 计算这一分钟的费用，以分为单位
+                        $costInCents = ($totalData / (1024.0 * 1024.0 * 1024.0)) * $rate * $transferUnitPriceInCents;
+
+                        // 将这一分钟的费用累积到未结算费用中，确保未结算费用是以分为单位的整数
+                        $user->unbilled_charges += (int)round($costInCents * 100); // 将费用转换为整数（分）
+
+                        // 检查未结算费用是否至少有1分
+                        if ($user->unbilled_charges >= 100) { // 因为现在是以分为单位，所以检查是否至少有100分（即1元）
+                            // 从余额中扣除整数部分的未结算费用
+                            $deductibleCharges = floor($user->unbilled_charges / 100); // 将分转换回元
+                            $user->balance -= $deductibleCharges * 100; // 从余额中扣除费用，余额也是以分为单位
+
+                            // 更新未结算费用，只保留未扣除的分
+                            $user->unbilled_charges %= 100; // 保留未扣除的分
+                        }
+
+                        // 确保余额不会变成负数
+                        if ($user->balance < 0) {
+                            $user->balance = 0;
+                        }
+
                     }
 
                     // 保存用户数据，如果失败则记录日志
