@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Plan;
 use App\Models\User;
 use App\Services\MailService;
 use Illuminate\Bus\Queueable;
