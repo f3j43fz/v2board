@@ -254,7 +254,7 @@ class OrderService
         $realTimeLeftDays = intval($timeLeftDays / 31 ) * 31;
 
         $dailyUnitPrice = $plan['daily_unit_price'] / 100;
-        $order->surplus_amount = ($order->surplus_amount + ($realTimeLeftDays * $dailyUnitPrice)) * 100;
+        $order->surplus_amount = $order->surplus_amount + ($realTimeLeftDays * $dailyUnitPrice);
     }
 
     private function getSurplusValueByTransfer(User $user, Order $order, Plan $plan)
@@ -266,7 +266,7 @@ class OrderService
         if ($transferLeft <= 0) return;
 
         $transferUnitPrice = $plan['transfer_unit_price'] / 100;
-        $order->surplus_amount = $order->surplus_amount + $transferLeft * $transferUnitPrice * 100;
+        $order->surplus_amount = ($order->surplus_amount + $transferLeft * $transferUnitPrice) * 100;
     }
 
     public function paid(string $callbackNo)
