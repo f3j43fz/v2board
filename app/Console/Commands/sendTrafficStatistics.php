@@ -46,14 +46,19 @@ class sendTrafficStatistics extends Command
         $telegramService->sendMessageWithAdmin("开始播报今日流量统计");
 
         // 获取今日流量消耗前20名的用户数据
-        // 本数值可自定义
+        // 20的数值可调
         $userTrafficRank = $this->getUserTodayRank(20);
 
-        // 格式化消息并发送
+        // 初始化消息字符串
+        $message = "今日流量消耗排行榜：\n";
+
+        // 格式化消息
         foreach ($userTrafficRank['data'] as $userTraffic) {
-            $message = "#" . $userTraffic['user_id'] . " 上传：" . round($userTraffic['u'] / 1073741824, 2) . " GB 下载：" . round($userTraffic['d'] / 1073741824, 2) . " GB";
-            $telegramService->sendMessageWithAdmin($message);
+            $message .= "#" . $userTraffic['user_id'] . " 上传：" . round($userTraffic['u'] / 1073741824, 2) . " GB 下载：" . round($userTraffic['d'] / 1073741824, 2) . " GB\n";
         }
+
+        // 发送汇总的消息
+        $telegramService->sendMessageWithAdmin($message);
 
         $telegramService->sendMessageWithAdmin("今日流量统计播报完毕");
     }
