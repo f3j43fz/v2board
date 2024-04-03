@@ -84,7 +84,7 @@ class TrafficFetchJob implements ShouldQueue
                         if ($user->unbilled_charges >= 100) { // 因为现在是以分为单位，所以检查是否至少有100分（即1元）
                             // 从余额中扣除整数部分的未结算费用
                             $deductibleCharges = floor($user->unbilled_charges / 100); // 将分转换回元
-                            $user->balance -= $deductibleCharges * 100; // 从余额中扣除费用，余额也是以分为单位
+                            $user->balance -= $deductibleCharges; // 从余额中扣除费用，余额也是以分为单位
 
                             // 更新未结算费用，只保留未扣除的分
                             $user->unbilled_charges %= 100; // 保留未扣除的分
