@@ -73,7 +73,7 @@ class TrafficFetchJob implements ShouldQueue
                         $totalData = $this->data[$userId][0] + $this->data[$userId][1];
                         $rate = $this->server['rate'];
                         $cost = $totalData * $rate / (1024 * 1024 * 1024) * ($plan->transfer_unit_price / 100);
-                        $user->balance -= $cost;
+                        $user->balance -= $cost * 100;
                     }
 
                     // 保存用户数据，如果失败则记录日志
