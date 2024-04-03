@@ -43,7 +43,7 @@ class sendTrafficStatistics extends Command
     {
         ini_set('memory_limit', -1);
         $telegramService = new TelegramService();
-        $telegramService->sendMessageWithAdmin("开始播报今日流量统计");
+        $this->notify("开始播报今日流量统计");
 
         // 获取今日流量消耗前20名的用户数据
         // 20的数值可调
@@ -58,9 +58,9 @@ class sendTrafficStatistics extends Command
         }
 
         // 发送汇总的消息
-        $telegramService->sendMessageWithAdmin($message);
+        $this->notify($message);
+        $this->notify("今日流量统计播报完毕");
 
-        $telegramService->sendMessageWithAdmin("今日流量统计播报完毕");
     }
 
     public function getUserTodayRank($limit)
@@ -103,5 +103,13 @@ class sendTrafficStatistics extends Command
         return [
             'data' => array_slice($data, 0, $limit)
         ];
+    }
+
+
+    private function notify($text){
+        $telegramService = new TelegramService();
+        // 修改成你的TG群组的ID
+        $chatID =config('v2board.telegram_group_id');
+        $telegramService->sendMessage($chatID, $text,'markdown');
     }
 }
