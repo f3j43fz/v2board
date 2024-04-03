@@ -16271,7 +16271,7 @@
                         color: "#646669"
                     }
                 }, Object(b["formatMessage"])({
-                    id: "\u603b\u8ba1"
+                    id: "\u53ef\u7528"
                 })), f.a.createElement("h1", {
                     className: "text-light mt-3 mb-3"
                 }, g.currency_symbol, " ", ((t.total_amount + (t.pre_handling_amount || 0)) / 100).toFixed(2), " ", g.currency), f.a.createElement("button", {
@@ -28849,7 +28849,7 @@
                         color: "#646669"
                     }
                 }, Object(m["formatMessage"])({
-                    id: "\u603b\u8ba1"
+                    id: "\u53ef\u7528"
                 })), f.a.createElement("h1", {
                     className: "text-light mt-3 mb-3"
                 }, d.currency_symbol, " ", this.getTotalAmount(), " ", d.currency), f.a.createElement("button", {
