@@ -93,6 +93,7 @@ class TrafficFetchJob implements ShouldQueue
                         // 确保余额不会变成负数
                         if ($user->balance < 0) {
                             $user->balance = 0;
+                            $user->transfer_enable = 0;
                         }
 
                     }

@@ -344,7 +344,7 @@ class OrderService
     private function buyByPayAsYouGo(Plan $plan, User $user)
     {
         $this->buyByResetTraffic();
-        $this->user->transfer_enable = $user->balance / $plan->transfer_unit_price * 1024 * 1024 * 1024;
+        $this->user->transfer_enable = round($user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
         $this->user->plan_id = $plan->id;
         $this->user->group_id = $plan->group_id;
         $this->user->expired_at = NULL;
