@@ -108,6 +108,14 @@ class OrderService
         $rechargeAmountGotten = ($rechargeAmount >= $discountThreshold)? $rechargeAmount * (1 + $discount) : $rechargeAmount;
         $this->user->balance = $this->user->balance + $rechargeAmountGotten;
 
+        //如果是 pay as you go 套餐的用户在余额用完后继续充值，那么：自动重置流量 + 重新分配可用流量
+        $plan = Plan::find($this->user->plan_id);
+        if(!$plan->setup_price == null && $this->user->transfer_enable == 0){
+            $this->user->u = 0;
+            $this->user->d = 0;
+            $this->user->transfer_enable = round($this->user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
+        }
+
         DB::beginTransaction();
         if (!$this->user->save()) {
             DB::rollBack();
