@@ -16271,7 +16271,7 @@
                         color: "#646669"
                     }
                 }, Object(b["formatMessage"])({
-                    id: "\u53ef\u7528"
+                    id: "\u603b\u8ba1"
                 })), f.a.createElement("h1", {
                     className: "text-light mt-3 mb-3"
                 }, g.currency_symbol, " ", ((t.total_amount + (t.pre_handling_amount || 0)) / 100).toFixed(2), " ", g.currency), f.a.createElement("button", {
@@ -27018,7 +27018,7 @@
                 }, l.a.createElement("span", {
                     className: "font-w700"
                 }, Object(b["formatMessage"])({
-                    id: "\u5df2\u7528 {used} / \u53ef\u7528 {total}"
+                    id: "\u5df2\u7528 {used} / \u603b\u8ba1 {total}"
                 }, {
                     used: Object(p["b"])(d.u + d.d),
                     total: Object(p["b"])(d.transfer_enable)
@@ -28849,7 +28849,7 @@
                         color: "#646669"
                     }
                 }, Object(m["formatMessage"])({
-                    id: "\u53ef\u7528"
+                    id: "\u603b\u8ba1"
                 })), f.a.createElement("h1", {
                     className: "text-light mt-3 mb-3"
                 }, d.currency_symbol, " ", this.getTotalAmount(), " ", d.currency), f.a.createElement("button", {
