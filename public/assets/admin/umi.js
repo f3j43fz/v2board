@@ -18552,6 +18552,20 @@
                     className: "form-group"
                 }, p.a.createElement("label", {
                     for: "example-text-input-alt"
+                }, "PAGO\u6298\u6263\u6bd4\u4f8b ", p.a.createElement(a["a"], {
+                    placement: "top",
+                    title: "\u8bbe\u7f6e\u540e\u8be5\u7528\u6237\u8d2d\u4e70\u3010\u968f\u7528\u968f\u4ed8\u3011\u8ba2\u9605\u5c06\u59cb\u7ec8\u4eab\u53d7\u8be5\u6298\u6263"
+                }, p.a.createElement(s["a"], {
+                    type: "question-circle"
+                }))), p.a.createElement(u["a"], {
+                    addonAfter: "%",
+                    defaultValue: t.discount,
+                    placeholder: "\u8bf7\u8f93\u5165PAGO\u6298\u6263\u6bd4\u4f8b",
+                    onChange: e => this.formChange("temporary_transfer_discount", e.target.value)
+                })), p.a.createElement("div", {
+                    className: "form-group"
+                }, p.a.createElement("label", {
+                    for: "example-text-input-alt"
                 }, "\u9650\u901f"), p.a.createElement(u["a"], {
                     addonAfter: "Mbps",
                     defaultValue: t.speed_limit,

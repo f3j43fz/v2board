@@ -72,7 +72,11 @@ class TrafficFetchJob implements ShouldQueue
                     if (!is_null($plan->setup_price)) {
                         $totalData = $this->data[$userId][0] + $this->data[$userId][1];
                         $rate = floatval($this->server['rate']);
-                        $transferUnitPriceInCents = $plan->transfer_unit_price; // 每GB的流量单价，单位为分
+                        // 每GB的流量单价，单位为分
+                        $transferUnitPriceInCents = !empty($user->temporary_transfer_discount)
+                            ? intval($plan->transfer_unit_price * $user->temporary_transfer_discount / 100)
+                            : $plan->transfer_unit_price;
+
 
                         // 计算这一分钟的费用，以分为单位
                         $costInCents = ($totalData / (1024.0 * 1024.0 * 1024.0)) * $rate * $transferUnitPriceInCents;
