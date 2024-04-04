@@ -111,8 +111,7 @@ class OrderService
         //如果是 pay as you go 套餐的用户在余额用完后继续充值，那么：自动重置流量 + 重新分配可用流量
         if($this->user->is_PAGO == 1){
             $plan = Plan::find($this->user->plan_id);
-            $this->user->u = 0;
-            $this->user->d = 0;
+            $this->buyByResetTraffic();
             $this->user->transfer_enable = round($this->user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
         }
 
