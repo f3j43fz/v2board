@@ -167,4 +167,21 @@ class MailService
             ]
         ]);
     }
+
+    // 余额不足提醒
+    public function remindInsufficientBalance($email, $balance)
+    {
+        SendEmailJob::dispatch([
+            'email' => $email,
+            'subject' => __('余额不足提醒', [
+                'app_name' =>  config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'remindInsufficientBalance',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'balance' => $balance
+            ]
+        ]);
+    }
 }

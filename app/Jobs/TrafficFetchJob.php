@@ -96,9 +96,12 @@ class TrafficFetchJob implements ShouldQueue
                         }
 
                         // 确保余额不会变成负数
+                        // 邮件提醒
                         if ($user->balance < 0) {
                             $user->balance = 0;
                             $user->transfer_enable = 0;
+                            $mailService = new MailService();
+                            $mailService->remindInsufficientBalance($user->email, $user->balance / 100);
                         }
 
                     }
