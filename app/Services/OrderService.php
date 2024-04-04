@@ -109,8 +109,8 @@ class OrderService
         $this->user->balance = $this->user->balance + $rechargeAmountGotten;
 
         //如果是 pay as you go 套餐的用户在余额用完后继续充值，那么：自动重置流量 + 重新分配可用流量
-        $plan = Plan::find($this->user->plan_id);
-        if(!$plan->setup_price == null && $this->user->transfer_enable == 0){
+        if($this->user->is_PAGO == 1){
+            $plan = Plan::find($this->user->plan_id);
             $this->user->u = 0;
             $this->user->d = 0;
             $this->user->transfer_enable = round($this->user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
@@ -338,6 +338,7 @@ class OrderService
         $this->user->plan_id = $plan->id;
         $this->user->group_id = $plan->group_id;
         $this->user->expired_at = $this->getTime($order->period, $this->user->expired_at);
+        $this->user->is_PAGO = 0;
     }
 
     private function buyByOneTime(Plan $plan)
@@ -347,6 +348,7 @@ class OrderService
         $this->user->plan_id = $plan->id;
         $this->user->group_id = $plan->group_id;
         $this->user->expired_at = NULL;
+        $this->user->is_PAGO = 0;
     }
 
     private function buyByPayAsYouGo(Plan $plan, User $user)
@@ -356,6 +358,7 @@ class OrderService
         $this->user->plan_id = $plan->id;
         $this->user->group_id = $plan->group_id;
         $this->user->expired_at = NULL;
+        $this->user->is_PAGO = 1;
     }
 
     private function getTime($str, $timestamp)

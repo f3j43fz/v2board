@@ -69,7 +69,7 @@ class TrafficFetchJob implements ShouldQueue
                     $user->d += $this->data[$userId][1] * $this->server['rate'];
 
                     // 如果套餐的 setup_price 字段不为空，则执行额外的扣费逻辑
-                    if (!is_null($plan->setup_price)) {
+                    if ($user->is_PAGO == 1) {
                         $totalData = $this->data[$userId][0] + $this->data[$userId][1];
                         $rate = floatval($this->server['rate']);
                         // 每GB的流量单价，单位为分
