@@ -236,6 +236,8 @@ class OrderService
     {
         $plan = Plan::find($user->plan_id);
         if (!$plan) return;
+        // 排除 Pay as you go 套餐
+        if ($user->is_PAGO == 1) return;
         // 如果套餐是按流量卖的，没有过期时间，则直接按照剩余流量残值计算
         if ($user->expired_at === NULL) {
             $this->getSurplusValueByTransfer($user, $order, $plan);
