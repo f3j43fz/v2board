@@ -88,6 +88,11 @@ class OrderController extends Controller
             abort(500, __('Subscription plan does not exist'));
         }
 
+        // 防止 Pay as you go 套餐重复购买
+        if ($plan->setup_price > 0 && $user->is_PAGO == 1) {
+            abort(500, __('This plan does not require repeated purchases; just maintain a sufficient balance'));
+        }
+
         if ($user->plan_id !== $plan->id && !$planService->haveCapacity() && $request->input('period') !== 'reset_price') {
             abort(500, __('Current product is sold out'));
         }
