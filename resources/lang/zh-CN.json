@@ -70,7 +70,7 @@
     "Plan period cannot be empty": "套餐周期不能为空",
     "Wrong plan period": "套餐周期参数有误",
     "The recharge amount exceeds the limit of 1000 yuan": "充值金额不得超过1000元",
-    "The recharge amount should larger than 5 yuan": "充值金额不得低于5元",
+    "The recharge amount should larger than 10 yuan": "充值金额不得低于10元",
     "Ticket subject cannot be empty": "工单主题不能为空",
     "Ticket level cannot be empty": "工单等级不能为空",
     "Incorrect ticket level format": "工单等级参数有误",
