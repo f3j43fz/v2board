@@ -55,7 +55,7 @@ class ClientController extends Controller
         $flag = strtolower($flag);
 
         // 检查3中情况： 【按周期】套餐过期、【按流量】套餐满流量、【随用随付】套餐没余额
-        if($userService->hasPlanButExpired($user) || $userService->hasPlanButExhausted($user)){
+        if($userService->hasPlanButExpired($user) || $userService->hasPlanButExhausted($user) || ($user->is_PAGO == 1 && $user->balance == 0)){
             $URL = config('v2board.app_url');
             $commonArray = [
                 'type' => 'shadowsocks',
@@ -67,10 +67,13 @@ class ClientController extends Controller
             $array1 = $commonArray;
             $array2 = $commonArray;
 
-            $array1['name'] = $userService->hasPlanButExpired($user) ? "您的套餐已过期" : "您的流量已耗尽";
-            $array2['name'] = "请到： {$URL} 续费";
-
-
+            if($user->is_PAGO == 1){
+                $array1['name'] = "您的余额不足";
+                $array2['name'] = "请到： {$URL} 充值";
+            }else{
+                $array1['name'] = $userService->hasPlanButExpired($user) ? "您的套餐已过期" : "您的流量已耗尽";
+                $array2['name'] = "请到： {$URL} 续费";
+            }
 
 
             $array3 = $commonArray;
