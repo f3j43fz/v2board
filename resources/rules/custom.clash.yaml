@@ -5,6 +5,7 @@ allow-lan: false
 bind-address: '*'
 mode: rule
 log-level: info
+ipv6: true
 external-controller: '127.0.0.1:21365'
 profile:
   store-selected: true
