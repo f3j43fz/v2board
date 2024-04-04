@@ -18559,7 +18559,7 @@
                     type: "question-circle"
                 }))), p.a.createElement(u["a"], {
                     addonAfter: "%",
-                    defaultValue: t.discount,
+                    defaultValue: t.temporary_transfer_discount,
                     placeholder: "\u8bf7\u8f93\u5165PAGO\u6298\u6263\u6bd4\u4f8b",
                     onChange: e => this.formChange("temporary_transfer_discount", e.target.value)
                 })), p.a.createElement("div", {
