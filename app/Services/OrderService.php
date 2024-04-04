@@ -112,6 +112,7 @@ class OrderService
         if($this->user->is_PAGO == 1){
             $plan = Plan::find($this->user->plan_id);
             $this->buyByResetTraffic();
+            $this->user->expired_at = null;
             $this->user->transfer_enable = round($this->user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
         }
 
