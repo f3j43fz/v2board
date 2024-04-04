@@ -65,14 +65,16 @@ class ClientController extends Controller
             ];
 
             $array1 = $commonArray;
+            $array2 = $commonArray;
             if ($user->balance == 0){
                 $array1['name'] = "您的余额不足";
+                $array2['name'] = "请到： {$URL} 充值";
             }else{
                 $array1['name'] = $userService->hasPlanButExpired($user) ? "您的套餐已过期" : "您的流量已耗尽";
+                $array2['name'] = "请到： {$URL} 续费";
             }
 
-            $array2 = $commonArray;
-            $array2['name'] = "请到： {$URL} 续费/充值";
+
 
             $array3 = $commonArray;
             $array3['name'] = "如需帮助，可工单/邮件联系";
