@@ -93,11 +93,6 @@ class OrderService
 
     public function recharge()
     {
-        $order = $this->order;
-        $this->user = User::find($order->user_id);
-        // 请先购买套餐后，再充值
-        if($this->user->plan_id === NULL) abort(500, '请先购买套餐后，再充值');
-
         // 管理员在后台设置的 充值优惠比例 以及 活动门槛
         // 路径：/config/v2board.php
         // 之后，记得修改管理员前端，方便后续修改
@@ -108,7 +103,8 @@ class OrderService
         $discount = config('v2board.recharge_discount', 20) * 0.01;
 
 
-
+        $order = $this->order;
+        $this->user = User::find($order->user_id);
         $rechargeAmount = $order->total_amount + $order->discount_amount + $order->balance_amount;
         $rechargeAmountGotten = ($rechargeAmount >= $discountThreshold)? $rechargeAmount * (1 + $discount) : $rechargeAmount;
         $this->user->balance = $this->user->balance + $rechargeAmountGotten;
