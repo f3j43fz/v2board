@@ -150,6 +150,9 @@ class OrderService
         $this->buyByPayAsYouGo($plan, $this->user);
         $this->setSpeedLimit($plan->speed_limit);
 
+        // 更新用户购买记录，区分新/老用户
+        $this->updateHasPurchasedPlanStatus();
+
         if (!$this->user->save()) {
             DB::rollBack();
             abort(500, '开通失败');
