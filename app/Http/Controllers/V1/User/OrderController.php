@@ -181,11 +181,15 @@ class OrderController extends Controller
 
     public function saveForRecharge(RechargeSave $request)
     {
-        // 请先购买套餐后，再充值
-        $user = User::find($request->user['id']);
-        if($user->plan_id === NULL) abort(500, __('Please purchase a plan first before topping up'));
 
+        $user = User::find($request->user['id']);
         $userService = new UserService();
+
+        // 确保充值前至少有过一次套餐购买记录，确保佣金发放
+        if($userService->hasPurchasedPlanBefore($request->user['id'])){
+            abort(500, __('Please purchase a plan first before topping up'));
+        }
+
         if ($userService->isNotCompleteOrderByUserId($request->user['id'])) {
             abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
         }
