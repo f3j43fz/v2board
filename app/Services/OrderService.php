@@ -93,6 +93,9 @@ class OrderService
 
     public function recharge()
     {
+        // 请先购买套餐后，再充值
+        if($this->user->plan_id === NULL) abort(500, '请先购买套餐后，再充值');
+
         // 管理员在后台设置的 充值优惠比例 以及 活动门槛
         // 路径：/config/v2board.php
         // 之后，记得修改管理员前端，方便后续修改
