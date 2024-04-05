@@ -404,9 +404,8 @@ class OrderService
 
     private function updateHasPurchasedPlanStatus()
     {
-        if (!$this->user->has_Purchased_Plan_Before) {
-            $this->user->has_Purchased_Plan_Before = 1;
-        }
+        //如果 $this->user->has_Purchased_Plan_Before 的值为 0，它会将其设置为 1；如果已经是 1，则保持不变。
+        $this->user->has_Purchased_Plan_Before |= 1;
     }
 
 }
