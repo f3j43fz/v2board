@@ -152,9 +152,9 @@ class UserController extends Controller
             }
         }
         $user['subscribe_url'] = Helper::getSubscribeUrl("/api/v1/client/subscribe?token={$user['token']}");
-        if (($user['expired_at'] === NULL ||($user['expired_at'] != NULL && $user['expired_at'] < time())) && $user['is_PAGO'] == 0) {
-            $user['subscribe_url'] = 'ni hai mei you tao can huo zhe tao can yi guo qi, qing gou mai tao can';
-        }
+//        if (($user['expired_at'] === NULL ||($user['expired_at'] != NULL && $user['expired_at'] < time())) && $user['is_PAGO'] == 0) {
+//            $user['subscribe_url'] = 'ni hai mei you tao can huo zhe tao can yi guo qi, qing gou mai tao can';
+//        }
         $userService = new UserService();
         $user['reset_day'] = $userService->getResetDay($user);
         return response([
