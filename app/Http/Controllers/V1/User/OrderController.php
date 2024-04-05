@@ -186,7 +186,7 @@ class OrderController extends Controller
         $userService = new UserService();
 
         // 确保充值前至少有过一次套餐购买记录，确保佣金发放
-        if(!$userService->hasPurchasedPlanBefore($request->user['id'])){
+        if($user->has_Purchased_Plan_Before == 0){
             abort(500, __('Please purchase a plan first before topping up'));
         }
 

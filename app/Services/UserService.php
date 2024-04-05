@@ -200,11 +200,5 @@ class UserService
         StatServerJob::dispatch($data, $server, $protocol, 'd');
     }
 
-    public function hasPurchasedPlanBefore(int $userId): bool
-    {
-        return Order::where('status', 3)
-            ->where('user_id', $userId)
-            ->exists();
-    }
 
 }
