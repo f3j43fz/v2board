@@ -159,31 +159,32 @@ class ServerService
             return $server;
         }, $servers);
     }
-
     public function getAvailableUsers($groupId)
     {
         return User::whereIn('group_id', $groupId)
-            ->whereRaw('u + d < transfer_enable')
+            ->where(function ($query) {
+                $query->where(function ($query) {
+                    $query->where('is_PAGO', '!=', 1)
+                        ->whereRaw('u + d < transfer_enable');
+                })->orWhere(function ($query) {
+                    $query->where('is_PAGO', '=', 1)
+                        ->where('balance', '>', 0);
+                });
+            })
             ->where(function ($query) {
                 $query->where('expired_at', '>=', time())
                     ->orWhereNull('expired_at');
             })
             ->where('banned', 0)
-            ->where(function ($query) {
-                $query->where('is_pago', '!=', 1)
-                    ->orWhere(function ($query) {
-                        $query->where('is_pago', 1)
-                            ->where('balance', '>', 0);
-                    });
-            })
             ->select([
                 'id',
                 'uuid',
-                'speed_limit'
+                'speed_limit',
+                'device_limit'
             ])
             ->get();
-    }
 
+    }
 
     public function log(int $userId, int $serverId, int $u, int $d, float $rate, string $method)
     {
