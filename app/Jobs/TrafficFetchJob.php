@@ -92,7 +92,7 @@ class TrafficFetchJob implements ShouldQueue
                             $user->balance -= $deductibleCharges; // 从余额中扣除费用，余额也是以分为单位
 
                             // 更新未结算费用，只保留未扣除的分
-                            $user->unbilled_charges %= 100; // 保留未扣除的分
+                            $user->unbilled_charges %= 10000; // 保留未扣除的分
                         }
 
                         // 确保余额不会变成负数
