@@ -165,14 +165,20 @@ class ServerService
             ->whereRaw('u + d < transfer_enable')
             ->where(function ($query) {
                 $query->where('expired_at', '>=', time())
-                    ->orWhere('expired_at', NULL);
+                    ->orWhereNull('expired_at');
             })
             ->where('banned', 0)
+            ->where(function ($query) {
+                $query->where('is_pago', '!=', 1)
+                    ->orWhere(function ($query) {
+                        $query->where('is_pago', 1)
+                            ->where('balance', '>', 0);
+                    });
+            })
             ->select([
                 'id',
                 'uuid',
-                'speed_limit',
-                'device_limit'
+                'speed_limit'
             ])
             ->get();
 
