@@ -162,7 +162,7 @@ class ServerService
     public function getAvailableUsers($groupId)
     {
         return User::whereIn('group_id', $groupId)
-            ->whereRaw('(u + d < transfer_enable) AND (is_PAGO != 1)')
+            ->whereRaw('u + d < transfer_enable')
             ->where(function ($query) {
                 $query->where('expired_at', '>=', time())
                     ->orWhereNull('expired_at');
