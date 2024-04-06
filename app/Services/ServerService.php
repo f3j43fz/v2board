@@ -165,9 +165,14 @@ class ServerService
             ->whereRaw('u + d < transfer_enable')
             ->where(function ($query) {
                 $query->where('expired_at', '>=', time())
-                    ->orWhere('expired_at', NULL);
+                    ->orWhereNull('expired_at');
             })
             ->where('banned', 0)
+            // Exclude users with is_PAGO = 1 and balance = 0
+            ->whereNot(function($query) {
+                $query->where('is_PAGO', 1)
+                    ->where('balance', 0);
+            })
             ->select([
                 'id',
                 'uuid',
