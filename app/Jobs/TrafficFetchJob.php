@@ -83,12 +83,12 @@ class TrafficFetchJob implements ShouldQueue
                         $costInCents = ($totalData / (1024.0 * 1024.0 * 1024.0)) * $rate * $transferUnitPriceInCents;
 
                         // 将这一分钟的费用累积到未结算费用中，确保未结算费用是以分为单位的整数
-                        $user->unbilled_charges += (int)round($costInCents * 1000); // 计费最小精度 100KB
+                        $user->unbilled_charges += (int)round($costInCents * 10000); // 计费最小精度 10KB
 
                         // 检查未结算费用是否至少有1分
-                        if ($user->unbilled_charges >= 1000) { // 因为现在是以分为单位，所以检查是否至少有1000分（即0.01元）
+                        if ($user->unbilled_charges >= 10000) { // 因为现在是以分为单位，所以检查是否至少有10000分（即0.01元）
                             // 从余额中扣除整数部分的未结算费用
-                            $deductibleCharges = floor($user->unbilled_charges / 1000); // 将分转换回元
+                            $deductibleCharges = floor($user->unbilled_charges / 10000); // 将分转换回元
                             $user->balance -= $deductibleCharges; // 从余额中扣除费用，余额也是以分为单位
 
                             // 更新未结算费用，只保留未扣除的分
