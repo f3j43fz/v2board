@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\Plan;
 use App\Models\User;
+use App\Services\BillingService;
 use App\Services\MailService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,9 +16,6 @@ class TrafficFetchJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-//    protected $u;
-//    protected $d;
-//    protected $userId;
     protected $data;
     protected $server;
     protected $protocol;
@@ -34,9 +31,6 @@ class TrafficFetchJob implements ShouldQueue
     public function __construct(array $data, array $server, $protocol)
     {
         $this->onQueue('traffic_fetch');
-//        $this->u = $u;
-//        $this->d = $d;
-//        $this->userId = $userId;
         $this->data = $data;
         $this->server = $server;
         $this->protocol = $protocol;
@@ -51,6 +45,8 @@ class TrafficFetchJob implements ShouldQueue
     {
         $attempt = 0;
         $maxAttempts = 3;
+        $billingService = new BillingService();
+        $rate = floatval($this->server['rate']);
         while ($attempt < $maxAttempts) {
             try {
                 DB::beginTransaction();
@@ -58,29 +54,17 @@ class TrafficFetchJob implements ShouldQueue
                     $user = User::lockForUpdate()->find($userId);
                     if (!$user) continue;
 
-                    // 获取用户的套餐 ID
-                    $planId = $user->plan_id;
-                    // 利用 Plan 模型查找对应的套餐
-                    $plan = Plan::find($planId);
-
                     // 更新用户的时间戳和流量数据
                     $user->t = time();
-                    $user->u += $this->data[$userId][0] * $this->server['rate'];
-                    $user->d += $this->data[$userId][1] * $this->server['rate'];
+                    $upstream = $this->data[$userId][0];
+                    $downstream = $this->data[$userId][1];
+                    $user->u += $upstream * $rate;
+                    $user->d += $downstream * $rate;
 
-                    // 如果【随用随付】套餐，则执行额外的扣费逻辑
+                    // 如果是【随用随付】套餐，则执行额外的扣费逻辑
                     if ($user->is_PAGO == 1) {
-                        $totalData = $this->data[$userId][0] + $this->data[$userId][1];
-                        $rate = floatval($this->server['rate']);
-                        // 每GB的流量单价，单位为分
-                        // 考虑折扣的情况
-                        $transferUnitPriceInCents = !empty($user->temporary_transfer_discount)
-                            ? intval($plan->transfer_unit_price * $user->temporary_transfer_discount / 100)
-                            : $plan->transfer_unit_price;
-
-
-                        // 计算这一分钟的费用，以分为单位
-                        $costInCents = ($totalData / (1024.0 * 1024.0 * 1024.0)) * $rate * $transferUnitPriceInCents;
+                        // 计算本计费周期的费用，以分为单位
+                        $costInCents = $billingService->calculateCost($user, $upstream, $downstream, $rate);
 
                         // 将这一分钟的费用累积到未结算费用中，确保未结算费用是以分为单位的整数
                         $user->unbilled_charges += (int)round($costInCents * 10000); // 计费最小精度 10KB
