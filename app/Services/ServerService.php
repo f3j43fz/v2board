@@ -162,16 +162,16 @@ class ServerService
     public function getAvailableUsers($groupId)
     {
         return User::whereIn('group_id', $groupId)
-            ->whereRaw('u + d < transfer_enable')
+            ->whereRaw('(u + d < transfer_enable) AND (is_PAGO != 1)')
             ->where(function ($query) {
                 $query->where('expired_at', '>=', time())
                     ->orWhereNull('expired_at');
             })
             ->where('banned', 0)
             ->where(function ($query) {
-                $query->where('is_pago', '!=', 1)
+                $query->where('is_PAGO', '!=', 1)
                     ->orWhere(function ($query) {
-                        $query->where('is_pago', 1)
+                        $query->where('is_PAGO', 1)
                             ->where('balance', '>', 0);
                     });
             })
