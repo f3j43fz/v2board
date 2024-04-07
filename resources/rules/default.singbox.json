@@ -10,6 +10,7 @@
             {
                 "tag": "tx",
                 "address": "https://doh.pub/dns-query",
+                "address_resolver": "119.29.29.29",
                 "address_strategy": "prefer_ipv4",
                 "detour": "直连"
             },
