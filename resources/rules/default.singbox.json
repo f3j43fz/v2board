@@ -10,7 +10,6 @@
             {
                 "tag": "tx",
                 "address": "https://doh.pub/dns-query",
-                "address_resolver": "119.29.29.29",
                 "address_strategy": "prefer_ipv4",
                 "detour": "直连"
             },
@@ -31,37 +30,6 @@
             },
             {
                 "clash_mode": "全局",
-                "server": "google"
-            },
-            {
-                "rule_set": [
-                    {
-                        "tag": "geosite-cn",
-                        "type": "remote",
-                        "format": "binary",
-                        "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
-                        "download_detour": "V2Pass"
-                    },
-                    {
-                        "tag": "geosite-private",
-                        "type": "remote",
-                        "format": "binary",
-                        "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-private.srs",
-                        "download_detour": "V2Pass"
-                    }
-                ],
-                "server": "tx"
-            },
-            {
-                "rule_set": [
-                    {
-                        "tag": "geolocation-!cn",
-                        "type": "remote",
-                        "format": "binary",
-                        "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geolocation-!cn.srs",
-                        "download_detour": "V2Pass"
-                    }
-                ],
                 "server": "google"
             },
             {
