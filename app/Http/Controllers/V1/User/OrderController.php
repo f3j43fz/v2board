@@ -128,11 +128,11 @@ class OrderController extends Controller
         $remainTransfer = ($user->transfer_enable - $user->u - $user->d) / (1024*1024*1024);
         if($currentPlan->onetime_price > 0 && $remainTransfer > 0){
             $now = time();
-            $formatted_date = date('mdHi', $now);
+            $datetime = date("Y-m-d H:i:s", $now);
             $telegramService = new TelegramService();
             $notification = "✍️记录【按流量】套餐用户的剩余可用流量\n"
                 . "———————————————\n"
-                . "记录时间： `" . $formatted_date . "`\n"
+                . "记录时间： `" . $datetime . "`\n"
                 . "邮箱： `{$user->email}`\n"
                 . "剩余流量： `" . $remainTransfer . "` GB\n";
             $telegramService->sendMessageWithAdmin($notification, true);
