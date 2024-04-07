@@ -9,7 +9,8 @@
             },
             {
                 "tag": "tx",
-                "address": "https://120.53.53.53/dns-query",
+                "address": "https://doh.pub/dns-query",
+                "address_resolver": "119.29.29.29",
                 "address_strategy": "prefer_ipv4",
                 "detour": "直连"
             },
@@ -22,7 +23,7 @@
             {
                 "outbound": "any",
                 "server": "tx",
-                "disable_cache": true
+                "disable_cache": false
             },
             {
                 "clash_mode": "直连",
@@ -33,17 +34,34 @@
                 "server": "google"
             },
             {
-                "geosite": [
-                    "cn",
-                    "apple@cn",
-                    "category-games@cn",
-                    "private"
+                "rule_set": [
+                    {
+                        "tag": "geosite-cn",
+                        "type": "remote",
+                        "format": "binary",
+                        "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
+                        "download_detour": "V2Pass"
+                    },
+                    {
+                        "tag": "geosite-private",
+                        "type": "remote",
+                        "format": "binary",
+                        "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-private.srs",
+                        "download_detour": "V2Pass"
+                    }
                 ],
-                "domain_keyword": "ntp",
                 "server": "tx"
             },
             {
-                "geosite": "geolocation-!cn",
+                "rule_set": [
+                    {
+                        "tag": "geolocation-!cn",
+                        "type": "remote",
+                        "format": "binary",
+                        "url": "https://mirror.ghproxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geolocation-!cn.srs",
+                        "download_detour": "V2Pass"
+                    }
+                ],
                 "server": "google"
             },
             {
@@ -55,6 +73,7 @@
             }
         ],
         "final": "tx",
+        "strategy": "prefer_ipv4",
         "fakeip": {
             "enabled": true,
             "inet4_range": "198.18.0.0/15",
