@@ -123,19 +123,21 @@ class OrderController extends Controller
         }
 
         // 记录一次性套餐用户的流量
-        $planService2 = new PlanService($user->plan_id);
-        $currentPlan = $planService2->plan;
-        $remainTransfer = ($user->transfer_enable - $user->u - $user->d) / (1024*1024*1024);
-        if($currentPlan->onetime_price > 0 && $remainTransfer > 0 && $plan->onetime_price > 0){
-            $now = time();
-            $datetime = date("Y-m-d H:i:s", $now);
-            $telegramService = new TelegramService();
-            $notification = "✍️记录【按流量】套餐的用户的剩余可用流量\n"
-                . "———————————————\n"
-                . "记录时间： `" . $datetime . "`\n"
-                . "邮箱： `{$user->email}`\n"
-                . "剩余流量： `" . $remainTransfer . "` GB\n";
-            $telegramService->sendMessageWithAdmin($notification, true);
+        if($user->plan_id != NULL){
+            $planService2 = new PlanService($user->plan_id);
+            $currentPlan = $planService2->plan;
+            $remainTransfer = ($user->transfer_enable - $user->u - $user->d) / (1024*1024*1024);
+            if($currentPlan->onetime_price > 0 && $remainTransfer > 0 && $plan->onetime_price > 0){
+                $now = time();
+                $datetime = date("Y-m-d H:i:s", $now);
+                $telegramService = new TelegramService();
+                $notification = "✍️记录【按流量】套餐的用户的剩余可用流量\n"
+                    . "———————————————\n"
+                    . "记录时间： `" . $datetime . "`\n"
+                    . "邮箱： `{$user->email}`\n"
+                    . "剩余流量： `" . $remainTransfer . "` GB\n";
+                $telegramService->sendMessageWithAdmin($notification, true);
+            }
         }
 
         DB::beginTransaction();
