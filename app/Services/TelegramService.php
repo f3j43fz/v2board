@@ -26,6 +26,7 @@ class TelegramService {
         ]);
 
         if ($pin && isset($response->result->message_id)) {
+            $chatId = config('v2board.telegram_group_id');
             $this->pinChatMessage($chatId, $response->result->message_id);
         }
     }
