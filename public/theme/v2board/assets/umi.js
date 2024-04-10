@@ -43400,6 +43400,12 @@
                     className: "bg-info"
                 }), Object(w["formatMessage"])({
                     id: "invitation_code_note_info3"
+                })), d.a.createElement("p", {
+                    className: "badge-dot"
+                }, d.a.createElement("i", {
+                    className: "bg-info"
+                }), Object(w["formatMessage"])({
+                    id: "invitation_code_note_info4"
                 })))))), d.a.createElement("div", {
                     className: "row mb-3 mb-md-0"
                 }, d.a.createElement("div", {
