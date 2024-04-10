@@ -113,7 +113,7 @@ class TelegramService {
         $this->request('pinChatMessage', [
             'chat_id' => $chatId,
             'message_id' => $messageId,
-            'disable_notification' => true // Set to false if you want to notify all members about the new pinned message
+            'disable_notification' => false // Set to false if you want to notify all members about the new pinned message
         ]);
     }
 
