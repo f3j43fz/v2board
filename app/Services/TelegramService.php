@@ -25,10 +25,13 @@ class TelegramService {
             'parse_mode' => $parseMode
         ]);
 
-        if ($pin && isset($response->result->message_id)) {
-            $response = $this->pinChatMessage($chatId, $response->result->message_id);
-            if (isset($response->description)) {
-                echo $response->description . PHP_EOL;
+        if ($response->ok && $pin) {
+            $messageId = $response->result->message_id ?? null;
+            if ($messageId) {
+                $this->pinChatMessage($chatId, $messageId);
+            } else {
+                // Handle the case where message_id is not set in the response
+                throw new Exception('Message ID not found in the response.');
             }
         }
     }
