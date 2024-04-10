@@ -59,7 +59,7 @@ class KnowledgeController extends Controller
             . "下述【使用文档】有更新：\n"
             . "`{$title}`\n"
             . "请到官网查看\n";
-        $telegramService->sendMessage($chatID, $text,'markdown');
+        $telegramService->sendMessage($chatID, $text,false,'markdown');
 
         return response([
             'data' => true

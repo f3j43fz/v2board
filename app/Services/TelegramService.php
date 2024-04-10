@@ -14,16 +14,20 @@ class TelegramService {
         $this->api = 'https://api.telegram.org/bot' . config('v2board.telegram_bot_token', $token) . '/';
     }
 
-    public function sendMessage(int $chatId, string $text, string $parseMode = '')
+    public function sendMessage(int $chatId, string $text, bool $pin = false, string $parseMode = '')
     {
         if ($parseMode === 'markdown') {
             $text = str_replace('_', '\_', $text);
         }
-        $this->request('sendMessage', [
+        $response = $this->request('sendMessage', [
             'chat_id' => $chatId,
             'text' => $text,
             'parse_mode' => $parseMode
         ]);
+
+        if ($pin && isset($response->result->message_id)) {
+            $this->pinChatMessage($chatId, $response->result->message_id);
+        }
     }
 
     public function approveChatJoinRequest(int $chatId, int $userId)
@@ -98,6 +102,16 @@ class TelegramService {
         return $deletedUsers;
     }
 
+    private function pinChatMessage(int $chatId, int $messageId)
+    {
+        $this->request('pinChatMessage', [
+            'chat_id' => $chatId,
+            'message_id' => $messageId,
+            'disable_notification' => true // Set to false if you want to notify all members about the new pinned message
+        ]);
+    }
+
+
     private function isUserActive(int $chatId, int $userId): bool
     {
         $response = $this->request('getChatMember', [
@@ -139,7 +153,7 @@ class TelegramService {
     }
 
 
-    public function sendMessageWithAdmin($message, $isStaff = false)
+    public function sendMessageWithAdmin($message, $isStaff = false, $pin = false)
     {
         if (!config('v2board.telegram_bot_enable', 0)) return;
         $users = User::where(function ($query) use ($isStaff) {
@@ -151,7 +165,7 @@ class TelegramService {
             ->where('telegram_id', '!=', NULL)
             ->get();
         foreach ($users as $user) {
-            SendTelegramJob::dispatch($user->telegram_id, $message);
+            SendTelegramJob::dispatch($user->telegram_id, $message, $pin);
         }
     }
 }

@@ -44,7 +44,7 @@ class ReplyTicket extends Telegram {
             $msg->text,
             $user->id
         );
-        $telegramService->sendMessage($msg->chat_id, "#`{$ticketId}` 的工单已回复成功", 'markdown');
+        $telegramService->sendMessage($msg->chat_id, "#`{$ticketId}` 的工单已回复成功", false,'markdown');
         $telegramService->sendMessageWithAdmin("#`{$ticketId}` 的工单已由 {$user->email} 进行回复", true);
     }
 }

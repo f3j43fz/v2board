@@ -262,7 +262,7 @@ class CheckCommission extends Command
             } else {
                 $inviter->commission_balance = $inviter->commission_balance + $commissionBalance;
                 //TG通知
-                if(!$inviter->is_admin == 1){
+                if(!$inviter->is_admin){
                     $this->notify($inviteUserId,$commissionBalance/100);
                 }
                 //发邮件给 inviter //blance是余额 commission_balance是佣金
@@ -298,7 +298,7 @@ class CheckCommission extends Command
             . "🎉用户 #$userID 邀请朋友购买订阅，获得佣金：`{$commissionBalance}` 元\n\n"
             . "当前佣金比例：`{$rate}%`\n\n"
             . "满 `100` 元可提现";
-        $telegramService->sendMessage($chatID, $text,'markdown');
+        $telegramService->sendMessage($chatID, $text,false,'markdown');
     }
 
 }

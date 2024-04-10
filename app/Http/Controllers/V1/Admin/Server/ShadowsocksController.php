@@ -96,6 +96,6 @@ class ShadowsocksController extends Controller
         $text = "#节点变动\n\n"
             . "`{$nodeName}`\n\n"
             . "更新订阅可获取\n";
-        $telegramService->sendMessage($chatID, $text,'markdown');
+        $telegramService->sendMessage($chatID, $text,false,'markdown');
     }
 }

@@ -92,7 +92,7 @@ class TongjiMoney extends Command
 
         // 输出结果，通知 Telegram
         $telegramService = new TelegramService();
-        $telegramService->sendMessageWithAdmin($message);
+        $telegramService->sendMessageWithAdmin($message,false,true);
 
     }
 }

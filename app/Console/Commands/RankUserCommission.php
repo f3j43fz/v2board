@@ -65,7 +65,7 @@ class RankUserCommission extends Command
             $text .= "{$userId}{$spaces}， 佣金：" . $commissionFormatted . " 元\n";
         }
 
-        $telegramService->sendMessage($chatID, $text, 'markdown');
+        $telegramService->sendMessage($chatID, $text, false,'markdown');
     }
 
 

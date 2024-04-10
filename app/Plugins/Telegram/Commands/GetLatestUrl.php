@@ -16,6 +16,6 @@ class GetLatestUrl extends Telegram {
             config('v2board.app_name', 'V2Board'),
             config('v2board.app_url')
         );
-        $telegramService->sendMessage($message->chat_id, $text, 'markdown');
+        $telegramService->sendMessage($message->chat_id, $text, false,'markdown');
     }
 }
