@@ -148,6 +148,7 @@ class TelegramService {
         $curl->close();
         if (!isset($response->ok)) abort(500, '请求失败');
         if (!$response->ok) {
+            \Log::error('来自TG的错误：' . $response->description, '来自TG的错误：' . $response->description);
             abort(500, '来自TG的错误：' . $response->description);
         }
         return $response;
