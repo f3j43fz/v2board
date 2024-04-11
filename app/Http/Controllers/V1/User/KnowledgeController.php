@@ -70,7 +70,7 @@ class KnowledgeController extends Controller
         while (strpos($body, '<!--access start-->') !== false) {
             $accessData = $this->getBetween($body, '<!--access start-->', '<!--access end-->');
             if ($accessData) {
-                $body = str_replace($accessData, '<div class="v2board-no-access">'. __("您必须拥有有效的订阅才可以查看该区域的内容") .'</div>' . '  ' .'<a class="btn btn-hero-primary" style="color:#f5f8fa;" href="#/plan">购买订阅</a>', $body);
+                $body = str_replace($accessData, '<div class="v2board-no-access">'. __("您必须拥有有效的订阅才可以查看该区域的内容") . '<a class="btn btn-hero-primary" style="color:#f5f8fa;" href="#/plan">购买订阅</a>' . '</div>', $body);
             }
         }
     }
