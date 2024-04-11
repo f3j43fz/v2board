@@ -14265,7 +14265,7 @@
                 }, a.a.createElement("p", {
                     className: "mb-0"
                 }, Object(c["formatMessage"])({
-                    id: "\u5145\u503c\u540e\u7684\u4f59\u989d\u4ec5\u7528\u4e8e\u6d88\u8d39\u4f7f\u7528"
+                    id: "\u5355\u7b14\u5145\u503c\u91d1\u989d\u533a\u95f4\u0020\u0028\u00a5\u0031\u0030\u0020\u002d\u0020\u00a5\u0031\u002c\u0030\u0030\u0030\u0029"
                 }, {
                     title: window.settings.title
                 })))), a.a.createElement("div", {
