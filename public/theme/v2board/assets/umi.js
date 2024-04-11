@@ -13513,7 +13513,7 @@
                 }, l.a.createElement(q["a"], null, l.a.createElement(w["a"], {
                     type: "primary mr-2"
                 }, l.a.createElement(x["a"], {
-                    type: "transaction"
+                    type: "pay-circle"
                 }), " ", Object(m["formatMessage"])({
                     id: "\u5145\u503c"
                 }))))))))), l.a.createElement("div", {
