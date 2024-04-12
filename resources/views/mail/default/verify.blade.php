@@ -1,10 +1,45 @@
-<div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-    <img src="https://s3.bmp.ovh/imgs/2024/04/12/5cd1bf1456e513a3.png" alt="Logo" style="display: block; margin: 0 auto; width: 150px;">
-    <h2 style="text-align: center; color: #333;">{{$name}} 邮箱验证码</h2>
-    <p style="text-align: center; color: #666; font-size: 16px;">请在{{$name}}上输入以下验证码:</p>
-    <div style="background-color: #46a2a0; color: white; text-align: center; font-size: 24px; padding: 10px; margin: 20px auto; width: 200px; border-radius: 5px;">
-        {{$code}}
-    </div>
-    <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">请勿将此验证码透露给他人。</p>
-    <p style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">此邮件由 <a href="{{$url}}" style="color: blue; text-decoration: underline;">{{$name}}</a> 自动生成，请勿回复。</p>
+<div style="background: #eee">
+    <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <div style="background:#fff">
+                    <div style="padding: 20px; text-align: center;">
+                        <img src="https://s3.bmp.ovh/imgs/2024/04/12/5cd1bf1456e513a3.png" alt="Logo" style="width: 100px;">
+                    </div>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                        <tr style="padding:20px 40px 0 40px;display:table-cell">
+                            <td style="font-size:24px;line-height:1.5;color:#000;">邮箱验证码</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
+                                尊敬的用户 {{$userName}} 您好！
+                                <br />
+                                <br />
+                                您正在尝试验证邮箱，请使用以下验证码完成验证：
+                                <div style="background-color: #46a2a0; color: white; text-align: center; font-size: 24px; padding: 10px; margin: 20px auto; width: 200px; border-radius: 5px;">
+                                    {{$code}}
+                                </div>
+                                请在 5 分钟内使用该验证码，以确保账户安全。如果您未尝试此操作，请忽略此邮件。
+                            </td>
+                        </tr>
+                        <tr style="padding:40px;display:table-cell">
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                        <tr>
+                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">返回{{$name}}</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
