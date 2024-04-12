@@ -69,6 +69,7 @@ class UserController extends Controller
         $this->filter($request, $builder);
         $users = $builder->get();
         foreach ($users as $user) {
+            $userName = explode('@', $user->email)[0];
             SendEmailJob::dispatch([
                 'email' => $user->email,
                 'subject' => $request->input('subject'),
@@ -76,7 +77,8 @@ class UserController extends Controller
                 'template_value' => [
                     'name' => config('v2board.app_name', 'V2Board'),
                     'url' => config('v2board.app_url'),
-                    'content' => $request->input('content')
+                    'content' => $request->input('content'),
+                    'userName' => $userName
                 ]
             ]);
         }

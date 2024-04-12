@@ -85,7 +85,7 @@ class TrafficFetchJob implements ShouldQueue
                             $user->balance = 0;
                             $user->transfer_enable = 0;
                             $mailService = new MailService();
-                            $mailService->remindInsufficientBalance($user->email, $user->balance / 100);
+                            $mailService->remindInsufficientBalance($user, $user->balance / 100);
                         }
 
                     }

@@ -68,7 +68,7 @@ class TrafficFetchJob2 implements ShouldQueue
                                     $balanceChange = -$user->balance; // 只扣除到0
                                     // 可以在这里发送余额不足的通知
                                     $mailService = new MailService();
-                                    $mailService->remindInsufficientBalance($user->email, ($user->balance + $balanceChange) / 100);
+                                    $mailService->remindInsufficientBalance($user, ($user->balance + $balanceChange) / 100);
                                 }
                             }
 

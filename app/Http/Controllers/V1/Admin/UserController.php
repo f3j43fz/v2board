@@ -261,6 +261,7 @@ class UserController extends Controller
         foreach ($userBatches as $userBatch) {
             $emailJobs = [];
             foreach ($userBatch as $user) {
+                $userName = explode('@', $user->email)[0];
                 $emailJobs[] = [
                     'email' => $user->email,
                     'subject' => $request->input('subject'),
@@ -268,7 +269,8 @@ class UserController extends Controller
                     'template_value' => [
                         'name' => config('v2board.app_name', 'V2Board'),
                         'url' => config('v2board.app_url'),
-                        'content' => $request->input('content')
+                        'content' => $request->input('content'),
+                        'userName' => $userName
                     ]
                 ];
             }

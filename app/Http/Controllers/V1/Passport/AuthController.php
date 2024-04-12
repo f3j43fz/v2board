@@ -278,6 +278,10 @@ class AuthController extends Controller
             $platform = $result['os_name'];
             $platformVersion = $result['os_version'];
 
+            //获取邮箱用户名 以及 时间
+            $userName = explode('@', $user->email)[0];
+            $now = time();
+            $datetime = date("Y-m-d H:i:s", $now);
 
             SendEmailJob::dispatch([
                 'email' => $user->email,
@@ -287,6 +291,8 @@ class AuthController extends Controller
                 'template_name' => 'remindLogin',
                 'template_value' => [
                     'name' => config('v2board.app_name', 'V2Board'),
+                    'userName' => $userName,
+                    'datetime' => $datetime,
                     'url' => config('v2board.app_url'),
                     'ip' => $userIP,
                     'ipInfo' => $userISPInfo,

@@ -38,6 +38,7 @@ class ConfigController extends Controller
 
     public function testSendMail(Request $request)
     {
+        $userName = explode('@', $request->user['email'])[0];
         $obj = new SendEmailJob([
             'email' => $request->user['email'],
             'subject' => 'This is v2board test email',
@@ -45,7 +46,8 @@ class ConfigController extends Controller
             'template_value' => [
                 'name' => config('v2board.app_name', 'V2Board'),
                 'content' => 'This is v2board test email',
-                'url' => config('v2board.app_url')
+                'url' => config('v2board.app_url'),
+                'userName' => $userName
             ]
         ]);
         return response([

@@ -4,25 +4,23 @@
         <tr>
             <td>
                 <div style="background:#fff">
+                    <div style="padding: 20px; text-align: center;">
+                        <img src="https://s3.bmp.ovh/imgs/2024/04/12/5cd1bf1456e513a3.png" alt="Logo" style="width: 100px;">
+                    </div>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <thead>
-                        <tr>
-                            <td valign="middle" style="padding-left:30px;background-color:#415A94;color:#fff;padding:20px 40px;font-size: 21px;">{{$name}}</td>
-                        </tr>
-                        </thead>
                         <tbody>
-                        <tr style="padding:40px 40px 0 40px;display:table-cell">
-                            <td style="font-size:24px;line-height:1.5;color:#000;margin-top:40px">套餐开通成功</td>
+                        <tr style="padding:20px 40px 0 40px;display:table-cell">
+                            <td style="font-size:24px;line-height:1.5;color:#000;">套餐开通成功</td>
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
-                                尊敬的用户您好！
+                                尊敬的用户 {{$userName}} 您好！
                                 <br />
                                 <br />
-                                您的服务已经开通，感谢您对 {{$name}} 的支持。
+                                您的服务已经开通，感谢您对 {{$name}} 一如既往的支持。
                                 <br />
                                 <br />
-                                为保证服务质量，请您按照官网【使用文档】-【手动更新丁阅方法汇总】的指示，定期更新丁阅。
+                                为保证服务质量，请您按照官网【使用文档】-【手动更新丁阅方法汇总】的指示，定期更新丁阅。如果您有任何疑问或者需要帮助，欢迎发送工单或邮件联系我们。
                                 <br />
                                 <br />
                                 -----------------
@@ -44,7 +42,8 @@
                         </tr>
                         </tbody>
                     </table>
-                </div></td>
+                </div>
+            </td>
         </tr>
         </tbody>
     </table>

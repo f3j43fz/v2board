@@ -9,24 +9,33 @@
                     </div>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
-                        <tr style="padding:40px 40px 0 40px;display:table-cell">
-                            <td style="font-size:24px;line-height:1.5;color:#000;margin-top:40px">佣金到账</td>
+                        <tr style="padding:20px 40px 0 40px;display:table-cell">
+                            <td style="font-size:24px;line-height:1.5;color:#000;">网站通知</td>
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
                                 尊敬的用户 {{$userName}} 您好！
                                 <br />
                                 <br />
-                                您的受邀用户购买了套餐，您获得了 {{$rate}}% 的佣金：{{$commission}}元，感谢您与朋友的支持。
-                                <br />
-                                <br />
-                                佣金可在官网左侧的【我的邀请】处查看。佣金可以：划转到余额使用 或者 满100元后提现。
-                                <br />
-                                <br />
-                                -----------------
+                                {!! nl2br($content) !!}
                                 <br />
                                 <br />
                                 {{$name}} 团队敬上 祝您生活愉快
+                                <br />
+                                <br />
+                                ----------------------------------
+                                <br />
+                                <br />
+                                工单ID： {{$ticketID}}
+                                <br />
+                                <br />
+                                主题：{{$subject}}
+                                <br />
+                                <br />
+                                状态：已回复
+                                <br />
+                                <br />
+                                ----------------------------------
                             </td>
                         </tr>
                         <tr style="padding:40px;display:table-cell">

@@ -65,16 +65,43 @@ class TicketService {
         $cacheKey = 'ticket_sendEmailNotify_' . $ticket->user_id;
         if (!Cache::get($cacheKey)) {
             Cache::put($cacheKey, 1, 1800);
+            $userName = explode('@', $user->email)[0];
+            $ticketID = $ticket->id;
+            $subject = $ticket->subject;
             SendEmailJob::dispatch([
                 'email' => $user->email,
-                'subject' => '您在' . config('v2board.app_name', 'V2Board') . '的工单得到了回复',
-                'template_name' => 'notify',
+                'subject' => '[工单ID： ' . $ticketID . '] ' .  $subject,
+                'template_name' => 'notifyTicketReplied',
                 'template_value' => [
                     'name' => config('v2board.app_name', 'V2Board'),
                     'url' => config('v2board.app_url'),
-                    'content' => "主题：{$ticket->subject}\r\n回复内容：{$ticketMessage->message}"
+                    'content' => $ticketMessage->message,
+                    'userName' => $userName,
+                    'ticketID' =>$ticketID,
+                    'subject' => $subject
                 ]
             ]);
         }
     }
+
+    // 用户创建工单后，发邮件提示用户
+    public function notifyTicketGenerated(User $user, $ticketID, $subject, $level, $message)
+    {
+        $userName = explode('@', $user->email)[0];
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => '[工单ID： ' . $ticketID . '] ' .  $subject,
+            'template_name' => 'notifyTicketGenerated',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'content' => $message,
+                'level' => $level,
+                'userName' => $userName,
+                'subject' => $subject,
+            ]
+        ]);
+
+    }
+
 }

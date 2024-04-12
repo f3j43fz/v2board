@@ -97,6 +97,12 @@ class TicketController extends Controller
         }
 
         $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
+
+        //发送邮件，告知用户工单已经生成，待处理
+        $ticketID = $ticket->id;
+        $ticketService = new TicketService();
+        $ticketService->notifyTicketGenerated($user, $ticketID, $request->input('subject'), $request->input('level'), $request->input('message'));
+
         return response([
             'data' => true
         ]);
