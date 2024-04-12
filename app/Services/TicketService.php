@@ -88,6 +88,14 @@ class TicketService {
     public function notifyTicketGenerated(User $user, $ticketID, $subject, $level, $message)
     {
         $userName = explode('@', $user->email)[0];
+
+        $levelMapping = [
+            0 => '低',
+            1 => '中',
+            2 => '高'
+        ];
+        $level = $levelMapping[$level];
+
         SendEmailJob::dispatch([
             'email' => $user->email,
             'subject' => '[工单ID： ' . $ticketID . '] ' .  $subject,
