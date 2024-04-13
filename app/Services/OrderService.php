@@ -416,7 +416,7 @@ class OrderService
 
     private function isOrderAutoRenewed(Order $order)
     {
-        return $order->callback_no == $order->trade_no;
+        return $order->callback_no == 'auto_renew';
     }
 
 

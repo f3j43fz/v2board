@@ -111,8 +111,8 @@ class AutoRenewPlan extends Command
         $order->status = 1;
         //付款时间为未来的10秒
         $order->paid_at = time() + 10;
-        //回调单号为订单号(因为不需要付款，没有回调一说)
-        $order->callback_no = $order->trade_no;
+        //回调单号为 'auto_renew' (因为不需要付款，没有回调一说)
+        $order->callback_no = 'auto_renew';
 
         if (!$order->save()) {
             DB::rollback();
