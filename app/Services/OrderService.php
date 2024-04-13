@@ -88,15 +88,15 @@ class OrderService
 
         DB::commit();
 
-        ////调用邮件提醒
-        $mailService = new MailService();
-        if($this->isOrderAutoRenewed($order)){
-            //自动续费的订单
-            $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
-        } else{
-            // 用户手动下单的订单
-            $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
-        }
+//        ////调用邮件提醒
+//        $mailService = new MailService();
+//        if($this->isOrderAutoRenewed($order)){
+//            //自动续费的订单
+//            $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
+//        } else{
+//            // 用户手动下单的订单
+//            $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
+//        }
 
     }
 
