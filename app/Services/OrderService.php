@@ -90,15 +90,72 @@ class OrderService
 
         ////调用邮件提醒
         $mailService = new MailService();
-//        if ($order->callback_no == 'auto_renew'){
-//            //自动续费的订单
-//            $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
-//        }else {
-//            // 用户手动下单的订单
-//            $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
-//        }
-
         $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
+    }
+
+    public function autoRenew()
+    {
+        $order = $this->order;
+        $this->user = User::find($order->user_id);
+        $plan = Plan::find($order->plan_id);
+
+        if ($order->refund_amount) {
+            $this->user->balance = $this->user->balance + $order->refund_amount;
+        }
+        DB::beginTransaction();
+        if ($order->surplus_order_ids) {
+            try {
+                Order::whereIn('id', $order->surplus_order_ids)->update([
+                    'status' => 4
+                ]);
+            } catch (\Exception $e) {
+                DB::rollback();
+                abort(500, '开通失败');
+            }
+        }
+        switch ((string)$order->period) {
+            case 'onetime_price':
+                $this->buyByOneTime($plan);
+                break;
+            case 'reset_price':
+                $this->buyByResetTraffic();
+                break;
+            default:
+                $this->buyByPeriod($order, $plan);
+        }
+
+        switch ((int)$order->type) {
+            case 1:
+                $this->openEvent(config('v2board.new_order_event_id', 0));
+                break;
+            case 2:
+                $this->openEvent(config('v2board.renew_order_event_id', 0));
+                break;
+            case 3:
+                $this->openEvent(config('v2board.change_order_event_id', 0));
+                break;
+        }
+
+        $this->setSpeedLimit($plan->speed_limit);
+
+        // 更新用户购买记录，区分新/老用户
+        $this->updateHasPurchasedPlanStatus();
+
+        if (!$this->user->save()) {
+            DB::rollBack();
+            abort(500, '开通失败');
+        }
+        $order->status = 3;
+        if (!$order->save()) {
+            DB::rollBack();
+            abort(500, '开通失败');
+        }
+
+        DB::commit();
+
+        ////调用邮件提醒
+        $mailService = new MailService();
+        $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
     }
 
     public function recharge()

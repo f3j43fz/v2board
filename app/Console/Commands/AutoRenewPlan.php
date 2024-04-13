@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\OrderHandleJob;
 use App\Models\Order;
 use App\Models\Plan;
+use App\Services\OrderService;
 use App\Services\TelegramService;
 use App\Services\UserService;
 use App\Utils\Helper;
@@ -45,6 +46,7 @@ class AutoRenewPlan extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit', -1);
         // 设定每批处理100个用户
         $chunkSize = 100;
 
@@ -107,12 +109,8 @@ class AutoRenewPlan extends Command
         $order->balance_amount = $plan->month_price;
         //设定类型为：续费
         $order->type = 2;
-        //设为开通中
-        $order->status = 1;
-        //付款时间为未来的10秒
-        $order->paid_at = time() + 10;
-        //回调单号为 'auto_renew' (因为不需要付款，没有回调一说)
-        $order->callback_no = 'auto_renew';
+        //设置成待支付
+        $order->status= 0;
 
         if (!$order->save()) {
             DB::rollback();
@@ -120,13 +118,11 @@ class AutoRenewPlan extends Command
         }
         DB::commit();
 
-        try {
-            OrderHandleJob::dispatchNow($order->trade_no);
-        } catch (\Exception $e) {
+        $orderService = new OrderService($order);
+        if (!$orderService->paid('auto_renew')) {
             return false;
         }
         return true;
-
     }
 
 }
