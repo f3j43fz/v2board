@@ -66,7 +66,7 @@ class AutoRenewPlan extends Command
                     continue;
                 }
 
-                // 检查【按周期】套餐的用户是否已经过期
+                // 【按周期】套餐过期 且 余额大于月付价格
                 if ($user->expired_at != NULL && $user->expired_at < time()) {
                     if ($plan->month_price > 0 && $user->balance >= $plan->month_price) {
                         if ($this->startAutoRenew($user, $plan)) {
