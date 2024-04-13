@@ -88,15 +88,15 @@ class OrderService
 
         DB::commit();
 
-        ////调用邮件提醒
-        $mailService = new MailService();
-        if ($order->callback_no == 'auto_renew'){
-            //自动续费的订单
-            $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
-        }else {
-            // 用户手动下单的订单
-            $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
-        }
+//        ////调用邮件提醒
+//        $mailService = new MailService();
+//        if ($order->callback_no == 'auto_renew'){
+//            //自动续费的订单
+//            $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
+//        }else {
+//            // 用户手动下单的订单
+//            $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
+//        }
 
     }
 
@@ -414,7 +414,7 @@ class OrderService
         $this->user->has_Purchased_Plan_Before |= 1;
     }
 
-    private function isOrderAutoRenewed(Order $order)
+    private function isOrderAutoRenewed(Order $order): bool
     {
         return $order->callback_no == 'auto_renew';
     }
