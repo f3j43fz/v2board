@@ -88,8 +88,8 @@ class OrderService
 
         DB::commit();
 
-//        ////调用邮件提醒
-//        $mailService = new MailService();
+        ////调用邮件提醒
+        $mailService = new MailService();
 //        if ($order->callback_no == 'auto_renew'){
 //            //自动续费的订单
 //            $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
@@ -98,6 +98,7 @@ class OrderService
 //            $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
 //        }
 
+        $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
     }
 
     public function recharge()
