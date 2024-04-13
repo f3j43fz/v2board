@@ -90,12 +90,19 @@ class OrderService
 
         ////调用邮件提醒
         $mailService = new MailService();
-        $mailService->remindUpdateSub($this->user);//必须是这个参数
-        ////调用邮件提醒
+        if($this->isOrderAutoRenewed($order)){
+            //自动续费的订单
+            $mailService->remindOrderRenewed($this->user, $plan);//必须是这个参数
+        } else{
+            // 用户手动下单的订单
+            $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
+        }
+
     }
 
     public function recharge()
     {
+        DB::beginTransaction();
         // 管理员在后台设置的 充值优惠比例 以及 活动门槛
         // 路径：/config/v2board.php
         // 之后，记得修改管理员前端，方便后续修改
@@ -120,7 +127,6 @@ class OrderService
             $this->user->transfer_enable = round($this->user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
         }
 
-        DB::beginTransaction();
         if (!$this->user->save()) {
             DB::rollBack();
             abort(500, '充值失败');
@@ -167,7 +173,7 @@ class OrderService
 
         ////调用邮件提醒
         $mailService = new MailService();
-        $mailService->remindUpdateSub($this->user);//必须是这个参数
+        $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
         ////调用邮件提醒
 
     }
@@ -407,5 +413,12 @@ class OrderService
         //如果 $this->user->has_Purchased_Plan_Before 的值为 0，它会将其设置为 1；如果已经是 1，则保持不变。
         $this->user->has_Purchased_Plan_Before |= 1;
     }
+
+    private function isOrderAutoRenewed(Order $order)
+    {
+        return $order->callback_no == $order->trade_no;
+    }
+
+
 
 }

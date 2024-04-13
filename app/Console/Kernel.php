@@ -32,6 +32,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('v2board:statistics')->dailyAt('0:10');
         // check
         $schedule->command('check:order')->everyMinute();
+
+        //自动续费
+        $schedule->command('check:autoRenew')->everyMinute();
+
         $schedule->command('check:commission')->everyMinute();
         $schedule->command('check:ticket')->everyMinute();
         // reset

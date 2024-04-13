@@ -10,14 +10,14 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                         <tr style="padding:20px 40px 0 40px;display:table-cell">
-                            <td style="font-size:24px;line-height:1.5;color:#000;">套餐开通成功</td>
+                            <td style="font-size:24px;line-height:1.5;color:#000;">自动续费成功</td>
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
                                 尊敬的用户 {{$userName}} 您好！
                                 <br />
                                 <br />
-                                您的服务已经开通，感谢您对 {{$name}} 一如既往的支持。您的服务如下：
+                                您的服务已自动续费并开通，感谢您对 {{$name}} 一如既往的支持。您的服务如下：
                                 <br />
                                 <br />
                                 ###############
@@ -26,7 +26,7 @@
                                 套餐：{{$planName}}
                                 <br />
                                 <br />
-                                流量：{{$traffic}} （若是随用随付套餐，无需理会可用流量的值，您只需保持余额充足即可）
+                                流量：{{$traffic}}
                                 <br />
                                 <br />
                                 到期时间：{{$expiredTime}}

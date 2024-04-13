@@ -113,9 +113,12 @@ class MailService
     }
 
     ////用户购买套餐后，发邮件提示更新订阅
-    public function remindUpdateSub(User $user)
+    public function remindUpdateSub(User $user, Plan $plan)
     {
         $userName = explode('@', $user->email)[0];
+        $planName = $plan->name;
+        $traffic = $user->transfer_enable / (1024*1024*1024);
+        $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d H:i', $user->expired_at);
         SendEmailJob::dispatch([
             'email' => $user->email,
             'subject' => __('您的服务已开通', [
@@ -125,7 +128,10 @@ class MailService
             'template_value' => [
                 'name' => config('v2board.app_name', 'V2Board'),
                 'url' => config('v2board.app_url'),
-                'userName' => $userName
+                'userName' => $userName,
+                'planName' => $planName,
+                'traffic' => $traffic,
+                'expiredTime' => $expiredTime
             ]
         ]);
     }
@@ -203,6 +209,30 @@ class MailService
                 'url' => config('v2board.app_url'),
                 'balance' => $balance,
                 'userName' => $userName
+            ]
+        ]);
+    }
+
+    public function remindOrderRenewed(User $user, User $plan)
+    {
+        $userName = explode('@', $user->email)[0];
+        $planName = $plan->name;
+        $traffic = $user->transfer_enable / (1024*1024*1024);
+        $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d H:i', $user->expired_at);
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('您的服务已自动续费', [
+                'app_name' =>  config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'remindOrderRenewed',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'userName' => $userName,
+                'planName' => $planName,
+                'traffic' => $traffic,
+                'expiredTime' => $expiredTime
+
             ]
         ]);
     }

@@ -182,7 +182,8 @@ class UserController extends Controller
     {
         $updateData = $request->only([
             'remind_expire',
-            'remind_traffic'
+            'remind_traffic',
+            'auto_renew'
         ]);
 
         $user = User::find($request->user['id']);

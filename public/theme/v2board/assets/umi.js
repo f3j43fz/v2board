@@ -13609,6 +13609,14 @@
                     loading: this.props.user.remind_traffic_loading,
                     checked: t.remind_traffic,
                     onChange: e => this.update("remind_traffic", e ? 1 : 0)
+                }))),l.a.createElement("div", {
+                    className: "form-group"
+                }, l.a.createElement("label", null, Object(m["formatMessage"])({
+                    id: "\u5f00\u542f\u81ea\u52a8\u7eed\u8d39\uff08\u4ec5\u9650\u3010\u6309\u5468\u671f\u5957\u9910\u3011\uff09"
+                })), l.a.createElement("div", null, l.a.createElement(i["a"], {
+                    loading: this.props.user.auto_renew_loading,
+                    checked: t.auto_renew,
+                    onChange: e => this.update("auto_renew", e ? 1 : 0)
                 }))))))))), l.a.createElement("div", {
                     className: "row mb-3 mb-md-0"
                 }, l.a.createElement("div", {
