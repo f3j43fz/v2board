@@ -261,7 +261,7 @@ class UserController extends Controller
         foreach ($userBatches as $userBatch) {
             $emailJobs = [];
             foreach ($userBatch as $user) {
-                if($user->banned) continue;
+                if ($user->banned) continue;
                 $userName = explode('@', $user->email)[0];
                 $emailJobs[] = [
                     'email' => $user->email,
