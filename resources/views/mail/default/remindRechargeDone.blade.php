@@ -20,7 +20,7 @@
                                 您的充值已完成，感谢您对 {{$name}} 的支持。
                                 <br />
                                 <br />
-                                您充值了：{{$rechargeAmount}} 元，到账： {{rechargeAmountGotten}} 元。当前余额：{{$balance}} 元
+                                您充值了：{{$rechargeAmount}} 元，到账： {{$rechargeAmountGotten}} 元。当前余额：{{$balance}} 元
                                 <br />
                                 <br />
                                 -----------------
