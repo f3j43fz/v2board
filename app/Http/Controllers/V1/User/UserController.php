@@ -92,6 +92,7 @@ class UserController extends Controller
                 'banned',
                 'remind_expire',
                 'remind_traffic',
+                'auto_renew',
                 'expired_at',
                 'balance',
                 'commission_balance',
