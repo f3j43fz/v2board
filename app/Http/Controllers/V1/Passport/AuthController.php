@@ -305,9 +305,9 @@ class AuthController extends Controller
             ]);
 
 
-            $user->last_login_at = time();
-            $user->last_login_ip = $request->ip();
-            $user->save();
+//            $user->last_login_at = time();
+//            $user->last_login_ip = $request->ip();
+//            $user->save();
 
         }
 
