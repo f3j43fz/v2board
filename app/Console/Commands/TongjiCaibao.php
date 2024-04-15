@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\StatServer;
+use App\Models\StatUser;
 use App\Models\User;
 use App\Services\PlanService;
 use DateTime;
@@ -55,10 +57,9 @@ class TongjiCaibao extends Command
         $info = $info . $this->statTraffic();
 
 
-
         // 输出最终的结果，通知 Telegram
         $telegramService = new TelegramService();
-        $telegramService->sendMessageWithAdmin($info,false,true);
+        $telegramService->sendMessageWithAdmin($info, false, true);
 
     }
 
@@ -122,7 +123,6 @@ class TongjiCaibao extends Command
         return $message;
     }
 
-
     private function statUser(): string
     {
         $timezone = new DateTimeZone('Asia/Shanghai');
@@ -157,7 +157,7 @@ class TongjiCaibao extends Command
 
         // 构建消息内容
         $message = "2）用户：\n\n";
-        $message .= "总用户数： {$totalActiveUsers} 人 | 新注册用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人\n\n";
+        $message .= "总用户： {$totalActiveUsers} 人 | 新注册用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人\n\n";
 
         return $message;
     }
@@ -173,10 +173,106 @@ class TongjiCaibao extends Command
         return $totalActiveUsers;
     }
 
-
-
     private function statTraffic(): string
     {
-        return "待定\n\n";
+        $message = "3）流量统计：\n\n";
+
+        // 服务器流量统计
+        $serverStats = $this->getServerLastRank();
+        $message .= "流量消耗前10的服务器及其消耗数据:\n";
+        foreach ($serverStats['data'] as $server) {
+            $message .= "服务器名称：{$server['server_name']} | 消耗流量：{$server['total']} GB\n";
+        }
+        $message .= "\n";
+
+        // 用户流量统计
+        $userStats = $this->getUserLastRank();
+        $message .= "流量消耗前15的用户及其消耗数据:\n";
+        foreach ($userStats['data'] as $user) {
+            $message .= "用户邮箱：{$user['email']} | 消耗流量：{$user['total']} GB\n";
+        }
+
+        return $message;
+    }
+
+    private function getServerLastRank()
+    {
+        $servers = [
+            'shadowsocks' => ServerShadowsocks::where('parent_id', null)->get()->toArray(),
+            'v2ray' => ServerVmess::where('parent_id', null)->get()->toArray(),
+            'trojan' => ServerTrojan::where('parent_id', null)->get()->toArray(),
+            'vmess' => ServerVmess::where('parent_id', null)->get()->toArray(),
+            'vless' => ServerVless::where('parent_id', null)->get()->toArray(),
+            'hysteria' => ServerHysteria::where('parent_id', null)->get()->toArray()
+        ];
+        $startAt = strtotime('-1 day', strtotime(date('Y-m-d')));
+        $endAt = strtotime(date('Y-m-d'));
+        $statistics = StatServer::select([
+            'server_id',
+            'server_type',
+            'u',
+            'd',
+            DB::raw('(u+d) as total')
+        ])
+            ->where('record_at', '>=', $startAt)
+            ->where('record_at', '<', $endAt)
+            ->where('record_type', 'd')
+            ->limit(10)
+            ->orderBy('total', 'DESC')
+            ->get()
+            ->toArray();
+        foreach ($statistics as $k => $v) {
+            foreach ($servers[$v['server_type']] as $server) {
+                if ($server['id'] === $v['server_id']) {
+                    $statistics[$k]['server_name'] = $server['name'];
+                }
+            }
+            $statistics[$k]['total'] = $statistics[$k]['total'] / 1073741824; // 转换为GB
+        }
+        array_multisort(array_column($statistics, 'total'), SORT_DESC, $statistics);
+        return [
+            'data' => array_slice($statistics, 0, 10)
+        ];
+    }
+
+    private function getUserLastRank()
+    {
+        $startAt = strtotime('-1 day', strtotime(date('Y-m-d')));
+        $endAt = strtotime(date('Y-m-d'));
+        $statistics = StatUser::select([
+            'user_id',
+            'server_rate',
+            'u',
+            'd',
+            DB::raw('(u+d) as total')
+        ])
+            ->where('record_at', '>=', $startAt)
+            ->where('record_at', '<', $endAt)
+            ->where('record_type', 'd')
+            ->limit(30)
+            ->orderBy('total', 'DESC')
+            ->get()
+            ->toArray();
+        $data = [];
+        $idIndexMap = [];
+        foreach ($statistics as $k => $v) {
+            $id = $statistics[$k]['user_id'];
+            $user = User::where('id', $id)->first();
+            $statistics[$k]['email'] = $user['email'];
+            $statistics[$k]['total'] = $statistics[$k]['total'] * $statistics[$k]['server_rate'] / 1073741824;
+            if (isset($idIndexMap[$id])) {
+                $index = $idIndexMap[$id];
+                $data[$index]['total'] += $statistics[$k]['total'];
+            } else {
+                unset($statistics[$k]['server_rate']);
+                $data[] = $statistics[$k];
+                $idIndexMap[$id] = count($data) - 1;
+            }
+        }
+        array_multisort(array_column($data, 'total'), SORT_DESC, $data);
+        return [
+            'data' => array_slice($data, 0, 10)
+        ];
+
     }
 }
