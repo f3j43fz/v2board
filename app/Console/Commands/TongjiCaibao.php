@@ -151,6 +151,10 @@ class TongjiCaibao extends Command
             ->distinct()
             ->count('user_id');
 
+        // 转化率
+        $rate = round($orderingNewUsersCount / $newUsersCount * 100) . '%';
+
+
         // 下单老用户数
         $orderingOldUsersCount = Order::whereNotIn('user_id', $newUserIds)
             ->whereBetween('created_at', [$startOfDay, $endOfDay])
@@ -166,7 +170,7 @@ class TongjiCaibao extends Command
 
         // 构建消息内容
         $message = "2）用户：\n\n";
-        $message .= "总用户： {$totalActiveUsers} 人 | 新用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人 | 自动续费： {$enableRenewUsers} 人\n\n";
+        $message .= "总用户： {$totalActiveUsers} 人 | 新用户： {$newUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人 | 转化率： {$rate} | 下单老用户： {$orderingOldUsersCount} 人 | 自动续费开启人数： {$enableRenewUsers} 人\n\n";
 
         return $message;
     }
