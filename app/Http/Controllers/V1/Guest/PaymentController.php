@@ -30,8 +30,6 @@ class PaymentController extends Controller
 
     private function handle($tradeNo, $callbackNo)
     {
-        $telegramService = new TelegramService();
-        $telegramService->sendMessageWithAdmin('开始处理订单',true);
         $order = Order::where('trade_no', $tradeNo)->first();
         if (!$order) {
             abort(500, 'order is not found');
@@ -110,7 +108,7 @@ class PaymentController extends Controller
             $getAmount,
             $anotherInfo
         );
-
+        $telegramService = new TelegramService();
         $telegramService->sendMessageWithAdmin($message,true);
         return true;
     }
