@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:order')->everyMinute();
 
         //自动续费
-        $schedule->command('check:autoRenew')->dailyAt('0:15');
+        $schedule->command('check:autoRenew')->everyMinute();
 
         $schedule->command('check:commission')->everyMinute();
         $schedule->command('check:ticket')->everyMinute();
