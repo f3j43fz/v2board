@@ -187,7 +187,7 @@ class TongjiCaibao extends Command
         $serverStats = $this->getServerLastRank();
         $message .= "流量消耗前10的服务器及其消耗数据:\n";
         foreach ($serverStats['data'] as $server) {
-            $message .= "服务器名称：{$server['server_name']} | 消耗流量：{$server['total']} GB\n";
+            $message .= "{$server['server_name']} | 消耗流量：{$server['total']} GB\n";
         }
         $message .= "\n";
 
@@ -195,7 +195,7 @@ class TongjiCaibao extends Command
         $userStats = $this->getUserLastRank();
         $message .= "流量消耗前15的用户及其消耗数据:\n";
         foreach ($userStats['data'] as $user) {
-            $message .= "用户邮箱：{$user['email']} | 消耗流量：{$user['total']} GB\n";
+            $message .= "{$user['email']} | 消耗流量：{$user['total']} GB\n";
         }
 
         return $message;
