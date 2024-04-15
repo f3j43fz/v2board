@@ -161,9 +161,12 @@ class TongjiCaibao extends Command
         // 总有效套餐的用户数
         $totalActiveUsers = $this->countTotalActiveUsers();
 
+        //开启了自动续费的用户的数量
+        $enableRenewUsers = $this->countUsersWhoEnableRenew();
+
         // 构建消息内容
         $message = "2）用户：\n\n";
-        $message .= "总用户： {$totalActiveUsers} 人 | 新用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人\n\n";
+        $message .= "总用户： {$totalActiveUsers} 人 | 新用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人 | 自动续费： {$enableRenewUsers} 人\n\n";
 
         return $message;
     }
@@ -178,6 +181,12 @@ class TongjiCaibao extends Command
         }
         return $totalActiveUsers;
     }
+
+    private function countUsersWhoEnableRenew(): int
+    {
+        return User::where('auto_renew', 1)->count();
+    }
+
 
     private function statTraffic(): string
     {
