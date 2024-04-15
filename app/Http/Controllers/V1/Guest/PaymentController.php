@@ -30,6 +30,8 @@ class PaymentController extends Controller
 
     private function handle($tradeNo, $callbackNo)
     {
+        $telegramService = new TelegramService();
+        $telegramService->sendMessageWithAdmin('开始处理订单',true);
         $order = Order::where('trade_no', $tradeNo)->first();
         if (!$order) {
             abort(500, 'order is not found');
@@ -95,7 +97,7 @@ class PaymentController extends Controller
             }
         }
 
-        $telegramService = new TelegramService();
+
         $message = sprintf(
             "💰成功收款%s元\n———————————————\n订单号：`%s`\n邮箱： `%s`\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： `%s`\n本次佣金：%s元\n%s元",
             $order->total_amount / 100,
@@ -109,7 +111,7 @@ class PaymentController extends Controller
             $anotherInfo
         );
 
-        $telegramService->sendMessageWithAdmin($message);
+        $telegramService->sendMessageWithAdmin($message,true);
         return true;
     }
 
