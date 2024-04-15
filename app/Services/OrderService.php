@@ -99,42 +99,12 @@ class OrderService
         $this->user = User::find($order->user_id);
         $plan = Plan::find($order->plan_id);
 
-        if ($order->refund_amount) {
-            $this->user->balance = $this->user->balance + $order->refund_amount;
-        }
         DB::beginTransaction();
-        if ($order->surplus_order_ids) {
-            try {
-                Order::whereIn('id', $order->surplus_order_ids)->update([
-                    'status' => 4
-                ]);
-            } catch (\Exception $e) {
-                DB::rollback();
-                abort(500, '开通失败');
-            }
-        }
-        switch ((string)$order->period) {
-            case 'onetime_price':
-                $this->buyByOneTime($plan);
-                break;
-            case 'reset_price':
-                $this->buyByResetTraffic();
-                break;
-            default:
-                $this->buyByPeriod($order, $plan);
-        }
 
-        switch ((int)$order->type) {
-            case 1:
-                $this->openEvent(config('v2board.new_order_event_id', 0));
-                break;
-            case 2:
-                $this->openEvent(config('v2board.renew_order_event_id', 0));
-                break;
-            case 3:
-                $this->openEvent(config('v2board.change_order_event_id', 0));
-                break;
-        }
+        // 【按周期】续费套餐
+        $this->buyByPeriod($order, $plan);
+        // 类型是续费
+        $this->openEvent(config('v2board.renew_order_event_id', 0));
 
         $this->setSpeedLimit($plan->speed_limit);
 
@@ -143,12 +113,12 @@ class OrderService
 
         if (!$this->user->save()) {
             DB::rollBack();
-            abort(500, '开通失败');
+            abort(500, '自动续费失败');
         }
         $order->status = 3;
         if (!$order->save()) {
             DB::rollBack();
-            abort(500, '开通失败');
+            abort(500, '自动续费失败');
         }
 
         DB::commit();
@@ -173,7 +143,7 @@ class OrderService
 
         $order = $this->order;
         $this->user = User::find($order->user_id);
-        $rechargeAmount = $order->total_amount + $order->discount_amount + $order->balance_amount;
+        $rechargeAmount = $order->total_amount;
         $rechargeAmountGotten = ($rechargeAmount >= $discountThreshold)? $rechargeAmount * (1 + $discount) : $rechargeAmount;
         $this->user->balance = $this->user->balance + $rechargeAmountGotten;
 
@@ -470,11 +440,6 @@ class OrderService
     {
         //如果 $this->user->has_Purchased_Plan_Before 的值为 0，它会将其设置为 1；如果已经是 1，则保持不变。
         $this->user->has_Purchased_Plan_Before |= 1;
-    }
-
-    private function isOrderAutoRenewed(Order $order): bool
-    {
-        return $order->callback_no == 'auto_renew';
     }
 
 
