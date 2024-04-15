@@ -51,10 +51,10 @@ class LogLoginJob implements ShouldQueue
             'last_login_ip' => $this->last_login_ip
         ];
 
-        // 检查是否达到批处理数量或时间限制
+        // 仅当达到批处理数量时立即执行更新，否则存储在缓存中待计划任务处理
         if (count($currentBatch) >= 10) {
             $this->updateLoginRecords($currentBatch);
-            Cache::forget($key); // 清空缓存
+            Cache::forget($key);
         } else {
             Cache::put($key, $currentBatch, 300); // 5分钟内有效
         }
@@ -65,7 +65,8 @@ class LogLoginJob implements ShouldQueue
      * @param array $batch
      * @return void
      */
-    private function updateLoginRecords($batch)
+    // 批量更新方法公开为 public 以允许从外部调用
+    public function updateLoginRecords($batch)
     {
         foreach ($batch as $login) {
             User::where('id', $login['user_id'])
