@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\SendEmailJob;
+use App\Models\Plan;
 use App\Models\User;
 use App\Utils\CacheKey;
 use Illuminate\Support\Facades\Cache;
