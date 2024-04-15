@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Passport\AuthForget;
 use App\Http\Requests\Passport\AuthLogin;
 use App\Http\Requests\Passport\AuthRegister;
+use App\Jobs\LogLoginJob;
 use App\Jobs\SendEmailJob;
 use App\Models\InviteCode;
 use App\Models\Plan;
@@ -208,6 +209,9 @@ class AuthController extends Controller
             );
         }
 
+        // 记录登录IP 和 时间
+        if(!$user->is_admin) LogLoginJob::dispatch($user->id, time(), $request->ip());
+
         $authService = new AuthService($user);
 
         return response()->json([
@@ -306,6 +310,9 @@ class AuthController extends Controller
 
 
         }
+
+        // 记录登录IP 和 时间
+        if(!$user->is_admin) LogLoginJob::dispatch($user->id, time(), $request->ip());
 
         $authService = new AuthService($user);
         return response([
