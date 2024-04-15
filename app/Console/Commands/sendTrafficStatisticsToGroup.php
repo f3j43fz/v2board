@@ -57,7 +57,6 @@ class sendTrafficStatisticsToGroup extends Command
 
         // 用户流量统计
         $userStats = $this->getUserLastRank();
-        $message .= "流量消耗前10的用户及其消耗数据:\n";
         foreach ($userStats['data'] as $user) {
             $message .= "#{$user['user_id']} | 消耗流量：{$user['total']} GB\n";
         }
