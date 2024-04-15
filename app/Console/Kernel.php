@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Jobs\LogLoginJob;
 use App\Models\Tokenrequest;
 use App\Utils\CacheKey;
 use Illuminate\Console\Scheduling\Schedule;
@@ -70,7 +69,8 @@ class Kernel extends ConsoleKernel
             $key = 'login_updates';
             $currentBatch = Cache::get($key, []);
             if (!empty($currentBatch)) {
-                (new LogLoginJob)->updateLoginRecords($currentBatch);
+                $userService = new \App\Services\UserService();
+                $userService->updateLoginRecords($currentBatch);
                 Cache::forget($key);
             }
         })->everyFiveMinutes();

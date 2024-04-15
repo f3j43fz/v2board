@@ -2,14 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class LogLoginJob implements ShouldQueue
 {
@@ -20,13 +19,8 @@ class LogLoginJob implements ShouldQueue
     protected $last_login_ip;
 
     public $tries = 3;
-    public $timeout = 60; // 增加 timeout 时间，适应批处理操作
+    public $timeout = 60;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
     public function __construct($userID, $time, $ip)
     {
         $this->userID = $userID;
@@ -34,46 +28,22 @@ class LogLoginJob implements ShouldQueue
         $this->last_login_ip = $ip;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(UserService $userService)
     {
         $key = 'login_updates';
         $currentBatch = Cache::get($key, []);
 
-        // 加入当前登录信息到批处理数组
         $currentBatch[] = [
             'user_id' => $this->userID,
             'last_login_at' => $this->last_login_at,
             'last_login_ip' => $this->last_login_ip
         ];
 
-        // 仅当达到批处理数量时立即执行更新，否则存储在缓存中待计划任务处理
         if (count($currentBatch) >= 10) {
-            $this->updateLoginRecords($currentBatch);
+            $userService->updateLoginRecords($currentBatch);
             Cache::forget($key);
         } else {
             Cache::put($key, $currentBatch, 300); // 5分钟内有效
-        }
-    }
-
-    /**
-     * 批量更新登录记录到数据库
-     * @param array $batch
-     * @return void
-     */
-    // 批量更新方法公开为 public 以允许从外部调用
-    public function updateLoginRecords($batch)
-    {
-        foreach ($batch as $login) {
-            User::where('id', $login['user_id'])
-                ->update([
-                    'last_login_at' => $login['last_login_at'],
-                    'last_login_ip' => $login['last_login_ip']
-                ]);
         }
     }
 }

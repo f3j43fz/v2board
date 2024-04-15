@@ -200,5 +200,15 @@ class UserService
         StatServerJob::dispatch($data, $server, $protocol, 'd');
     }
 
+    public function updateLoginRecords(array $batch)
+    {
+        foreach ($batch as $login) {
+            User::where('id', $login['user_id'])
+                ->update([
+                    'last_login_at' => $login['last_login_at'],
+                    'last_login_ip' => $login['last_login_ip']
+                ]);
+        }
+    }
 
 }
