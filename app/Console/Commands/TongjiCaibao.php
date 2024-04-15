@@ -193,7 +193,7 @@ class TongjiCaibao extends Command
 
         // 用户流量统计
         $userStats = $this->getUserLastRank();
-        $message .= "流量消耗前15的用户及其消耗数据:\n";
+        $message .= "流量消耗前10的用户及其消耗数据:\n";
         foreach ($userStats['data'] as $user) {
             $message .= "{$user['email']} | 消耗流量：{$user['total']} GB\n";
         }
@@ -233,7 +233,7 @@ class TongjiCaibao extends Command
                     $statistics[$k]['server_name'] = $server['name'];
                 }
             }
-            $statistics[$k]['total'] = $statistics[$k]['total'] / 1073741824; // 转换为GB
+            $statistics[$k]['total'] = round($statistics[$k]['total'] / 1073741824); // 转换为GB
         }
         array_multisort(array_column($statistics, 'total'), SORT_DESC, $statistics);
         return [
@@ -265,7 +265,7 @@ class TongjiCaibao extends Command
             $id = $statistics[$k]['user_id'];
             $user = User::where('id', $id)->first();
             $statistics[$k]['email'] = $user['email'];
-            $statistics[$k]['total'] = $statistics[$k]['total'] * $statistics[$k]['server_rate'] / 1073741824;
+            $statistics[$k]['total'] = round($statistics[$k]['total'] * $statistics[$k]['server_rate'] / 1073741824);
             if (isset($idIndexMap[$id])) {
                 $index = $idIndexMap[$id];
                 $data[$index]['total'] += $statistics[$k]['total'];
