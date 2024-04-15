@@ -30,7 +30,7 @@ class LogLoginJob implements ShouldQueue
 
     public function handle(UserService $userService)
     {
-        $key = 'login_updates';
+        $key = CacheKey::get('LOGIN_UPDATES');
         $currentBatch = Cache::get($key, []);
 
         $currentBatch[] = [
