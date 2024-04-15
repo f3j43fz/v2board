@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Passport\AuthForget;
 use App\Http\Requests\Passport\AuthLogin;
 use App\Http\Requests\Passport\AuthRegister;
-use App\Jobs\LogLoginJob;
 use App\Jobs\SendEmailJob;
 use App\Models\InviteCode;
 use App\Models\Plan;
@@ -306,7 +305,9 @@ class AuthController extends Controller
             ]);
 
 
-//            LogLoginJob::dispatch($user->id, time(), $request->ip());
+            $user->last_login_at = time();
+            $user->last_login_ip = $request->ip();
+            $user->save();
 
         }
 
