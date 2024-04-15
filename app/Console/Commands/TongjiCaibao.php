@@ -163,7 +163,7 @@ class TongjiCaibao extends Command
 
         // 构建消息内容
         $message = "2）用户：\n\n";
-        $message .= "总用户： {$totalActiveUsers} 人 | 新注册用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人\n\n";
+        $message .= "总用户： {$totalActiveUsers} 人 | 新用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人\n\n";
 
         return $message;
     }

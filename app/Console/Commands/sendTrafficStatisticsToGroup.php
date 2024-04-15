@@ -2,27 +2,27 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\StatUser;
 use App\Models\User;
 use App\Services\TelegramService;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-class sendTrafficStatistics extends Command
+class sendTrafficStatisticsToGroup extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'customFunction:sendTrafficStatistics';
+    protected $signature = 'customFunction:sendTrafficStatisticsToGroup';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '今日用户流量统计';
+    protected $description = '统计每日用户流量，推送到用户群里';
 
     /**
      * Create a new command instance.
@@ -42,31 +42,33 @@ class sendTrafficStatistics extends Command
     public function handle()
     {
         ini_set('memory_limit', -1);
-        $telegramService = new TelegramService();
-        $this->notify("开始播报今日流量统计");
 
-        // 获取今日流量消耗前20名的用户数据
-        // 20的数值可调
-        $userTrafficRank = $this->getUserTodayRank(20);
+        $info = "🕧 昨日流量排行\n———————————\n\n";
 
-        // 初始化消息字符串
-        $message = "📈 今日流量消耗排行榜：\n";
+        $info = $info . $this->statTraffic();
 
-        // 格式化消息
-        foreach ($userTrafficRank['data'] as $userTraffic) {
-            $message .= "#" . "`" . $userTraffic['user_id'] . "`" . " 上传：" . round($userTraffic['u'] / 1073741824, 2) . " GB 下载：" . round($userTraffic['d'] / 1073741824, 2) . " GB\n";
-        }
-
-        // 发送汇总的消息
-        $this->notify($message);
-        $this->notify("今日流量统计播报完毕");
+        $this->notify($info);
 
     }
 
-    public function getUserTodayRank($limit)
+    private function statTraffic(): string
     {
-        $startAt = strtotime(date('Y-m-d'));
-        $endAt = time();
+        $message = "";
+
+        // 用户流量统计
+        $userStats = $this->getUserLastRank();
+        $message .= "流量消耗前10的用户及其消耗数据:\n";
+        foreach ($userStats['data'] as $user) {
+            $message .= "#{$user['user_id']} | 消耗流量：{$user['total']} GB\n";
+        }
+
+        return $message;
+    }
+
+    private function getUserLastRank()
+    {
+        $startAt = strtotime('-1 day', strtotime(date('Y-m-d')));
+        $endAt = strtotime(date('Y-m-d'));
         $statistics = StatUser::select([
             'user_id',
             'server_rate',
@@ -87,12 +89,10 @@ class sendTrafficStatistics extends Command
             $id = $statistics[$k]['user_id'];
             $user = User::where('id', $id)->first();
             $statistics[$k]['email'] = $user['email'];
-            $statistics[$k]['total'] = $statistics[$k]['total'] * $statistics[$k]['server_rate'] / 1073741824;
+            $statistics[$k]['total'] = round($statistics[$k]['total'] * $statistics[$k]['server_rate'] / 1073741824);
             if (isset($idIndexMap[$id])) {
                 $index = $idIndexMap[$id];
                 $data[$index]['total'] += $statistics[$k]['total'];
-                $data[$index]['u'] += $statistics[$k]['u'];
-                $data[$index]['d'] += $statistics[$k]['d'];
             } else {
                 unset($statistics[$k]['server_rate']);
                 $data[] = $statistics[$k];
@@ -101,10 +101,10 @@ class sendTrafficStatistics extends Command
         }
         array_multisort(array_column($data, 'total'), SORT_DESC, $data);
         return [
-            'data' => array_slice($data, 0, $limit)
+            'data' => array_slice($data, 0, 10)
         ];
-    }
 
+    }
 
     private function notify($text){
         $telegramService = new TelegramService();
@@ -112,4 +112,6 @@ class sendTrafficStatistics extends Command
         $chatID =config('v2board.telegram_group_id');
         $telegramService->sendMessage($chatID, $text,false,'markdown');
     }
+
+
 }
