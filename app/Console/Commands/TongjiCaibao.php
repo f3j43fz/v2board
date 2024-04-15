@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\PlanService;
 use DateTime;
 use DateTimeZone;
 use App\Models\Order;
@@ -123,8 +124,54 @@ class TongjiCaibao extends Command
 
     private function statUser(): string
     {
-        return "待定\n\n";
+        $timezone = new DateTimeZone('Asia/Shanghai');
+        $yesterday = new DateTime('yesterday', $timezone);
+        $startOfDay = $yesterday->setTime(0, 0, 0)->format('Y-m-d H:i:s');
+        $endOfDay = $yesterday->setTime(23, 59, 59)->format('Y-m-d H:i:s');
+
+        // 新注册用户数
+        $newUsers = User::whereBetween('created_at', [$startOfDay, $endOfDay])->get();
+        $newUsersCount = $newUsers->count();
+
+        // 新注册用户的ID
+        $newUserIds = $newUsers->pluck('id');
+
+        // 下单新用户数
+        $orderingNewUsersCount = Order::whereIn('user_id', $newUserIds)
+            ->whereBetween('created_at', [$startOfDay, $endOfDay])
+            ->whereIn('status', [3, 4])
+            ->distinct()
+            ->count('user_id');
+
+        // 下单老用户数
+        $orderingOldUsersCount = Order::whereNotIn('user_id', $newUserIds)
+            ->whereBetween('created_at', [$startOfDay, $endOfDay])
+            ->whereIn('status', [3, 4])
+            ->distinct()
+            ->count('user_id');
+
+        // 总有效套餐的用户数
+        $totalActiveUsers = $this->countTotalActiveUsers();
+
+        // 构建消息内容
+        $message = "2）用户：\n\n";
+        $message .= "总用户数： {$totalActiveUsers} 人 | 新注册用户： {$newUsersCount} 人 | 下单老用户： {$orderingOldUsersCount} 人 | 下单新用户： {$orderingNewUsersCount} 人\n\n";
+
+        return $message;
     }
+
+    // 统计总的有效套餐用户数
+    private function countTotalActiveUsers(): int
+    {
+        $counts = PlanService::countActiveUsers();
+        $totalActiveUsers = 0;
+        foreach ($counts as $count) {
+            $totalActiveUsers += $count->count;
+        }
+        return $totalActiveUsers;
+    }
+
+
 
     private function statTraffic(): string
     {
