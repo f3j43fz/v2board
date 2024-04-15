@@ -4,6 +4,11 @@ namespace App\Console\Commands;
 
 use App\Models\StatServer;
 use App\Models\StatUser;
+use App\Models\ServerHysteria;
+use App\Models\ServerShadowsocks;
+use App\Models\ServerTrojan;
+use App\Models\ServerVless;
+use App\Models\ServerVmess;
 use App\Models\User;
 use App\Services\PlanService;
 use DateTime;
