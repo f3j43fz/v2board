@@ -31,8 +31,7 @@ class CacheKey
         'USER_SESSIONS' => '用户session',
         'FORGET_REQUEST_LIMIT' => '找回密码次数限制',
         'Domain_IP' => '域名对应的IP',
-        'PLAN' => '套餐信息',
-        'LOGIN_UPDATES' => '登录信息更新'
+        'PLAN' => '套餐信息'
     ];
 
     public static function get(string $key, $uniqueValue)

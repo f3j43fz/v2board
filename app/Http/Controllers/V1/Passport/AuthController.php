@@ -306,7 +306,7 @@ class AuthController extends Controller
             ]);
 
 
-            LogLoginJob::dispatch($user->id, time(), $request->ip());
+//            LogLoginJob::dispatch($user->id, time(), $request->ip());
 
         }
 
