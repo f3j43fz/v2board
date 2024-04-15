@@ -17,6 +17,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Services\TelegramService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class TongjiCaibao extends Command
 {
