@@ -130,9 +130,15 @@ class TongjiCaibao extends Command
         $startOfDay = $yesterday->setTime(0, 0, 0)->format('Y-m-d H:i:s');
         $endOfDay = $yesterday->setTime(23, 59, 59)->format('Y-m-d H:i:s');
 
+        // 调试输出
+        $this->info("查询的时间范围：从 {$startOfDay} 到 {$endOfDay}");
+
         // 新注册用户数
         $newUsers = User::whereBetween('created_at', [$startOfDay, $endOfDay])->get();
         $newUsersCount = $newUsers->count();
+
+        // 调试输出
+        $this->info("新注册用户ID：".implode(", ", $newUsers->pluck('id')->toArray()));
 
         // 新注册用户的ID
         $newUserIds = $newUsers->pluck('id');
