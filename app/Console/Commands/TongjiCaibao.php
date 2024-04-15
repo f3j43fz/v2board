@@ -195,7 +195,7 @@ class TongjiCaibao extends Command
         $userStats = $this->getUserLastRank();
         $message .= "流量消耗前10的用户及其消耗数据:\n";
         foreach ($userStats['data'] as $user) {
-            $message .= "{$user['email']} | 消耗流量：{$user['total']} GB\n";
+            $message .= "#{$user['user_id']} | 消耗流量：{$user['total']} GB\n";
         }
 
         return $message;
