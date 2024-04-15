@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
 use App\Services\PlanService;
 use DateTime;
 use DateTimeZone;
