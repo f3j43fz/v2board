@@ -76,7 +76,7 @@ class PaymentController extends Controller
         // inviterEmail  inviterCommission
         $inviterEmail = '';
         $getAmount = 0; // 本次佣金
-        $anotherInfo = "";
+        $anotherInfo = "邀请人：该用户不存在邀请人";
 
         if (!empty($order->invite_user_id)) {
             $inviter = User::find($order->invite_user_id);
@@ -86,10 +86,10 @@ class PaymentController extends Controller
 
                 if ((int)config('v2board.withdraw_close_enable', 0)) {
                     $inviterBalance = $inviter->balance / 100 + $getAmount; // 总余额 （关闭提现）
-                    $anotherInfo = "邀请人总余额： " . $inviterBalance;
+                    $anotherInfo = "邀请人总余额：" . $inviterBalance. " 元";
                 } else {
                     $inviterCommissionBalance = $inviter->commission_balance / 100 + $getAmount; // 总佣金 （允许提现）
-                    $anotherInfo = "邀请人总佣金： " . $inviterCommissionBalance;
+                    $anotherInfo = "邀请人总佣金：" . $inviterCommissionBalance. " 元";
 
                 }
             }
@@ -97,7 +97,7 @@ class PaymentController extends Controller
 
 
         $message = sprintf(
-            "💰成功收款%s元\n———————————————\n订单号：`%s`\n邮箱： `%s`\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： `%s`\n本次佣金：%s元\n%s元",
+            "💰成功收款%s元\n———————————————\n订单号：`%s`\n邮箱： `%s`\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： `%s`\n本次佣金：%s 元\n%s",
             $order->total_amount / 100,
             $order->trade_no,
             $userEmail,
