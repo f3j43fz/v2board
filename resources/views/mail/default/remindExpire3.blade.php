@@ -14,7 +14,7 @@
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
-                                尊敬的用户 {{$userName}} 您好！
+                                尊敬的用户 {{$userName}} ，
                                 <br />
                                 <br />
                                 您的服务已经过期 3 天了噢。底部有最新网址。如果你已续费请忽略此邮件。

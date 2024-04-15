@@ -14,7 +14,7 @@
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
-                                尊敬的用户 {{$userName}} 您好！
+                                尊敬的用户 {{$userName}} ，
                                 <br />
                                 <br />
                                 您的服务已经开通，感谢您对 {{$name}} 一如既往的支持。您的服务如下：

@@ -14,7 +14,7 @@
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
-                                尊敬的用户 {{$userName}} 您好！
+                                尊敬的用户 {{$userName}} ，
                                 <br />
                                 <br />
                                 您正在尝试验证邮箱，请使用以下验证码完成验证：

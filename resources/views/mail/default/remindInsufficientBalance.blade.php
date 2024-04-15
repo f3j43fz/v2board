@@ -14,7 +14,7 @@
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
-                                尊敬的用户 {{$userName}} 您好！
+                                尊敬的用户 {{$userName}} ，
                                 <br />
                                 <br />
                                 您在 {{$name}} 的余额为：{{$balance}} 元，已无法继续使用【随用随付】套餐。可到官网【个人中心】充值后继续使用噢~。

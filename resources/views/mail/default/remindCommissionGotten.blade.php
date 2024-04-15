@@ -14,7 +14,7 @@
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
-                                尊敬的用户 {{$userName}} 您好！
+                                尊敬的用户 {{$userName}} ，
                                 <br />
                                 <br />
                                 您的受邀用户购买了套餐，您获得了 {{$rate}}% 的佣金：{{$commission}}元，感谢您与朋友的支持。
