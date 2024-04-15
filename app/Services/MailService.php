@@ -186,9 +186,9 @@ class MailService
             'template_value' => [
                 'name' => config('v2board.app_name', 'V2Board'),
                 'url' => config('v2board.app_url'),
-                'rechargeAmount' => $rechargeAmount,
-                'rechargeAmountGotten' => $rechargeAmountGotten,
-                'balance' => $balance,
+                'rechargeAmount' => $rechargeAmount/100,
+                'rechargeAmountGotten' => $rechargeAmountGotten/100,
+                'balance' => $balance/100,
                 'userName' => $userName
             ]
         ]);
