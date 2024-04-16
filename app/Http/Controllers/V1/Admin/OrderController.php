@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\OrderFetch;
 use App\Http\Requests\Admin\OrderUpdate;
 use App\Models\CommissionLog;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\User;
 use App\Services\OrderService;
@@ -45,6 +46,14 @@ class OrderController extends Controller
         if ($order->surplus_order_ids) {
             $order['surplus_orders'] = Order::whereIn('id', $order->surplus_order_ids)->get();
         }
+
+        if (!empty($order->payment_id)) {
+            $payment = Payment::find($order->payment_id);
+            $order->payment_id = $payment ? $payment->name : "无";
+        } else {
+            $order->payment_id = "无";
+        }
+
         return response([
             'data' => $order
         ]);
@@ -72,6 +81,14 @@ class OrderController extends Controller
                 }
             }
         }
+
+        if (!empty($res[$i]['payment_id'])) {
+            $payment = Payment::find($res[$i]['payment_id']);
+            $res[$i]['payment_id'] = $payment ? $payment->name : "无";
+        } else {
+            $res[$i]['payment_id'] = "无";
+        }
+
         return response([
             'data' => $res,
             'total' => $total

@@ -75295,6 +75295,13 @@
                     style: n
                 }, g.a.createElement(S["a"], {
                     span: 6
+                }, "\u652f\u4ed8\u65b9\u5f0f"), g.a.createElement(S["a"], {
+                    span: 18
+                }, (this.state.order.payment_id))), g.a.createElement(E["a"], {
+                    gutter: [16, 16],
+                    style: n
+                }, g.a.createElement(S["a"], {
+                    span: 6
                 }, "\u652f\u4ed8\u91d1\u989d"), g.a.createElement(S["a"], {
                     span: 18
                 }, (this.state.order.total_amount / 100).toFixed(2))), g.a.createElement(E["a"], {
@@ -75522,6 +75529,10 @@
                                 type: "caret-down"
                             })))))
                         }
+                    }, {
+                        title: "\u4f63\u91d1\u91d1\u989d",
+                        dataIndex: "payment_id",
+                        key: "payment_id"
                     }, {
                         title: "\u4f63\u91d1\u91d1\u989d",
                         dataIndex: "commission_balance",
