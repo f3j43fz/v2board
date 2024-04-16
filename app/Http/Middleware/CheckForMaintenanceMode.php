@@ -16,7 +16,7 @@ class CheckForMaintenanceMode
      */
     public function handle(Request $request, Closure $next)
     {
-        if (config('v2board.is_maintenance', 1) == 1) {
+        if (config('v2board.is_maintenance', 0) == 1) {
             // 如果处于维护模式，重定向到指定页面
             return redirect('/maintenance');
         }
