@@ -75530,7 +75530,7 @@
                             })))))
                         }
                     }, {
-                        title: "\u4f63\u91d1\u91d1\u989d",
+                        title: "\u652f\u4ed8\u65b9\u5f0f",
                         dataIndex: "payment_id",
                         key: "payment_id"
                     }, {
