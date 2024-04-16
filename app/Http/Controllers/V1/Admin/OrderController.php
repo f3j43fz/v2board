@@ -80,13 +80,15 @@ class OrderController extends Controller
                     $res[$i]['plan_name'] = $plan[$k]['name'];
                 }
             }
-        }
 
-        if (!empty($res[$i]['payment_id'])) {
-            $payment = Payment::find($res[$i]['payment_id']);
-            $res[$i]['payment_id'] = $payment ? $payment->name : "无";
-        } else {
-            $res[$i]['payment_id'] = "无";
+
+            if (!empty($res[$i]['payment_id'])) {
+                $payment = Payment::find($res[$i]['payment_id']);
+                $res[$i]['payment_id'] = $payment ? $payment->name : "无";
+            } else {
+                $res[$i]['payment_id'] = "无";
+            }
+
         }
 
         return response([
