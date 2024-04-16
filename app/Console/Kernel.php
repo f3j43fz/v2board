@@ -64,6 +64,18 @@ class Kernel extends ConsoleKernel
             TokenRequest::where('requested_at', '<', $hourAgo)->delete();
         })->everyFiveMinutes();
 
+        // 每5分钟检查一次是否有待处理的登录信息
+        $schedule->call(function () {
+            $key = CacheKey::get('LOGIN_UPDATES','TIME&IP');
+            $currentBatch = Cache::get($key, []);
+            if (!empty($currentBatch)) {
+                $userService = new \App\Services\UserService();
+                $userService->updateLoginRecords($currentBatch);
+                Cache::forget($key);
+            }
+        })->everyFiveMinutes();
+
+
 
     }
 
