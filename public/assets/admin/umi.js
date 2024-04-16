@@ -75309,6 +75309,13 @@
                     style: n
                 }, g.a.createElement(S["a"], {
                     span: 6
+                }, "\u624b\u7eed\u8d39"), g.a.createElement(S["a"], {
+                    span: 18
+                }, (this.state.order.handling_amount / 100).toFixed(2))), g.a.createElement(E["a"], {
+                    gutter: [16, 16],
+                    style: n
+                }, g.a.createElement(S["a"], {
+                    span: 6
                 }, "\u4f18\u60e0\u91d1\u989d"), g.a.createElement(S["a"], {
                     span: 18
                 }, (this.state.order.discount_amount / 100).toFixed(2))), g.a.createElement(E["a"], {
