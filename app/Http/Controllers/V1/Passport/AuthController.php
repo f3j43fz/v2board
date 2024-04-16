@@ -199,6 +199,7 @@ class AuthController extends Controller
         }
 
         $user->last_login_at = time();
+//        $user->last_login_ip = $request->ip();
         $user->save();
 
         if ((int)config('v2board.register_limit_by_ip_enable', 0)) {
