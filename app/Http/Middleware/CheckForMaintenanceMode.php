@@ -2,25 +2,16 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode as Middleware;
 
-class CheckForMaintenanceMode
+class CheckForMaintenanceMode extends Middleware
 {
     /**
-     * Handle an incoming request.
+     * The URIs that should be reachable while maintenance mode is enabled.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * @var array
      */
-    public function handle(Request $request, Closure $next)
-    {
-        if (config('v2board.is_maintenance', 0)) {
-            // 直接使用 abort 函数生成 HTTP 503 响应
-            abort(503, '网站维护中，请您稍后再试');
-        }
-
-        return $next($request);
-    }
+    protected $except = [
+        //
+    ];
 }
