@@ -16,9 +16,9 @@ class CheckForMaintenanceMode
      */
     public function handle(Request $request, Closure $next)
     {
-        if (config('v2board.is_maintenance', 0) == 1) {
-            // 如果处于维护模式，重定向到指定页面
-            return redirect('/maintenance');
+        if (config('v2board.is_maintenance', 0) === true) {
+            // 直接使用 abort 函数生成 HTTP 503 响应
+            abort(503, '网站维护中，请您稍后再试');
         }
 
         return $next($request);
