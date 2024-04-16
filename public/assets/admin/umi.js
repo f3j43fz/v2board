@@ -56163,11 +56163,13 @@
                         render: (e, t) => {
                             return g.a.createElement(f["a"], {
                                 placement: "top",
-                                title: t.last_login_at ? "\u6700\u540e\u767b\u5f55".concat(w()(1e3 * t.last_login_at).format("YYYY-MM-DD HH:mm:ss")) : "\u4ece\u672a\u767b\u5f55"
+                                title: (t.last_login_at ? "\u6700\u540e\u767b\u5f55".concat(w()(1e3 * t.last_login_at).format("YYYY-MM-DD HH:mm:ss")) : "\u4ece\u672a\u767b\u5f55")
+                                    + (t.last_login_ip ? " \uFF0CIP\uFF1A".concat(t.last_login_ip) : "")
                             }, g.a.createElement(d["a"], {
                                 status: (new Date).getTime() / 1e3 - 600 > t.t ? "default" : "success"
                             }), e)
                         }
+
                     }, {
                         title: "\u90ae\u7bb1",
                         dataIndex: "email",
