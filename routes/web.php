@@ -68,5 +68,5 @@ Route::get('/' . config('v2board.secure_path', config('v2board.frontend_admin_pa
     ]);
 });
 
-// 维护模式页面路由
-Route::get('/maintenance', 'App\Http\Controllers\V1\Guest\MaintenanceController@index');
+//// 维护模式页面路由
+//Route::get('/maintenance', 'App\Http\Controllers\V1\Guest\MaintenanceController@index');
