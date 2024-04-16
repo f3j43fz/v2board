@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Models\Tokenrequest;
+use App\Services\UserService;
 use App\Utils\CacheKey;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -69,7 +70,7 @@ class Kernel extends ConsoleKernel
             $key = CacheKey::get('LOGIN_UPDATES','TIME&IP');
             $currentBatch = Cache::get($key, []);
             if (!empty($currentBatch)) {
-                $userService = new \App\Services\UserService();
+                $userService = new UserService();
                 $userService->updateLoginRecords($currentBatch);
                 Cache::forget($key);
             }
