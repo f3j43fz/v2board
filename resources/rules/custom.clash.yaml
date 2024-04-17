@@ -740,12 +740,12 @@ rules:
     - 'PROCESS-NAME,org.telegram.messenger,✈️Telegram 主控'
     - 'PROCESS-NAME,telegram-desktop,✈️Telegram 主控'
     # DC5 新加坡
-    - 'IP-CIDR,91.108.56.0/24,no-resolve,🇸🇬 Telegram DC5'
+    - 'IP-CIDR,91.108.56.0/24,🇸🇬 Telegram DC5,no-resolve'
     # DC1、DC3 美国
-    - 'IP-CIDR,149.154.175.0/25,no-resolve,🇺🇸 Telegram DC1&3'
+    - 'IP-CIDR,149.154.175.0/25,🇺🇸 Telegram DC1&3,no-resolve'
     # DC2、DC4 荷兰
-    - 'IP-CIDR,91.108.4.128/25,no-resolve,🇳🇱 Telegram DC2&4'
-    - 'IP-CIDR,149.154.160.0/21,no-resolve,🇳🇱 Telegram DC2&4'
+    - 'IP-CIDR,91.108.4.128/25,🇳🇱 Telegram DC2&4,no-resolve'
+    - 'IP-CIDR,149.154.160.0/21,🇳🇱 Telegram DC2&4,no-resolve'
     #Netflix
     - 'RULE-SET,Netflix,🍿Netflix'
     #Disney
