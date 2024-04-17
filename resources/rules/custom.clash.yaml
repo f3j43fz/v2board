@@ -707,6 +707,7 @@ rules:
     # DC5 新加坡
     - 'IP-CIDR,91.108.56.0/24,🇸🇬 Telegram DC5'
     # DC1、DC3 美国
+    - 'IP-CIDR,149.154.171.255/24,🇺🇸 Telegram DC1&3'
     - 'IP-CIDR,149.154.175.0/25,🇺🇸 Telegram DC1&3'
     - 'IP-CIDR,149.154.171.0/25,🇺🇸 Telegram DC1&3'
     # DC2、DC4 荷兰
