@@ -118,7 +118,10 @@ proxy-groups:
     - { name: 🤖Claude, type: select, proxies: [自动选择, 故障转移]}
     - { name: 😻动画疯, type: select, proxies: [/TW/,故障转移]}
     - { name: 🎴Instagram, type: select, proxies: [自动选择, 故障转移]}
-    - { name: ✈️Telegram, type: select, proxies: [自动选择, 故障转移]}
+    - { name: ✈️Telegram 主控, type: select, proxies: [自动选择, 故障转移]}
+    - { name: 🇸🇬 Telegram DC5, type: select, proxies: [自动选择, 故障转移]}
+    - { name: 🇺🇸 Telegram DC1&3, type: select, proxies: [自动选择, 故障转移]}
+    - { name: 🇳🇱 Telegram DC2&4, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🎮Twitch, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🎜Spotify, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🍿Netflix, type: select, proxies: [自动选择, 故障转移]}
@@ -703,7 +706,46 @@ rules:
     #ins
     - 'RULE-SET,Instagram,🎴Instagram'
     #tg
-    - 'RULE-SET,telegram,✈️Telegram'
+    - 'DOMAIN,api.imem.app,✈️Telegram 主控'
+    - 'DOMAIN,api.swiftgram.app,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,cdn-telegram.org,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,comments.app,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,contest.com,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,graph.org,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,legra.ph,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,mbrx.app,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,quiz.directory,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,stel.com,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,t.me,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,tdesktop.com,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telega.one,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telegra.ph,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telegram-cdn.org,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telegram.dog,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telegram.me,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telegram.org,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telegram.space,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telegramdownload.com,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,telesco.pe,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,tg.dev,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,tx.me,✈️Telegram 主控'
+    - 'DOMAIN-SUFFIX,usercontent.dev,✈️Telegram 主控'
+    - 'DOMAIN-KEYWORD,nicegram,✈️Telegram 主控'
+    - 'PROCESS-NAME,Telegram.exe,✈️Telegram 主控'
+    - 'PROCESS-NAME,nekox.messenger,✈️Telegram 主控'
+    - 'PROCESS-NAME,org.telegram.messenger,✈️Telegram 主控'
+    - 'PROCESS-NAME,telegram-desktop,✈️Telegram 主控'
+    - 'PROCESS-NAME,Telegram.exe,✈️Telegram 主控'
+    - 'PROCESS-NAME,nekox.messenger,✈️Telegram 主控'
+    - 'PROCESS-NAME,org.telegram.messenger,✈️Telegram 主控'
+    - 'PROCESS-NAME,telegram-desktop,✈️Telegram 主控'
+    # DC5 新加坡
+    - 'IP-CIDR,91.108.56.0/24,no-resolve,🇸🇬 Telegram DC5'
+    # DC1、DC3 美国
+    - 'IP-CIDR,149.154.175.0/25,no-resolve,🇺🇸 Telegram DC1&3'
+    # DC2、DC4 荷兰
+    - 'IP-CIDR,91.108.4.128/25,no-resolve,🇳🇱 Telegram DC2&4'
+    - 'IP-CIDR,149.154.160.0/21,no-resolve,🇳🇱 Telegram DC2&4'
     #Netflix
     - 'RULE-SET,Netflix,🍿Netflix'
     #Disney
