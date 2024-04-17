@@ -731,13 +731,10 @@ rules:
     - 'DOMAIN-SUFFIX,tx.me,✈️Telegram 主控'
     - 'DOMAIN-SUFFIX,usercontent.dev,✈️Telegram 主控'
     - 'DOMAIN-KEYWORD,nicegram,✈️Telegram 主控'
-    - 'PROCESS-NAME,Telegram.exe,✈️Telegram 主控'
     - 'PROCESS-NAME,nekox.messenger,✈️Telegram 主控'
     - 'PROCESS-NAME,org.telegram.messenger,✈️Telegram 主控'
-    - 'PROCESS-NAME,telegram-desktop,✈️Telegram 主控'
     - 'PROCESS-NAME,nekox.messenger,✈️Telegram 主控'
     - 'PROCESS-NAME,org.telegram.messenger,✈️Telegram 主控'
-    - 'PROCESS-NAME,telegram-desktop,✈️Telegram 主控'
     # DC5 新加坡
     - 'IP-CIDR,91.108.56.0/24,🇸🇬 Telegram DC5,no-resolve'
     # DC1、DC3 美国
