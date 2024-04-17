@@ -735,7 +735,6 @@ rules:
     - 'PROCESS-NAME,nekox.messenger,✈️Telegram 主控'
     - 'PROCESS-NAME,org.telegram.messenger,✈️Telegram 主控'
     - 'PROCESS-NAME,telegram-desktop,✈️Telegram 主控'
-    - 'PROCESS-NAME,Telegram.exe,✈️Telegram 主控'
     - 'PROCESS-NAME,nekox.messenger,✈️Telegram 主控'
     - 'PROCESS-NAME,org.telegram.messenger,✈️Telegram 主控'
     - 'PROCESS-NAME,telegram-desktop,✈️Telegram 主控'
