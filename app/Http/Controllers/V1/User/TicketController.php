@@ -20,8 +20,9 @@ class TicketController extends Controller
 {
     public function fetch(Request $request)
     {
-        if ($request->input('id')) {
-            $ticket = Ticket::where('id', $request->input('id'))
+        $id = $this->antiXss->xss_clean($request->input('id'));
+        if ($id) {
+            $ticket = Ticket::where('id', $id)
                 ->where('user_id', $request->user['id'])
                 ->first();
             if (!$ticket) {
@@ -49,6 +50,9 @@ class TicketController extends Controller
 
     public function save(TicketSave $request)
     {
+        $message = $this->antiXss->xss_clean($request->input('message'));
+        $subject = $this->antiXss->xss_clean($request->input('subject'));
+        $level = $this->antiXss->xss_clean($request->input('level'));
         DB::beginTransaction();
         if ((int)Ticket::where('status', 0)->where('user_id', $request->user['id'])->lockForUpdate()->count()) {
             abort(500, __('There are other unresolved tickets'));
@@ -63,10 +67,11 @@ class TicketController extends Controller
             DB::rollback();
             abort(500, __('Failed to open ticket'));
         }
+
         $ticketMessage = TicketMessage::create([
             'user_id' => $request->user['id'],
             'ticket_id' => $ticket->id,
-            'message' => $request->input('message')
+            'message' => $message
         ]);
         if (!$ticketMessage) {
             DB::rollback();
@@ -96,12 +101,11 @@ class TicketController extends Controller
             $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
         }
 
-        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
+        $this->sendNotify($ticket, $message, $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
 
         //发送邮件，告知用户工单已经生成，待处理
-        $ticketID = $ticket->id;
         $ticketService = new TicketService();
-        $ticketService->notifyTicketGenerated($user, $ticketID, $request->input('subject'), $request->input('level'), $request->input('message'));
+        $ticketService->notifyTicketGenerated($user, $ticket->id, $subject, $level, $message);
 
         return response([
             'data' => true
@@ -111,13 +115,16 @@ class TicketController extends Controller
 
     public function reply(Request $request)
     {
-        if (empty($request->input('id'))) {
+        $id = $this->antiXss->xss_clean($request->input('id'));
+        $message = $this->antiXss->xss_clean($request->input('message'));
+
+        if (empty($id)) {
             abort(500, __('Invalid parameter'));
         }
-        if (empty($request->input('message'))) {
+        if (empty($message)) {
             abort(500, __('Message cannot be empty'));
         }
-        $ticket = Ticket::where('id', $request->input('id'))
+        $ticket = Ticket::where('id', $id)
             ->where('user_id', $request->user['id'])
             ->first();
         if (!$ticket) {
@@ -132,7 +139,7 @@ class TicketController extends Controller
         $ticketService = new TicketService();
         if (!$ticketService->reply(
             $ticket,
-            $request->input('message'),
+            $message,
             $request->user['id']
         )) {
             abort(500, __('Ticket reply failed'));
@@ -160,7 +167,7 @@ class TicketController extends Controller
             $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
         }
 
-        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
+        $this->sendNotify($ticket, $message, $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
         return response([
             'data' => true
         ]);
@@ -169,10 +176,11 @@ class TicketController extends Controller
 
     public function close(Request $request)
     {
-        if (empty($request->input('id'))) {
+        $id = $this->antiXss->xss_clean($request->input('id'));
+        if (empty($id)) {
             abort(500, __('Invalid parameter'));
         }
-        $ticket = Ticket::where('id', $request->input('id'))
+        $ticket = Ticket::where('id', $id)
             ->where('user_id', $request->user['id'])
             ->first();
         if (!$ticket) {
@@ -196,11 +204,13 @@ class TicketController extends Controller
 
     public function withdraw(TicketWithdraw $request)
     {
+        $withdraw_method = $this->antiXss->xss_clean($request->input('withdraw_method'));
+        $withdraw_account = $this->antiXss->xss_clean($request->input('withdraw_account'));
         if ((int)config('v2board.withdraw_close_enable', 0)) {
             abort(500, 'user.ticket.withdraw.not_support_withdraw');
         }
         if (!in_array(
-            $request->input('withdraw_method'),
+            $withdraw_method,
             config(
                 'v2board.commission_withdraw_method',
                 Dict::WITHDRAW_METHOD_WHITELIST_DEFAULT
@@ -225,8 +235,8 @@ class TicketController extends Controller
             abort(500, __('Failed to open ticket'));
         }
         $message = sprintf("%s\r\n%s",
-            __('Withdrawal method') . "：" . $request->input('withdraw_method'),
-            __('Withdrawal account') . "：" . $request->input('withdraw_account')
+            __('Withdrawal method') . "：" . $withdraw_method,
+            __('Withdrawal account') . "：" . $withdraw_account
         );
         $ticketMessage = TicketMessage::create([
             'user_id' => $request->user['id'],
@@ -261,7 +271,7 @@ class TicketController extends Controller
             $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
         }
 
-        $this->sendNotify($ticket, $request->input('message'), $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
+        $this->sendNotify($ticket, $message, $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
         return response([
             'data' => true
         ]);
