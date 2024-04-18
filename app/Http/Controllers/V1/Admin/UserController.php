@@ -249,21 +249,22 @@ class UserController extends Controller
 
     public function sendMail(UserSendMail $request)
     {
-        $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
+        $sortType = $request->input('sort_type', 'DESC');
+        $sort = $request->input('sort', 'created_at');
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         $users = $builder->get();
 
-        $batchSize = 50; // 每个批次的用户数量
-        $userBatches = $users->chunk($batchSize); // 将用户分成多个批次
+        $batchSize = 800; // 每批次发送的用户数量
+        $delayMinutes = 10; // 每批次之间的延迟时间（分钟） // 一个小时发 = 6 * 800 = 4800 封
+        $batchCount = 0;
 
-        foreach ($userBatches as $userBatch) {
-            $emailJobs = [];
-            foreach ($userBatch as $user) {
-                if ($user->banned) continue;
+        foreach ($users->chunk($batchSize) as $chunk) {
+            $delay = $batchCount * $delayMinutes * 60;
+            foreach ($chunk as $user) {
+                if ($user->banned) continue; //不需要给封禁的用户发送邮件
                 $userName = explode('@', $user->email)[0];
-                $emailJobs[] = [
+                SendEmailJob::dispatch([
                     'email' => $user->email,
                     'subject' => $request->input('subject'),
                     'template_name' => 'notify',
@@ -273,14 +274,12 @@ class UserController extends Controller
                         'content' => $request->input('content'),
                         'userName' => $userName
                     ]
-                ];
+                ],'send_email_mass')->delay(now()->addSeconds($delay));
             }
-            SendEmailJob2::dispatch($emailJobs, 'send_email_mass');
+            $batchCount++;
         }
 
-        return response([
-            'data' => true
-        ]);
+        return response()->json(['data' => true]);
     }
 
     public function ban(Request $request)
