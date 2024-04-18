@@ -375,14 +375,16 @@ class AuthController extends Controller
 
     public function forget(AuthForget $request)
     {
-        $forgetRequestLimitKey = CacheKey::get('FORGET_REQUEST_LIMIT', $request->input('email'));
+        $email = $this->antiXss->xss_clean($request->input('email'));
+        $email_code = $this->antiXss->xss_clean($request->input('email_code'));
+        $forgetRequestLimitKey = CacheKey::get('FORGET_REQUEST_LIMIT', $email);
         $forgetRequestLimit = (int)Cache::get($forgetRequestLimitKey);
         if ($forgetRequestLimit >= 3) abort(500, __('Reset failed, Please try again later'));
-        if ((string)Cache::get(CacheKey::get('EMAIL_VERIFY_CODE', $request->input('email'))) !== (string)$request->input('email_code')) {
+        if ((string)Cache::get(CacheKey::get('EMAIL_VERIFY_CODE', $email)) !== (string)$email_code) {
             Cache::put($forgetRequestLimitKey, $forgetRequestLimit ? $forgetRequestLimit + 1 : 1, 300);
             abort(500, __('Incorrect email verification code'));
         }
-        $user = User::where('email', $request->input('email'))->first();
+        $user = User::where('email', $email)->first();
         if (!$user) {
             abort(500, __('This email is not registered in the system'));
         }
@@ -392,7 +394,7 @@ class AuthController extends Controller
         if (!$user->save()) {
             abort(500, __('Reset failed'));
         }
-        Cache::forget(CacheKey::get('EMAIL_VERIFY_CODE', $request->input('email')));
+        Cache::forget(CacheKey::get('EMAIL_VERIFY_CODE', $email));
         return response([
             'data' => true
         ]);
