@@ -217,8 +217,7 @@ class AuthController extends Controller
 
     public function login(AuthLogin $request)
     {
-
-        $email = $request->input('email');
+        $email = $this->antiXss->xss_clean($request->input('email'));
         $password = $request->input('password');
 
         if ((int)config('v2board.password_limit_enable', 1)) {
@@ -270,7 +269,7 @@ class AuthController extends Controller
 
             //方式二
             $browserDetection = new BrowserDetection();
-            $userAgent = $request->header('User-Agent');
+            $userAgent = $this->antiXss->xss_clean($request->header('User-Agent'));
             // 提取操作系统、浏览器和版本信息
             $result = $browserDetection->getAll($userAgent);
             $browser = $result['browser_name'];
