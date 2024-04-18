@@ -27,18 +27,12 @@ class CommController extends Controller
     public function sendEmailVerify(CommSendEmailVerify $request)
     {
         $userIP = $request->ip();
-//        if ((int)config('v2board.recaptcha_enable', 0)) {
-//            $recaptcha = new ReCaptcha(config('v2board.recaptcha_key'));
-//            $recaptchaResp = $recaptcha->verify($request->input('recaptcha_data'));
-//            if (!$recaptchaResp->isSuccess()) {
-//                abort(500, __('Invalid code is incorrect'));
-//            }
-//        }
 
         if ((int)config('v2board.recaptcha_enable', 0)) {
 
             $secret = config('v2board.recaptcha_key');
-            $response = $request->input('recaptcha_data');
+
+            $response = $this->antiXss->xss_clean($request->input('recaptcha_data'));
 
             $response = Http::post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
                 'secret' => $secret,
