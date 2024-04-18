@@ -53,7 +53,7 @@ class CommController extends Controller
             }
         }
 
-        $email = $request->input('email');
+        $email = $this->antiXss->xss_clean($request->input('email'));
         if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
             abort(500, __('Email verification code has been sent, please request again later'));
         }
@@ -81,7 +81,8 @@ class CommController extends Controller
 
     public function pv(Request $request)
     {
-        $inviteCode = InviteCode::where('code', $request->input('invite_code'))->first();
+        $invite_code = $this->antiXss->xss_clean($request->input('invite_code'));
+        $inviteCode = InviteCode::where('code', $invite_code)->first();
         if ($inviteCode) {
             $inviteCode->pv = $inviteCode->pv + 1;
             $inviteCode->save();
