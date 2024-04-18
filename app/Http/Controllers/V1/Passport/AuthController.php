@@ -81,6 +81,11 @@ class AuthController extends Controller
     {
         $userIP = $request->ip();
 
+        //数据清洗，增加安全性
+        $email = $this->antiXss->xss_clean($request->input('email'));
+        $invite_code = $this->antiXss->xss_clean($request->input('invite_code'));
+        $email_code = $this->antiXss->xss_clean($request->input('email_code'));
+
         if ((int)config('v2board.register_limit_by_ip_enable', 0)) {
             $registerCountByIP = Cache::get(CacheKey::get('REGISTER_IP_RATE_LIMIT', $request->ip())) ?? 0;
             if ((int)$registerCountByIP >= (int)config('v2board.register_limit_count', 3)) {
@@ -89,18 +94,11 @@ class AuthController extends Controller
                 ]));
             }
         }
-//        if ((int)config('v2board.recaptcha_enable', 0)) {
-//            $recaptcha = new ReCaptcha(config('v2board.recaptcha_key'));
-//            $recaptchaResp = $recaptcha->verify($request->input('recaptcha_data'));
-//            if (!$recaptchaResp->isSuccess()) {
-//                abort(500, __('Invalid code is incorrect'));
-//            }
-//        }
 
         if ((int)config('v2board.recaptcha_enable', 0)) {
 
             $secret = config('v2board.recaptcha_key');
-            $response = $request->input('recaptcha_data');
+            $response = $this->antiXss->xss_clean($request->input('recaptcha_data'));
 
             $response = Http::post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
                 'secret' => $secret,
@@ -123,14 +121,14 @@ class AuthController extends Controller
 
         if ((int)config('v2board.email_whitelist_enable', 0)) {
             if (!Helper::emailSuffixVerify(
-                $request->input('email'),
+                $email,
                 config('v2board.email_whitelist_suffix', Dict::EMAIL_WHITELIST_SUFFIX_DEFAULT))
             ) {
                 abort(500, __('Email suffix is not in the Whitelist'));
             }
         }
         if ((int)config('v2board.email_gmail_limit_enable', 0)) {
-            $prefix = explode('@', $request->input('email'))[0];
+            $prefix = explode('@', $email)[0];
             if (strpos($prefix, '.') !== false || strpos($prefix, '+') !== false) {
                 abort(500, __('Gmail alias is not supported'));
             }
@@ -139,19 +137,19 @@ class AuthController extends Controller
             abort(500, __('Registration has closed'));
         }
         if ((int)config('v2board.invite_force', 0)) {
-            if (empty($request->input('invite_code'))) {
+            if (empty($invite_code)) {
                 abort(500, __('You must use the invitation code to register'));
             }
         }
         if ((int)config('v2board.email_verify', 0)) {
-            if (empty($request->input('email_code'))) {
+            if (empty($email_code)) {
                 abort(500, __('Email verification code cannot be empty'));
             }
-            if ((string)Cache::get(CacheKey::get('EMAIL_VERIFY_CODE', $request->input('email'))) !== (string)$request->input('email_code')) {
+            if ((string)Cache::get(CacheKey::get('EMAIL_VERIFY_CODE', $email)) !== (string)$email_code) {
                 abort(500, __('Incorrect email verification code'));
             }
         }
-        $email = $request->input('email');
+
         $password = $request->input('password');
         $exist = User::where('email', $email)->first();
         if ($exist) {
@@ -162,8 +160,8 @@ class AuthController extends Controller
         $user->password = password_hash($password, PASSWORD_DEFAULT);
         $user->uuid = Helper::guid(true);
         $user->token = Helper::guid();
-        if ($request->input('invite_code')) {
-            $inviteCode = InviteCode::where('code', $request->input('invite_code'))
+        if ($invite_code) {
+            $inviteCode = InviteCode::where('code', $invite_code)
                 ->where('status', 0)
                 ->first();
             if (!$inviteCode) {
@@ -195,7 +193,7 @@ class AuthController extends Controller
             abort(500, __('Register failed'));
         }
         if ((int)config('v2board.email_verify', 0)) {
-            Cache::forget(CacheKey::get('EMAIL_VERIFY_CODE', $request->input('email')));
+            Cache::forget(CacheKey::get('EMAIL_VERIFY_CODE', $email));
         }
 
         $user->last_login_at = time();

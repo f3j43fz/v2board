@@ -29,6 +29,7 @@
         "jenssegers/agent": "^2.6.4",
         "foroco/php-browser-detection": "^2.7",
         "geoip2/geoip2": "^2.0",
+        "voku/anti-xss": "^4",
         "ext-json": "*"
     },
     "require-dev": {
