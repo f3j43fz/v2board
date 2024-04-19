@@ -2,25 +2,20 @@
 
 namespace App\Payments;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PayPal {
     private $config;
-    private $client;
 
     public function __construct($config) {
         $this->config = $config;
-        $this->client = new Client([
-            'headers' => ['Content-Type' => 'application/json']
-        ]);
     }
 
     public function form() {
         return [
             'mode' => [
-                'label' => 'mode',
-                'description' => '沙箱/生产模式 sandbox/live',
+                'label' => 'Mode',
+                'description' => '沙箱/生产模式  sandbox/live',
                 'type' => 'input',
             ],
             'client_id' => [
@@ -42,105 +37,97 @@ class PayPal {
     }
 
     public function pay($order) {
-        $accessToken = $this->getAccessToken();
+
+        $config = [
+            'mode' => $this->config['mode'] == 'live' ? 'live' : 'sandbox',
+            'sandbox' => [
+                'client_id' => $this->config['client_id'],
+                'client_secret' => $this->config['client_secret'],
+                'app_id' => '',
+            ],
+            'live' => [
+                'client_id' => $this->config['client_id'],
+                'client_secret' => $this->config['client_secret'],
+                'app_id' => '',
+            ],
+            'payment_action' => 'Sale',
+            'currency' => $this->config['currency'],
+            'notify_url' => '',
+            'locale' => 'en_US',
+            'validate_ssl' => true,
+        ];
+
+
         $cnyMoney = $order['total_amount'] / 100;
         $to = $this->config['currency'];
-        $exchange_amount = ($this->exchange($cnyMoney, 'CNY', $to));
+        $trade_no = $order['trade_no'];
+        $exchange_amount = $this->exchange($cnyMoney, 'CNY', $to);
 
-        $params = [
+        $order_data = [
             'intent' => 'CAPTURE',
             'purchase_units' => [
                 [
                     'amount' => [
-                        'currency_code' => $this->config['currency'],
-                        'value' => number_format($exchange_amount, 2, '.', ''),
+                        'currency_code' => $to,
+                        'value' => $exchange_amount,
                     ],
-                    'reference_id' => $order['trade_no'],
+                    'reference_id' => $trade_no,
                 ],
-            ]
+            ],
         ];
 
-        try {
-            $response = $this->client->post($this->getApiUrl() . '/v2/checkout/orders', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken,
-                    'Content-Type' => 'application/json'
-                ],
-                'body' => json_encode($params)
-            ]);
-            $body = json_decode($response->getBody()->getContents(), true);
+        $pp = new PayPalClient($config);
+        $pp->getAccessToken();
+        $order = $pp->createOrder($order_data);
 
-            $approvalUrl = null;
-            foreach ($body['links'] as $link) {
-                if ($link['rel'] === 'approve') {
-                    $approvalUrl = $link['href'];
-                    break;
-                }
-            }
+        \Log::info($order); // 记录详细的错误日志
 
-            if ($approvalUrl) {
-                return [
-                    'type' => 1, // 0 for QR code, 1 for URL
-                    'data' => $approvalUrl
-                ];
-            } else {
-                throw new \Exception('支付链接未找到');
-            }
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            \Log::error('Request failed: ' . $e->getMessage(), [
-                'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : 'No response'
-            ]);
-            abort(500, "支付请求失败，请稍后再试。");  // 向用户返回通用错误消息
-        }
+//        $url = ;
+
+        return [
+            'type' => 1, // 0:qrcode 1:url
+            'data' => "https://test.com"
+        ];
+
     }
 
     public function notify($params) {
-        $accessToken = $this->getAccessToken();
-        $orderId = $params['order_id']; // 确保order_id已正确传入
 
-        try {
-            // Capture the payment for the given order
-            $response = $this->client->post($this->getApiUrl() . '/v2/checkout/orders/' . $orderId . '/capture', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken,
-                    'Content-Type' => 'application/json'
-                ]
-            ]);
-            $body = json_decode($response->getBody()->getContents(), true);
+        $config = [
+            'mode' => $this->config['mode'] == 'live' ? 'live' : 'sandbox',
+            'sandbox' => [
+                'client_id' => $this->config['client_id'],
+                'client_secret' => $this->config['client_secret'],
+                'app_id' => '',
+            ],
+            'live' => [
+                'client_id' => $this->config['client_id'],
+                'client_secret' => $this->config['client_secret'],
+                'app_id' => '',
+            ],
+            'payment_action' => 'Sale',
+            'currency' => $this->config['currency'],
+            'notify_url' => '',
+            'locale' => 'en_US',
+            'validate_ssl' => true,
+        ];
 
-            if (isset($body['status']) && $body['status'] == 'COMPLETED') {
-                return [
-                    'trade_no' => $body['id'],
-                    'callback_no' => $params['reference_id'],
-                    'custom_result' => 'ok'
-                ];
-            }
-        } catch (\Exception $e) {
-            \Log::error($e->getMessage(), ['exception' => $e]); // 记录详细的错误日志
-            abort(500, "网关通知处理失败。请联系管理员。"); // 向用户返回通用错误消息
+        $order_id = $params['order_id'];
+
+        $pp = new PayPalClient($config);
+        $pp->getAccessToken();
+
+        $result = $pp->capturePaymentOrder($order_id);
+
+        if (isset($result['status']) && $result['status'] === 'COMPLETED') {
+            return [
+                'trade_no' => $params['order_id'],
+                'callback_no' => $params['order_id'],
+                'custom_result' => 'ok'
+            ];
         }
     }
 
-
-    private function getAccessToken() {
-        // Basic Auth Credentials
-        $credentials = base64_encode($this->config['client_id'] . ':' . $this->config['client_secret']);
-
-        try {
-            $response = $this->client->post($this->getApiUrl() . '/v1/oauth2/token', [
-                'headers' => [
-                    'Authorization' => 'Basic ' . $credentials,
-                    'Content-Type' => 'application/x-www-form-urlencoded'
-                ],
-                'body' => 'grant_type=client_credentials'
-            ]);
-
-            $body = json_decode($response->getBody()->getContents(), true);
-            return $body['access_token'];
-        } catch (\Exception $e) {
-            abort(500, "获取PayPal访问令牌失败：" . $e->getMessage());
-        }
-    }
 
     public function exchange(float $amount, string $from, string $to): float
     {
@@ -153,9 +140,5 @@ class PayPal {
         $data = json_decode($response->getBody()->getContents(), true);
         $rate = $data['rates'][$to] / $data['rates'][$from];
         return (float) $rate;
-    }
-
-    private function getApiUrl() {
-        return $this->config['mode'] === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
     }
 }
