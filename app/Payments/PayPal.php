@@ -2,8 +2,6 @@
 
 namespace App\Payments;
 
-use App\Models\Config;
-use App\Services\Exchange;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -22,7 +20,7 @@ class PayPal {
         return [
             'mode' => [
                 'label' => 'mode',
-                'description' => '沙箱/生产模式  sandbox/live',
+                'description' => '沙箱/生产模式 sandbox/live',
                 'type' => 'input',
             ],
             'client_id' => [
@@ -55,11 +53,12 @@ class PayPal {
                 [
                     'amount' => [
                         'currency_code' => $this->config['currency'],
-                        'value' => number_format( $exchange_amount, 2, '.', ''),
+                        'value' => number_format($exchange_amount, 2, '.', ''),
                     ],
                     'reference_id' => $order['trade_no'],
                 ],
-            ]];
+            ]
+        ];
 
         try {
             $response = $this->client->post($this->getApiUrl() . '/v2/checkout/orders', [
@@ -95,21 +94,16 @@ class PayPal {
         }
     }
 
-
-
-    private function getApiUrl() {
-        return $this->config['mode'] === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
-    }
-
     public function notify($params) {
+        $accessToken = $this->getAccessToken();
+        $orderId = $params['order_id']; // 确保order_id已正确传入
 
         try {
-            $accessToken = $this->getAccessToken();
-            $orderId = $params['order_id']; // 确保order_id已正确传入
-
-            $response = $this->client->get($this->getApiUrl() . '/v2/checkout/orders/' . $orderId, [
+            // Capture the payment for the given order
+            $response = $this->client->post($this->getApiUrl() . '/v2/checkout/orders/' . $orderId . '/capture', [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json'
                 ]
             ]);
             $body = json_decode($response->getBody()->getContents(), true);
@@ -117,18 +111,13 @@ class PayPal {
             if (isset($body['status']) && $body['status'] == 'COMPLETED') {
                 return [
                     'trade_no' => $body['id'],
-                    'callback_no' => $params['trade_no'], // 注意这里要用正确的交易号字段
+                    'callback_no' => $params['reference_id'],
                     'custom_result' => 'ok'
                 ];
-            } else {
-                \Log::error('PayPal notify call failed.', [
-                    'response' => $body
-                ]);
-                abort(500, "支付状态未完成或验证失败。");
             }
         } catch (\Exception $e) {
-            \Log::error('Error in PayPal notify: ' . $e->getMessage(), ['exception' => $e]);
-            abort(500, "网关通知处理失败。请联系管理员。");
+            \Log::error($e->getMessage(), ['exception' => $e]); // 记录详细的错误日志
+            abort(500, "网关通知处理失败。请联系管理员。"); // 向用户返回通用错误消息
         }
     }
 
@@ -166,4 +155,7 @@ class PayPal {
         return (float) $rate;
     }
 
+    private function getApiUrl() {
+        return $this->config['mode'] === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+    }
 }
