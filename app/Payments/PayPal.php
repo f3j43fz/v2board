@@ -2,7 +2,7 @@
 
 namespace App\Payments;
 
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;  // "srmklive/paypal": "^3",
 use GuzzleHttp\Client;
 
 class PayPal {
@@ -57,7 +57,7 @@ class PayPal {
             ],
             'payment_action' => 'Sale',
             'currency' => $this->config['currency'],
-            'notify_url' => '',
+            'notify_url' => $order['notify_url'],
             'locale' => 'en_US',
             'validate_ssl' => true,
         ];
