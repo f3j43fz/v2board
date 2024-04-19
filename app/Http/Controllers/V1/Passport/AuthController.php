@@ -79,6 +79,10 @@ class AuthController extends Controller
 
     public function register(AuthRegister $request)
     {
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            abort(500, '非法IP地址');
+        }
+
         $userIP = $request->ip();
 
         //数据清洗，增加安全性
@@ -196,10 +200,6 @@ class AuthController extends Controller
             Cache::forget(CacheKey::get('EMAIL_VERIFY_CODE', $email));
         }
 
-        $user->last_login_at = time();
-//        $user->last_login_ip = $request->ip();
-        $user->save();
-
         if ((int)config('v2board.register_limit_by_ip_enable', 0)) {
             Cache::put(
                 CacheKey::get('REGISTER_IP_RATE_LIMIT', $request->ip()),
@@ -207,6 +207,10 @@ class AuthController extends Controller
                 (int)config('v2board.register_limit_expire', 60) * 60
             );
         }
+
+        $user->last_login_at = time();
+        $user->last_login_ip = $userIP;
+        $user->save();
 
         $authService = new AuthService($user);
 
@@ -217,6 +221,11 @@ class AuthController extends Controller
 
     public function login(AuthLogin $request)
     {
+
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            abort(500, '非法IP地址');
+        }
+
         $email = $this->antiXss->xss_clean($request->input('email'));
         $password = $request->input('password');
 
@@ -302,11 +311,6 @@ class AuthController extends Controller
                     'browserVersion' => $browserVersion
                 ]
             ]);
-
-
-//            $user->last_login_at = time();
-//            $user->last_login_ip = $request->ip();
-//            $user->save();
 
             LogLoginJob::dispatch($user->id, time(), $request->ip());
 
