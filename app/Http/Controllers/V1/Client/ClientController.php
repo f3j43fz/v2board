@@ -61,7 +61,7 @@ class ClientController extends Controller
             }
         }
 
-        $flag = $request->input('flag')
+        $flag = $this->antiXss->xss_clean($request->input('flag'))
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
 
