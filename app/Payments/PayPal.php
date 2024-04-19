@@ -122,7 +122,7 @@ class PayPal {
         $credentials = base64_encode($this->config['client_id'] . ':' . $this->config['client_secret']);
 
         try {
-            $response = $this->client->post($this->config['url'] . '/v1/oauth2/token', [
+            $response = $this->client->post($this->getApiUrl() . '/v1/oauth2/token', [
                 'headers' => [
                     'Authorization' => 'Basic ' . $credentials,
                     'Content-Type' => 'application/x-www-form-urlencoded'
