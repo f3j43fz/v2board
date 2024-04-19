@@ -79,6 +79,7 @@ class PayPal {
                     'data' => $approvalUrl
                 ];
             } else {
+                \Log::info('PayPal response', ['response' => $body]);
                 throw new \Exception('支付连接未找到');
             }
         } catch (\GuzzleHttp\Exception\RequestException $e) {
