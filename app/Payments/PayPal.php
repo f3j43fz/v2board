@@ -82,6 +82,8 @@ class PayPal {
                 throw new \Exception('支付连接未找到');
             }
         } catch (\GuzzleHttp\Exception\RequestException $e) {
+            \Log::info('PayPal response', ['response' => $body]);
+
             \Log::error('Request failed: ' . $e->getMessage(), [
                 'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : 'No response'
             ]);
