@@ -78,11 +78,11 @@ class PayPal {
                     'data' => $approvalUrl
                 ];
             } else {
-                throw new \Exception('Approval URL not found.');
+                throw new \Exception('支付连接未找到');
             }
         } catch (\Exception $e) {
             \Log::error($e->getMessage(), ['exception' => $e]); // 记录详细的错误日志
-            abort(500, "Payment request failed: Please try again later.");  // 向用户返回通用错误消息
+            abort(500, "支付请求失败，请稍后再试。");  // 向用户返回通用错误消息
         }
     }
 
@@ -113,7 +113,7 @@ class PayPal {
             }
         } catch (\Exception $e) {
             \Log::error($e->getMessage(), ['exception' => $e]); // 记录详细的错误日志
-            abort(500, "Notification handling failed: Please contact support."); // 向用户返回通用错误消息
+            abort(500, "网关通知处理失败。请联系管理员。"); // 向用户返回通用错误消息
         }
     }
 
@@ -133,7 +133,7 @@ class PayPal {
             $body = json_decode($response->getBody()->getContents(), true);
             return $body['access_token'];
         } catch (\Exception $e) {
-            abort(500, "Failed to retrieve access token: " . $e->getMessage());
+            abort(500, "获取PayPal访问令牌失败：" . $e->getMessage());
         }
     }
 
