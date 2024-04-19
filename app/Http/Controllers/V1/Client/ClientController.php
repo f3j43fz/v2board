@@ -30,7 +30,8 @@ class ClientController extends Controller
         $userService = new UserService();
 
         // UA过滤
-        if(!$this->checkUA($request->header('User-Agent'))){
+        $ua = $this->antiXss->xss_clean($request->header('User-Agent'));
+        if(!$this->checkUA($ua)){
             return redirect('https://bilibili.com');
         }
 
@@ -53,7 +54,10 @@ class ClientController extends Controller
 //        $user = User::find($userID);
         if(!$user->is_admin){
             if (!$this->checkTokenRequest($userID, $userIP, $userISPInfo)) {
-                return redirect('https://bilibili.com');
+                $response = [
+                    'error' => '您的请求IP过多，已暂时禁止您更新订阅'
+                ];
+                return response()->json($response, Response::HTTP_FORBIDDEN);
             }
         }
 
