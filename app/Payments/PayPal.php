@@ -82,11 +82,17 @@ class PayPal {
 
         \Log::info($order); // 记录详细的错误日志
 
-//        $url = ;
+        $approvalUrl = "";
+        foreach ($order['links'] as $link) {
+            if ($link['rel'] === 'approve') {
+                $approvalUrl = $link['href'];
+                break;
+            }
+        }
 
         return [
             'type' => 1, // 0:qrcode 1:url
-            'data' => "https://test.com"
+            'data' => $approvalUrl
         ];
 
     }
