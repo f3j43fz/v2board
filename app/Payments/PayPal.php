@@ -2,6 +2,8 @@
 
 namespace App\Payments;
 
+use App\Models\Config;
+use App\Services\Exchange;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -35,7 +37,7 @@ class PayPal {
             ],
             'currency' => [
                 'label' => 'Currency',
-                'description' => 'Currency code (e.g., USD CNY EUR JPY)',
+                'description' => 'Currency code (e.g., USD EUR JPY) 自动将人民币换成对应的货币，建议填 USD',
                 'type' => 'input',
             ]
         ];
@@ -43,13 +45,17 @@ class PayPal {
 
     public function pay($order) {
         $accessToken = $this->getAccessToken();
+        $cnyMoney = $order['total_amount'] / 100;
+        $to = $this->config['currency'];
+        $exchange_amount = ($this->exchange($cnyMoney, 'CNY', $to));
+
         $params = [
             'intent' => 'CAPTURE',
             'purchase_units' => [
                 [
                     'amount' => [
                         'currency_code' => $this->config['currency'],
-                        'value' => number_format($order['total_amount'] / 100, 2, '.', ''),
+                        'value' => number_format( $exchange_amount, 2, '.', ''),
                     ],
                     'reference_id' => $order['trade_no'],
                 ],
@@ -79,12 +85,9 @@ class PayPal {
                     'data' => $approvalUrl
                 ];
             } else {
-                \Log::info('PayPal response', ['response' => $body]);
-                throw new \Exception('支付连接未找到');
+                throw new \Exception('支付链接未找到');
             }
         } catch (\GuzzleHttp\Exception\RequestException $e) {
-            \Log::info('PayPal response', ['response' => $body]);
-
             \Log::error('Request failed: ' . $e->getMessage(), [
                 'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : 'No response'
             ]);
@@ -141,6 +144,19 @@ class PayPal {
         } catch (\Exception $e) {
             abort(500, "获取PayPal访问令牌失败：" . $e->getMessage());
         }
+    }
+
+    public function exchange(float $amount, string $from, string $to): float
+    {
+        return round($amount *  $this->getExchangeRate($from, $to), 2);
+    }
+
+    private function getExchangeRate(string $from, string $to): float
+    {
+        $response = $this->client->get('https://cdn.moneyconvert.net/api/latest.json');
+        $data = json_decode($response->getBody()->getContents(), true);
+        $rate = $data['rates'][$to] / $data['rates'][$from];
+        return (float) $rate;
     }
 
 }
