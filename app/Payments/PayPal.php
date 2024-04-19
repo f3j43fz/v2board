@@ -67,7 +67,7 @@ class PayPal {
 
             $approvalUrl = null;
             foreach ($body['links'] as $link) {
-                if ($link['rel'] === 'payer-action') {
+                if ($link['rel'] === 'approve') {
                     $approvalUrl = $link['href'];
                     break;
                 }
