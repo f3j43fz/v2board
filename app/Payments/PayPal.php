@@ -37,7 +37,7 @@ class PayPal {
             ],
             'currency' => [
                 'label' => 'Currency',
-                'description' => 'Currency code (e.g., USD EUR JPY) 自动将人民币换成对应的货币，建议填 USD',
+                'description' => '结算货币代码 (e.g., USD EUR JPY) 系统自动将人民币换成对应的货币，建议填 USD',
                 'type' => 'input',
             ]
         ];
@@ -102,10 +102,11 @@ class PayPal {
     }
 
     public function notify($params) {
-        $accessToken = $this->getAccessToken();
-        $orderId = $params['order_id']; // 确保order_id已正确传入
 
         try {
+            $accessToken = $this->getAccessToken();
+            $orderId = $params['order_id']; // 确保order_id已正确传入
+
             $response = $this->client->get($this->getApiUrl() . '/v2/checkout/orders/' . $orderId, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken
@@ -116,15 +117,21 @@ class PayPal {
             if (isset($body['status']) && $body['status'] == 'COMPLETED') {
                 return [
                     'trade_no' => $body['id'],
-                    'callback_no' => $params['reference_id'],
+                    'callback_no' => $params['trade_no'], // 注意这里要用正确的交易号字段
                     'custom_result' => 'ok'
                 ];
+            } else {
+                \Log::error('PayPal notify call failed.', [
+                    'response' => $body
+                ]);
+                abort(500, "支付状态未完成或验证失败。");
             }
         } catch (\Exception $e) {
-            \Log::error($e->getMessage(), ['exception' => $e]); // 记录详细的错误日志
-            abort(500, "网关通知处理失败。请联系管理员。"); // 向用户返回通用错误消息
+            \Log::error('Error in PayPal notify: ' . $e->getMessage(), ['exception' => $e]);
+            abort(500, "网关通知处理失败。请联系管理员。");
         }
     }
+
 
     private function getAccessToken() {
         // Basic Auth Credentials
