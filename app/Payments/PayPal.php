@@ -80,8 +80,10 @@ class PayPal {
             } else {
                 throw new \Exception('支付连接未找到');
             }
-        } catch (\Exception $e) {
-            \Log::error($e->getMessage(), ['exception' => $e]); // 记录详细的错误日志
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            \Log::error('Request failed: ' . $e->getMessage(), [
+                'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : 'No response'
+            ]);
             abort(500, "支付请求失败，请稍后再试。");  // 向用户返回通用错误消息
         }
     }
