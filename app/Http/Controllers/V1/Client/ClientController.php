@@ -18,6 +18,13 @@ class ClientController extends Controller
 {
     public function subscribe(Request $request)
     {
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            $response = [
+                'error' => '非法IP地址'
+            ];
+            return response()->json($response, Response::HTTP_FORBIDDEN);
+        }
+
         $servers = [];
         $user = $request->user;
         $userService = new UserService();
