@@ -58,7 +58,8 @@ class PayPal {
         try {
             $response = $this->client->post($this->getApiUrl() . '/v2/checkout/orders', [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json'
                 ],
                 'body' => json_encode($params)
             ]);
