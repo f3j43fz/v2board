@@ -3,12 +3,17 @@
 namespace App\Payments;
 
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use GuzzleHttp\Client;
 
 class PayPal {
     private $config;
+    private $client;
 
     public function __construct($config) {
         $this->config = $config;
+        $this->client = new Client([
+            'headers' => ['Content-Type' => 'application/json']
+        ]);
     }
 
     public function form() {
