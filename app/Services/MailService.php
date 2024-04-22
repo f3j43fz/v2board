@@ -237,4 +237,23 @@ class MailService
             ]
         ]);
     }
+
+    public function remindTimeAdded($email)
+    {
+        $userName = explode('@', $email)[0];
+        SendEmailJob::dispatch([
+            'email' => $email,
+            'subject' => __('您已成功邀请好友注册并获得奖励', [
+                'app_name' =>  config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'remindTimeAdded',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'userName' => $userName
+
+            ]
+        ]);
+
+    }
 }

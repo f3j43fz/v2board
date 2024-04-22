@@ -12,6 +12,7 @@ use App\Models\InviteCode;
 use App\Models\Plan;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\MailService;
 use App\Utils\CacheKey;
 use App\Utils\Dict;
 use App\Utils\Helper;
@@ -177,6 +178,7 @@ class AuthController extends Controller
                 if (!(int)config('v2board.invite_never_expire', 0)) {
                     $inviteCode->status = 1;
                     $inviteCode->save();
+                    $this->addInviterTime($inviteCode->user_id);
                 }
             }
         }
@@ -474,5 +476,22 @@ class AuthController extends Controller
         $parts[count($parts) - 2] = '*';
         $parts[count($parts) - 1] = '*';
         return implode(':', $parts);
+    }
+
+    private function addInviterTime($user_id)
+    {
+        $inviter = User::find($user_id);
+        if($inviter->transfer_enable && $inviter->expired_at != NULL && ($inviter->expired_at > time())){
+            $inviter->expired_at += 86400 * 2;
+            if($inviter->save()){
+                $this->notifyTimeAdded($inviter->email);
+            }
+        }
+    }
+
+    private function notifyTimeAdded($email)
+    {
+        $mailService = new MailService();
+        $mailService->remindTimeAdded($email);
     }
 }
