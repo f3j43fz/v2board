@@ -178,8 +178,8 @@ class AuthController extends Controller
                 if (!(int)config('v2board.invite_never_expire', 0)) {
                     $inviteCode->status = 1;
                     $inviteCode->save();
-                    $this->addInviterTime($inviteCode->user_id);
                 }
+                $this->addInviterTime($inviteCode->user_id);
             }
         }
 
