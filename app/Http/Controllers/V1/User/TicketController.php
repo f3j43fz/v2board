@@ -230,7 +230,7 @@ class TicketController extends Controller
             abort(500, __('Unsupported withdrawal method'));
         }
 
-        if (!preg_match('/^T[a-zA-Z0-9]{33}$/', $withdraw_account)) {
+        if ( $withdraw_method == 'USDT' && !preg_match('/^T[a-zA-Z0-9]{33}$/', $withdraw_account)) {
             abort(500, __('Unsupported USDT-TRC20 address'));
         }
 
