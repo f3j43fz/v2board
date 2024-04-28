@@ -17,6 +17,7 @@
     "Ticket reply failed": "工单回复失败",
     "Close failed": "关闭失败",
     "Unsupported withdrawal method": "不支持的提现方式",
+    "Unsupported USDT-TRC20 address": "请输入正确的 USDT-TRC20 地址",
     "The current required minimum withdrawal commission is :limit": "当前系统要求的最少提现佣金为：¥:limitCNY",
     "[Commission Withdrawal Request] This ticket is opened by the system": "[提现申请] 本工单由系统发出",
     "Withdrawal method": "提现方式",

@@ -50,6 +50,10 @@ class TicketController extends Controller
 
     public function save(TicketSave $request)
     {
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            abort(500, '非法IP地址');
+        }
+
         $message = $this->antiXss->xss_clean($request->input('message'));
         $subject = $this->antiXss->xss_clean($request->input('subject'));
         $level = $this->antiXss->xss_clean($request->input('level'));
@@ -115,6 +119,10 @@ class TicketController extends Controller
 
     public function reply(Request $request)
     {
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            abort(500, '非法IP地址');
+        }
+
         $id = $this->antiXss->xss_clean($request->input('id'));
         $message = $this->antiXss->xss_clean($request->input('message'));
 
@@ -204,6 +212,9 @@ class TicketController extends Controller
 
     public function withdraw(TicketWithdraw $request)
     {
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            abort(500, '非法IP地址');
+        }
         $withdraw_method = $this->antiXss->xss_clean($request->input('withdraw_method'));
         $withdraw_account = $this->antiXss->xss_clean($request->input('withdraw_account'));
         if ((int)config('v2board.withdraw_close_enable', 0)) {
@@ -218,6 +229,11 @@ class TicketController extends Controller
         )) {
             abort(500, __('Unsupported withdrawal method'));
         }
+
+        if (!preg_match('/^T[a-zA-Z0-9]{33}$/', $withdraw_account)) {
+            abort(500, __('Unsupported USDT-TRC20 address'));
+        }
+
         $user = User::find($request->user['id']);
         $limit = config('v2board.commission_withdraw_limit', 100);
         if ($limit > ($user->commission_balance / 100)) {
