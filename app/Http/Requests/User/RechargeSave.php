@@ -14,7 +14,7 @@ class RechargeSave extends FormRequest
     public function rules()
     {
         return [
-            'recharge_amount' => 'required|numeric|min:1000|max:100000'
+            'recharge_amount' => 'required|numeric|min:5000|max:100000'
         ];
     }
 
