@@ -762,8 +762,6 @@ rules:
     - 'RULE-SET,Spotify,🎜Spotify'
     #HBO
     - 'RULE-SET,HBO,🎞️HBO'
-    #TG
-    - 'RULE-SET,telegram,$app_name'
     #国外网站
     - 'RULE-SET,proxy,$app_name'
     #国内网站
