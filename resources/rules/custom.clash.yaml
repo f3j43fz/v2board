@@ -208,13 +208,6 @@ rule-providers:
     path: ./ruleset/HBO.yaml
     interval: 86400
 
-  OpenAI:
-    type: http
-    behavior: classical
-    url: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml"
-    path: ./ruleset/OpenAI.yaml
-    interval: 86400
-
   Twitch:
     type: http
     behavior: classical
@@ -696,7 +689,32 @@ rules:
     #Google 可直连服务
     - 'RULE-SET,google,🌎谷歌系'
     #OpenAI
-    - 'RULE-SET,OpenAI,🤖OpenAI'
+    - 'DOMAIN,browser-intake-datadoghq.com,🤖OpenAI'
+    - 'DOMAIN,static.cloudflareinsights.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,ai.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,algolia.net,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,api.statsig.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,auth0.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,chatgpt.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,chatgpt.livekit.cloud,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,client-api.arkoselabs.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,events.statsigapi.net,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,featuregates.org,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,host.livekit.cloud,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,identrust.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,intercom.io,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,intercomcdn.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,launchdarkly.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,oaistatic.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,oaiusercontent.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,observeit.net,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,segment.io,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,sentry.io,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,stripe.com,🤖OpenAI'
+    - 'DOMAIN-SUFFIX,turn.livekit.cloud,🤖OpenAI'
+    - 'DOMAIN-KEYWORD,openai,🤖OpenAI'
+    - 'IP-CIDR,24.199.123.28/32,🤖OpenAI'
+    - 'IP-CIDR,64.23.132.171/32,🤖OpenAI'
     #Claude
     - 'RULE-SET,Claude,🤖Claude'
     #Twitch
