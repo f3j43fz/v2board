@@ -401,6 +401,11 @@ class AuthController extends Controller
             abort(500, __('Reset failed'));
         }
         Cache::forget(CacheKey::get('EMAIL_VERIFY_CODE', $email));
+
+        // 登出其他设备
+        $authService = new AuthService($user);
+        $authService->removeAllSession();
+
         return response([
             'data' => true
         ]);
