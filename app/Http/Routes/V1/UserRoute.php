@@ -9,7 +9,7 @@ class UserRoute
     {
         $router->group([
             'prefix' => 'user',
-            'middleware' => 'user'
+            'middleware' => ['user', 'checkbanned']
         ], function ($router) {
             // User
             $router->get ('/resetSecurity', 'V1\\User\\UserController@resetSecurity');
