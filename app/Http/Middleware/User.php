@@ -21,7 +21,7 @@ class User
         if (!$authorization) abort(403, '未登录或登陆已过期');
 
         $user = AuthService::decryptAuthData($authorization);
-        if (!$user) abort(403, '未登录或登陆已过期');
+        if (!$user) abort(403, '未登录或登录已过期或用户被封禁');
         $request->merge([
             'user' => $user
         ]);

@@ -48,10 +48,11 @@ class AuthService
                     'id',
                     'email',
                     'is_admin',
-                    'is_staff'
+                    'is_staff',
+                    'banned'
                 ])
                     ->find($data['id']);
-                if (!$user) return false;
+                if (!$user || $user->banned) return false;  // 检查用户是否被封禁
                 Cache::put($jwt, $user->toArray(), 3600);
             }
             return Cache::get($jwt);
