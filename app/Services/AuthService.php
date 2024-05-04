@@ -41,25 +41,29 @@ class AuthService
     public static function decryptAuthData($jwt)
     {
         try {
-            if (!Cache::has($jwt)) {
-                $data = (array)JWT::decode($jwt, new Key(config('app.key'), 'HS256'));
-                if (!self::checkSession($data['id'], $data['session'])) return false;
-                $user = User::select([
-                    'id',
-                    'email',
-                    'is_admin',
-                    'is_staff',
-                    'banned'
-                ])
-                    ->find($data['id']);
-                if (!$user || $user->banned) return false;  // 检查用户是否被封禁
-                Cache::put($jwt, $user->toArray(), 3600);
+            $data = (array)JWT::decode($jwt, new Key(config('app.key'), 'HS256'));
+            if (!self::checkSession($data['id'], $data['session'])) return false;
+
+            $blacklistCacheKey = CacheKey::get("BLACKLISTED_SESSIONS", $data['session']);
+            if (Cache::has($blacklistCacheKey)) {
+                return false; // 如果session在黑名单中，则认为JWT无效
             }
+
+            $user = User::select([
+                'id',
+                'email',
+                'is_admin',
+                'is_staff'
+            ])->find($data['id']);
+            if (!$user) return false;
+
+            Cache::put($jwt, $user->toArray(), 3600); // 重新缓存用户信息，延长JWT的有效性
             return Cache::get($jwt);
         } catch (\Exception $e) {
             return false;
         }
     }
+
 
     private static function checkSession($userId, $session)
     {
@@ -99,7 +103,21 @@ class AuthService
 
     public function removeAllSession()
     {
+
         $cacheKey = CacheKey::get("USER_SESSIONS", $this->user->id);
+        $sessions = (array)Cache::get($cacheKey, []);
+        foreach ($sessions as $sessionId => $sessionData) {
+            $this->blacklistSession($sessionId); // 将每个session标记为黑名单
+        }
         return Cache::forget($cacheKey);
+
     }
+
+    public function blacklistSession($session)
+    {
+        $cacheKey = CacheKey::get("BLACKLISTED_SESSIONS", $session);
+        Cache::put($cacheKey, true, 3600); // 假设JWT的最大有效期是3600秒
+    }
+
+
 }
