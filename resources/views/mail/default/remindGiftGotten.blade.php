@@ -4,31 +4,32 @@
         <tr>
             <td>
                 <div style="background:#fff">
+                    <div style="padding: 20px; text-align: center;">
+                        <img src="https://s3.bmp.ovh/imgs/2024/04/12/5cd1bf1456e513a3.png" alt="Logo" style="width: 100px;">
+                    </div>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <thead>
-                        <tr>
-                            <td valign="middle" style="padding-left:30px;background-color:#415A94;color:#fff;padding:20px 40px;font-size: 21px;">{{$name}}</td>
-                        </tr>
-                        </thead>
                         <tbody>
-                        <tr style="padding:40px 40px 0 40px;display:table-cell">
-                            <td style="font-size:24px;line-height:1.5;color:#000;margin-top:40px">赠金到账</td>
+                        <tr style="padding:20px 40px 0 40px;display:table-cell">
+                            <td style="font-size:24px;line-height:1.5;color:#000;">中奖通知</td>
                         </tr>
                         <tr>
                             <td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
-                                尊敬的用户您好！
+                                尊敬的用户 {{$userName}} ，
                                 <br />
                                 <br />
-                                您在双十一活动期间购买了套餐,视作参加抽奖活动。现已开奖：
+                                您在五一劳动节优惠活动期间购买了套餐,视作参加本次抽奖活动。现已开奖：
                                 <br />
                                 <br />
-                                恭喜您获得了 {{$moneyGift}} 元的随机赠金，感谢您对 {{$name}} 的持续支持。
+                                恭喜您获得了 {{$moneyGift}} 元的赠金。感谢您选择 {{$name}}，您对 {{$name}} 的支持就是我们最大的前进动力。
                                 <br />
                                 <br />
-                                赠金已自动进入余额，可在官网左侧的【个人中心】- 我的钱包处查看。
+                                赠金已自动进入余额，您可在官网左侧的【个人中心】- 我的钱包 查看。
                                 <br />
                                 <br />
-                                ----{{$name}} 敬上
+                                -----------------
+                                <br />
+                                <br />
+                                {{$name}} 团队敬上 祝您生活愉快
                             </td>
                         </tr>
                         <tr style="padding:40px;display:table-cell">
@@ -40,11 +41,12 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                         <tr>
-                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">返回{{$name}}</a></td>
+                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">点我返回最新{{$name}}官网</a></td>
                         </tr>
                         </tbody>
                     </table>
-                </div></td>
+                </div>
+            </td>
         </tr>
         </tbody>
     </table>
