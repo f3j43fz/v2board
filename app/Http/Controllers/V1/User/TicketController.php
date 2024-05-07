@@ -20,26 +20,22 @@ class TicketController extends Controller
 {
     public function fetch(Request $request)
     {
-        $id = $this->antiXss->xss_clean($request->input('id'));
-        if ($id) {
-            $ticket = Ticket::where('id', $id)
-                ->where('user_id', $request->user['id'])
-                ->first();
-            if (!$ticket) {
-                abort(500, __('Ticket does not exist'));
-            }
+        $ticketID = $this->antiXss->xss_clean($request->input('id'));
+
+        if ($ticketID) {
+            $ticket = Ticket::where('id', $ticketID)
+                ->firstOrFail();
             $ticket['message'] = TicketMessage::where('ticket_id', $ticket->id)->get();
             for ($i = 0; $i < count($ticket['message']); $i++) {
-                if ($ticket['message'][$i]['user_id'] == $ticket->user_id) {
+                if ($ticket['message'][$i]['user_id'] !== $ticket->user_id) {
                     $ticket['message'][$i]['is_me'] = true;
                 } else {
                     $ticket['message'][$i]['is_me'] = false;
                 }
             }
-            return response([
-                'data' => $ticket
-            ]);
+            return response(['data' => $ticket]);
         }
+
         $ticket = Ticket::where('user_id', $request->user['id'])
             ->orderBy('created_at', 'DESC')
             ->get();
