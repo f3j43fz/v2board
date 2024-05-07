@@ -36,7 +36,7 @@ class Traffic extends Telegram {
         }
 
         if ($user->is_PAGO == 1) {
-            $balance= $user->balance;
+            $balance= $user->balance / 100;
             $text = "🚥个人信息\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n余额：`{$balance}` 元";
         }else{
             $text = "🚥个人信息\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n计划流量：`{$transferEnable}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n剩余流量：`{$remaining}`";
