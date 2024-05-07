@@ -32,8 +32,8 @@ class Bind extends Telegram {
 
         // 记录用户的 telegram @用户名
         $newRemarks = "Telegram ID: {$message->chat_id}";
-        if (isset($message->from->username)) {
-            $newRemarks .= ", 用户名: @{$message->from->username}";
+        if (isset($message->get_username)) {
+            $newRemarks .= ", 用户名: @{$message->get_username}";
         }
         $user->remarks = $user->remarks ? $user->remarks . " | " . $newRemarks : $newRemarks;
 
