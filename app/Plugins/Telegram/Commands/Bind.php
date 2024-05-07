@@ -29,9 +29,18 @@ class Bind extends Telegram {
             abort(500, '该账号已经绑定了Telegram账号');
         }
         $user->telegram_id = $message->chat_id;
+
+        // 记录用户的 telegram @用户名
+        $newRemarks = "Telegram ID: {$message->chat_id}";
+        if (isset($message->username)) {
+            $newRemarks .= ", 用户名: @{$message->username}";
+        }
+        $user->remarks = $user->remarks ? $user->remarks . " | " . $newRemarks : $newRemarks;
+
         if (!$user->save()) {
             abort(500, '设置失败');
         }
+
         $telegramService = $this->telegramService;
         $telegramService->sendMessage($message->chat_id, '绑定成功');
     }
