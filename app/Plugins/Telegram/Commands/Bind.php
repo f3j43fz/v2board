@@ -30,12 +30,14 @@ class Bind extends Telegram {
         }
         $user->telegram_id = $message->chat_id;
 
-        // 记录用户的 telegram @用户名
-        $newRemarks = "Telegram ID: {$message->chat_id}";
-        if (isset($message->get_username)) {
-            $newRemarks .= ", 用户名: @{$message->get_username}";
+        // 记录用户的 telegram ID 以及 @用户名
+        if(!$user->is_admin){
+            $newRemarks = "Telegram ID: {$message->chat_id}";
+            if (isset($message->get_username)) {
+                $newRemarks .= ", 用户名: @{$message->get_username}";
+            }
+            $user->remarks = $user->remarks ? $user->remarks . " | " . $newRemarks : $newRemarks;
         }
-        $user->remarks = $user->remarks ? $user->remarks . " | " . $newRemarks : $newRemarks;
 
         if (!$user->save()) {
             abort(500, '设置失败');
