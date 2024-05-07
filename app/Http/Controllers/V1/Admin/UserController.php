@@ -121,6 +121,8 @@ class UserController extends Controller
 
             if($plan->setup_price > 0){
                 $params['is_PAGO'] = 1;
+            }else{
+                $params['is_PAGO'] = 0;
             }
 
             $params['group_id'] = $plan->group_id;
