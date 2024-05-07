@@ -118,6 +118,11 @@ class UserController extends Controller
             if (!$plan) {
                 abort(500, '订阅计划不存在');
             }
+
+            if($plan->setup_price > 0){
+                $params['is_PAGO'] = 1;
+            }
+
             $params['group_id'] = $plan->group_id;
         }
         if ($request->input('invite_user_email')) {
