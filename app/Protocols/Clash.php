@@ -47,6 +47,8 @@ class Clash
         $proxy = [];
         $proxies = [];
 
+        $infoPrinted = false; // 初始化信息打印标志
+
         foreach ($servers as $item) {
             if ($item['type'] === 'shadowsocks'
                 && in_array($item['cipher'], [
@@ -69,7 +71,7 @@ class Clash
                 array_push($proxies, $item['name']);
             }
 
-            if ($item['type'] === 'vless' || $item['type'] === 'hysteria') {
+            if (($item['type'] === 'vless' || $item['type'] === 'hysteria') && !$infoPrinted) {
                 $info1 = '本客户端不支持直连套餐';
                 array_push($proxy, self::buildErrorInfo($info1));
                 array_push($proxies, $info1);
@@ -78,6 +80,11 @@ class Clash
                 array_push($proxy, self::buildErrorInfo($info2));
                 array_push($proxies, $info2);
 
+                $info3 = '然后在新的客户端导入订阅';
+                array_push($proxy, self::buildErrorInfo($info3));
+                array_push($proxies, $info3);
+
+                $infoPrinted = true; // 设置信息已打印
             }
         }
 
