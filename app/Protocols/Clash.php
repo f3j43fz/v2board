@@ -72,11 +72,11 @@ class Clash
             }
 
             if (($item['type'] === 'vless' || $item['type'] === 'hysteria') && !$infoPrinted) {
-                $info1 = '本客户端不支持 vless、histeria2 协议节点';
+                $info1 = '本客户端不支持直连套餐';
                 array_push($proxy, self::buildErrorInfo($info1));
                 array_push($proxies, $info1);
 
-                $info2 = '请下载其他客户端';
+                $info2 = '请您下载其他客户端';
                 array_push($proxy, self::buildErrorInfo($info2));
                 array_push($proxies, $info2);
 
