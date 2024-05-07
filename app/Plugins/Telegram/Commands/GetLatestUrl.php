@@ -11,9 +11,8 @@ class GetLatestUrl extends Telegram {
 
     public function handle($message, $match = []) {
         $telegramService = $this->telegramService;
-        if (!$message->is_private) {
+        if ($message->is_private) {
             abort(500, '请在我们的群组中发送本命令噢~');
-            return;
         }
         $text = sprintf(
             "%s的最新网址是：%s",
