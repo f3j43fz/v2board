@@ -66,6 +66,7 @@ class ClientController extends Controller
         $flag = strtolower($flag);
 
         // 检查 4 种情况： 【按周期】套餐过期、【按流量】套餐满流量、【随用随付】套餐没余额、小火箭版本太低，用不了直连套餐
+        // 小火箭版本 2.2.30(1947)
 
         $URL = config('v2board.app_url');
         $commonArray = [
