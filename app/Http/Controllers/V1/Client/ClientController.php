@@ -51,7 +51,6 @@ class ClientController extends Controller
 
 
         // 禁止多IP更新，管理员除外
-//        $user = User::find($userID);
         if(!$user->is_admin){
             if (!$this->checkTokenRequest($userID, $userIP, $userISPInfo)) {
                 $response = [
@@ -61,36 +60,54 @@ class ClientController extends Controller
             }
         }
 
+        //优先识别 flag 然后识别 UA
         $flag = $this->antiXss->xss_clean($request->input('flag'))
             ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
         $flag = strtolower($flag);
 
-        // 检查3中情况： 【按周期】套餐过期、【按流量】套餐满流量、【随用随付】套餐没余额
-        if($userService->hasPlanButExpired($user) || $userService->hasPlanButExhausted($user) || ($user->is_PAGO == 1 && $user->balance == 0)){
-            $URL = config('v2board.app_url');
-            $commonArray = [
-                'type' => 'shadowsocks',
-                'host' => 'baidu.com',
-                'port' => 8888,
-                'cipher' => 'aes-128-gcm',
-            ];
+        // 检查 4 种情况： 【按周期】套餐过期、【按流量】套餐满流量、【随用随付】套餐没余额、小火箭版本太低，用不了直连套餐
 
-            $array1 = $commonArray;
-            $array2 = $commonArray;
+        $URL = config('v2board.app_url');
+        $commonArray = [
+            'type' => 'shadowsocks',
+            'host' => 'baidu.com',
+            'port' => 8888,
+            'cipher' => 'aes-128-gcm',
+        ];
 
-            if($user->is_PAGO == 1){
-                $array1['name'] = "您的余额不足";
-                $array2['name'] = "请到： {$URL} 充值";
-            }else{
-                $array1['name'] = $userService->hasPlanButExpired($user) ? "您的套餐已过期" : "您的流量已耗尽";
-                $array2['name'] = "请到： {$URL} 续费";
-            }
+        $array1 = $commonArray;
+        $array2 = $commonArray;
+        $array3 = $commonArray;
 
-
-            $array3 = $commonArray;
+        if($userService->hasPlanButExpired($user)){
+            $array1['name'] = "您的套餐已过期";
+            $array2['name'] = "请到： {$URL} 续费";
             $array3['name'] = "如需帮助，可工单/邮件联系";
 
-            // 将 $array1 和 $array2 添加到 $servers 数组中
+            $servers[] = $array1;
+            $servers[] = $array2;
+            $servers[] = $array3;
+        }elseif ($userService->hasPlanButExhausted($user)){
+            $array1['name'] = "您的流量已耗尽";
+            $array2['name'] = "请到： {$URL} 续费";
+            $array3['name'] = "如需帮助，可工单/邮件联系";
+
+            $servers[] = $array1;
+            $servers[] = $array2;
+            $servers[] = $array3;
+        }elseif (($user->is_PAGO == 1 && $user->balance == 0)){
+            $array1['name'] = "您的余额不足";
+            $array2['name'] = "请到： {$URL} 充值";
+            $array3['name'] = "如需帮助，可工单/邮件联系";
+
+            $servers[] = $array1;
+            $servers[] = $array2;
+            $servers[] = $array3;
+        }elseif ( $userService->hasDirectPlan($user) && strpos($flag, 'shadowrocket') && $this->extractShadowrocketVersion($flag) < 1947){
+            $array1['name'] = "您的小火箭本版不支持直连套餐";
+            $array2['name'] = "请更新小火箭";
+            $array3['name'] = "然后再更新订阅";
+
             $servers[] = $array1;
             $servers[] = $array2;
             $servers[] = $array3;
@@ -100,9 +117,6 @@ class ClientController extends Controller
             $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
         }
 
-//        $serverService = new ServerService();
-//        $servers = $serverService->getAvailableServers($user);
-//        $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
 
 
         if ($flag) {
@@ -287,5 +301,13 @@ class ClientController extends Controller
             return "未知地区";
         }
     }
+
+
+    private function extractShadowrocketVersion($ua) {
+        $pattern = '/Shadowrocket\/(\d+)/';
+        preg_match($pattern, $ua, $matches);
+        return $matches[1] ?? '未知版本';
+    }
+
 
 }
