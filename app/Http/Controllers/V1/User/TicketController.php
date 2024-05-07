@@ -98,7 +98,7 @@ class TicketController extends Controller
         $expiredTime = null;
         if ($plan) {
             $planName = $plan->name;
-            $expiredTime = ($plan->onetime_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
+            $expiredTime = ($plan->onetime_price > 0 || $plan->setup_price > 0)? "永不过期" : date('Y-m-d', $user->expired_at);
         }
 
         $this->sendNotify($ticket, $message, $ISPInfo, $planName, $transferEnable, $transferUsed, $expiredTime, $email);
