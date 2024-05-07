@@ -39,7 +39,7 @@ class Traffic extends Telegram {
             $balance= $user->balance;
             $text = "🚥个人信息\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n余额：`{$balance}` 元";
         }else{
-            $text = "🚥个人查询\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n计划流量：`{$transferEnable}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n剩余流量：`{$remaining}`";
+            $text = "🚥个人信息\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n计划流量：`{$transferEnable}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n剩余流量：`{$remaining}`";
         }
         $telegramService->sendMessage($message->chat_id, $text, false,'markdown');
     }
