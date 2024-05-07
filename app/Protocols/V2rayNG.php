@@ -23,6 +23,9 @@ class V2rayNG
         $uri = '';
 
         foreach ($servers as $item) {
+            if ($item['type'] === 'hysteria') {
+                continue;
+            }
             if ($item['type'] === 'vmess') {
                 $uri .= self::buildVmess($user['uuid'], $item);
             }
