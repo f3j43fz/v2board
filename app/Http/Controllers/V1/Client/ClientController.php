@@ -67,6 +67,8 @@ class ClientController extends Controller
         // 检查 4 种情况： 【按周期】套餐过期、【按流量】套餐满流量、【随用随付】套餐没余额、小火箭版本太低，用不了直连套餐
         // 小火箭版本 2.2.30(1947)
 
+        $hasDirectPlan = $userService->hasDirectPlan($user);
+
         $URL = config('v2board.app_url');
         $commonArray = [
             'type' => 'shadowsocks',
@@ -103,7 +105,7 @@ class ClientController extends Controller
             $servers[] = $array1;
             $servers[] = $array2;
             $servers[] = $array3;
-        }elseif ($userService->hasDirectPlan($user) && strpos($flag, 'shadowrocket') && $this->extractShadowrocketVersion($flag) < 1947){
+        }elseif ($hasDirectPlan && strpos($flag, 'shadowrocket') && $this->extractShadowrocketVersion($flag) < 1947){
             $array1['name'] = "您的小火箭本版不支持直连套餐";
             $array2['name'] = "请更新小火箭";
             $array3['name'] = "然后再更新订阅";
@@ -111,7 +113,7 @@ class ClientController extends Controller
             $servers[] = $array1;
             $servers[] = $array2;
             $servers[] = $array3;
-        }elseif ($userService->hasDirectPlan($user) && !$this->supportRalityAndHisteria2($flag) ){
+        }elseif ($hasDirectPlan && !$this->supportRalityAndHisteria2($flag) ){
             $array1['name'] = "本客户端不支持直连套餐";
             $array2['name'] = "请您下载其他客户端";
             $array3['name'] = "然后在新的客户端导入订阅";
