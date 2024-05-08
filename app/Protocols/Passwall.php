@@ -2,7 +2,6 @@
 
 namespace App\Protocols;
 
-
 use App\Utils\Helper;
 
 class Passwall
@@ -36,12 +35,25 @@ class Passwall
             if ($item['type'] === 'trojan') {
                 $uri .= self::buildTrojan($user['uuid'], $item);
             }
+            if ($item['type'] === 'hysteria') {
+                $uri .= self::buildHysteria($user['uuid'], $item);
+            }
         }
         return base64_encode($uri);
     }
 
     public static function buildShadowsocks($password, $server)
     {
+        if ($server['cipher'] === '2022-blake3-aes-128-gcm') {
+            $serverKey = Helper::getServerKey($server['created_at'], 16);
+            $userKey = Helper::uuidToBase64($password, 16);
+            $password = "{$serverKey}:{$userKey}";
+        }
+        if ($server['cipher'] === '2022-blake3-aes-256-gcm') {
+            $serverKey = Helper::getServerKey($server['created_at'], 32);
+            $userKey = Helper::uuidToBase64($password, 32);
+            $password = "{$serverKey}:{$userKey}";
+        }
         $name = rawurlencode($server['name']);
         $str = str_replace(
             ['+', '/', '='],
@@ -74,18 +86,21 @@ class Passwall
             }
         }
         if ((string)$server['network'] === 'tcp') {
-            $tcpSettings = $server['network_settings'];
-            if (isset($tcpSettings['header']['type'])) $config['type'] = $tcpSettings['header']['type'];
-            if (isset($tcpSettings['header']['request']['path'][0])) $config['path'] = $tcpSettings['header']['request']['path'][0];
+            $tcpSettings = $server['networkSettings'];
+            if (isset($tcpSettings['header']['type']) && $tcpSettings['header']['type'] == 'http') {
+                $config['type'] = $tcpSettings['header']['type'];
+                if (isset($tcpSettings['header']['request']['headers']['Host'][0])) $config['host'] = $tcpSettings['header']['request']['headers']['Host'][0];
+                if (isset($tcpSettings['header']['request']['path'][0])) $config['path'] = $tcpSettings['header']['request']['path'][0];
+            }
         }
         if ((string)$server['network'] === 'ws') {
-            $wsSettings = $server['network_settings'];
+            $wsSettings = $server['networkSettings'];
             if (isset($wsSettings['path'])) $config['path'] = $wsSettings['path'];
             if (isset($wsSettings['headers']['Host'])) $config['host'] = $wsSettings['headers']['Host'];
         }
         if ((string)$server['network'] === 'grpc') {
-            $grpcSettings = $server['network_settings'];
-            if (isset($grpcSettings['service_name'])) $config['path'] = $grpcSettings['service_name'];
+            $grpcSettings = $server['networkSettings'];
+            if (isset($grpcSettings['serviceName'])) $config['path'] = $grpcSettings['serviceName'];
         }
         return "vmess://" . base64_encode(json_encode($config)) . "\r\n";
     }
@@ -93,34 +108,64 @@ class Passwall
     public static function buildVless($uuid, $server)
     {
         $config = [
+            "name" => Helper::encodeURIComponent($server['name']),
             "add" => $server['host'],
             "port" => (string)$server['port'],
-            "security" => ((int)$server['tls'] === 2) ? "reality" : "",
             "type" => $server['network'],
             "encryption" => "none",
-            "flow" => !empty($server['flow']) ? $server['flow'] : "",
-            "pbk" => ((int)$server['tls'] === 2) ? $server['tls_settings']['public_key'] : "",
-            "sni" => !empty($server['tls_settings']['server_name']) ? $server['tls_settings']['server_name'] : "",
-            "fp" => "chrome",
-            "sid" => ((int)$server['tls'] === 2) ? $server['tls_settings']['short_id'] : "",
+            "host" => "",
+            "path" => "",
+            "headerType" => "none",
+            "quicSecurity" => "none",
+            "serviceName" => "",
+            "mode" => "gun",
+            "security" => $server['tls'] !=0 ? ($server['tls'] == 2 ? "reality":"tls") : "",
+            "flow" => $server['flow'],
+            "fp" => isset($server['tls_settings']['fingerprint']) ? $server['tls_settings']['fingerprint'] : 'chrome',
+            "sni" => "",
+            "pbk" => "",
+            "sid" =>"",
         ];
+
+        $output = "vless://" . $uuid . "@" . $config['add'] . ":" . $config['port'];
+        $output .= "?" . "type={$config['type']}" . "&encryption={$config['encryption']}" . "&security={$config['security']}";
+
+        if ($server['tls']) {
+            if ($config['flow'] != "") $output .= "&flow={$config['flow']}";
+            if ($server['tls_settings']) {
+                $tlsSettings = $server['tls_settings'];
+                if (isset($tlsSettings['server_name']) && !empty($tlsSettings['server_name'])) $config['sni'] = $tlsSettings['server_name'];
+                $output .= "&sni={$config['sni']}";
+                if ($server['tls'] == 2) {
+                    $config['pbk'] = $tlsSettings['public_key'];
+                    $config['sid'] = $tlsSettings['short_id'];
+                    $output .= "&pbk={$config['pbk']}" . "&sid={$config['sid']}";
+                }
+            }
+        }
         if ((string)$server['network'] === 'tcp') {
             $tcpSettings = $server['network_settings'];
-            if (isset($tcpSettings['header']['type'])) $config['type'] = $tcpSettings['header']['type'];
-            if (isset($tcpSettings['header']['request']['path'][0])) $config['path'] = $tcpSettings['header']['request']['path'][0];
+            if (isset($tcpSettings['header']['type']) && $tcpSettings['header']['type'] == 'http') {
+                $config['headerType'] = $tcpSettings['header']['type'];
+                if (isset($tcpSettings['header']['request']['headers']['Host'][0])) $config['host'] = $tcpSettings['header']['request']['headers']['Host'][0];
+                if (isset($tcpSettings['header']['request']['path'][0])) $config['path'] = $tcpSettings['header']['request']['path'][0];
+            }
+            $output .= "&headerType={$config['headerType']}" . "&host={$config['host']}" . "&path={$config['path']}";
         }
         if ((string)$server['network'] === 'ws') {
             $wsSettings = $server['network_settings'];
-            if (isset($wsSettings['path'])) $config['path'] = $wsSettings['path'];
-            if (isset($wsSettings['headers']['Host'])) $config['host'] = $wsSettings['headers']['Host'];
+            if (isset($wsSettings['path'])) $config['path'] = Helper::encodeURIComponent($wsSettings['path']);
+            if (isset($wsSettings['headers']['Host'])) $config['host'] = Helper::encodeURIComponent($wsSettings['headers']['Host']);
+            $output .= "&path={$config['path']}" . "&host={$config['host']}";
         }
         if ((string)$server['network'] === 'grpc') {
             $grpcSettings = $server['network_settings'];
-            if (isset($grpcSettings['service_name'])) $config['path'] = $grpcSettings['service_name'];
+            if (isset($grpcSettings['serviceName'])) $config['serviceName'] = Helper::encodeURIComponent($grpcSettings['serviceName']);
+            if (isset($grpcSettings['multiMode'])) $config['mode'] = $grpcSettings['multiMode'] ? "multi" : "gun";
+            $output .= "&serviceName={$config['serviceName']}" . "&mode={$config['mode']}";
         }
-        $output = "vless://" . $uuid . "@" . $config['add'] . ":" . $config['port'];
-        $output .= "?" . http_build_query($config);
-        $output .= "#" . $server['name'];
+
+        $output .= "&fp={$config['fp']}" . "#" . $config['name'];
 
         return $output . "\r\n";
     }
@@ -133,8 +178,36 @@ class Passwall
             'peer' => $server['server_name'],
             'sni' => $server['server_name']
         ]);
-        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}#{$name}";
-        $uri .= "\r\n";
+        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}";
+        if(isset($server['network']) && in_array($server['network'], ["grpc", "ws"])){
+            $uri ="trojan-go://{$password}@{$server['host']}:{$server['port']}?{$query}" . "&type={$server['network']}";
+            if($server['network'] === "grpc" && isset($server['network_settings']['serviceName'])) {
+                $uri .= "&serviceName={$server['network_settings']['serviceName']}";
+            }
+            if($server['network'] === "ws") {
+                if(isset($server['network_settings']['path'])) {
+                    $uri .= "&path={$server['network_settings']['path']}";
+                }
+                if(isset($server['network_settings']['headers']['Host'])) {
+                    $uri .= "&host={$server['network_settings']['headers']['Host']}";
+                }
+            }
+        }
+
+        $uri .= "#{$name}\r\n";
+        return $uri;
+    }
+
+    public static function buildHysteria($password, $server)
+    {
+        $remote = filter_var($server['host'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? '[' . $server['host'] . ']' : $server['host'];
+        $name = Helper::encodeURIComponent($server['name']);
+
+        $uri = "hysteria2://{$password}@{$remote}:{$server['port']}/?insecure={$server['insecure']}&sni={$server['server_name']}";
+        $obfs_password = Helper::getServerKey($server['created_at'], 16);
+        $uri .= "&obfs={$server['obfs_type']}&obfs-password={$obfs_password}";
+
+        $uri .= "#{$name}\r\n";
         return $uri;
     }
 
