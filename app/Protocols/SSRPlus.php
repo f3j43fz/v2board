@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Protocols;
-
+use App\Utils\Helper;
 
 class SSRPlus
 {
@@ -24,6 +24,9 @@ class SSRPlus
         foreach ($servers as $item) {
             if ($item['type'] === 'vmess') {
                 $uri .= self::buildVmess($user['uuid'], $item);
+            }
+            if ($item['type'] === 'vless') {
+                $uri .= self::buildVless($user['uuid'], $item);
             }
             if ($item['type'] === 'shadowsocks') {
                 $uri .= self::buildShadowsocks($user['uuid'], $item);
@@ -62,22 +65,95 @@ class SSRPlus
             "tls" => $server['tls'] ? "tls" : "",
         ];
         if ($server['tls']) {
-            if ($server['tls_settings']) {
-                $tls_settings = $server['tls_settings'];
-                if (isset($tls_settings['serverName']) && !empty($tls_settings['serverName']))
-                    $config['sni'] = $tls_settings['serverName'];
+            if ($server['tlsSettings']) {
+                $tlsSettings = $server['tlsSettings'];
+                if (isset($tlsSettings['serverName']) && !empty($tlsSettings['serverName']))
+                    $config['sni'] = $tlsSettings['serverName'];
+            }
+        }
+        if ((string)$server['network'] === 'tcp') {
+            $tcpSettings = $server['networkSettings'];
+            if (isset($tcpSettings['header']['type']) && $tcpSettings['header']['type'] == 'http') {
+                $config['type'] = $tcpSettings['header']['type'];
+                if (isset($tcpSettings['header']['request']['headers']['Host'][0])) $config['host'] = $tcpSettings['header']['request']['headers']['Host'][0];
+                if (isset($tcpSettings['header']['request']['path'][0])) $config['path'] = $tcpSettings['header']['request']['path'][0];
             }
         }
         if ((string)$server['network'] === 'ws') {
-            $wsSettings = $server['network_settings'];
+            $wsSettings = $server['networkSettings'];
             if (isset($wsSettings['path'])) $config['path'] = $wsSettings['path'];
             if (isset($wsSettings['headers']['Host'])) $config['host'] = $wsSettings['headers']['Host'];
         }
         if ((string)$server['network'] === 'grpc') {
-            $grpcSettings = $server['network_settings'];
+            $grpcSettings = $server['networkSettings'];
             if (isset($grpcSettings['serviceName'])) $config['path'] = $grpcSettings['serviceName'];
         }
         return "vmess://" . base64_encode(json_encode($config)) . "\r\n";
+    }
+
+    public static function buildVless($uuid, $server)
+    {
+        $config = [
+            "name" => Helper::encodeURIComponent($server['name']),
+            "add" => $server['host'],
+            "port" => (string)$server['port'],
+            "type" => $server['network'],
+            "encryption" => "none",
+            "host" => "",
+            "path" => "",
+            "headerType" => "none",
+            "quicSecurity" => "none",
+            "serviceName" => "",
+            "mode" => "gun",
+            "security" => $server['tls'] !=0 ? ($server['tls'] == 2 ? "reality":"tls") : "",
+            "flow" => $server['flow'],
+            "fp" => isset($server['tls_settings']['fingerprint']) ? $server['tls_settings']['fingerprint'] : 'chrome',
+            "sni" => "",
+            "pbk" => "",
+            "sid" => "",
+        ];
+
+        $output = "vless://" . $uuid . "@" . $config['add'] . ":" . $config['port'];
+        $output .= "?" . "type={$config['type']}" . "&encryption={$config['encryption']}" . "&security={$config['security']}";
+
+        if ($server['tls']) {
+            if ($config['flow'] != "") $output .= "&flow={$config['flow']}";
+            if ($server['tls_settings']) {
+                $tlsSettings = $server['tls_settings'];
+                if (isset($tlsSettings['server_name']) && !empty($tlsSettings['server_name'])) $config['sni'] = $tlsSettings['server_name'];
+                $output .= "&sni={$config['sni']}";
+                if ($server['tls'] == 2) {
+                    $config['pbk'] = $tlsSettings['public_key'];
+                    $config['sid'] = $tlsSettings['short_id'];
+                    $output .= "&pbk={$config['pbk']}" . "&sid={$config['sid']}";
+                }
+            }
+        }
+        if ((string)$server['network'] === 'tcp') {
+            $tcpSettings = $server['network_settings'];
+            if (isset($tcpSettings['header']['type']) && $tcpSettings['header']['type'] == 'http') {
+                $config['headerType'] = $tcpSettings['header']['type'];
+                if (isset($tcpSettings['header']['request']['headers']['Host'][0])) $config['host'] = $tcpSettings['header']['request']['headers']['Host'][0];
+                if (isset($tcpSettings['header']['request']['path'][0])) $config['path'] = $tcpSettings['header']['request']['path'][0];
+            }
+            $output .= "&headerType={$config['headerType']}" . "&host={$config['host']}" . "&path={$config['path']}";
+        }
+        if ((string)$server['network'] === 'ws') {
+            $wsSettings = $server['network_settings'];
+            if (isset($wsSettings['path'])) $config['path'] = Helper::encodeURIComponent($wsSettings['path']);
+            if (isset($wsSettings['headers']['Host'])) $config['host'] = Helper::encodeURIComponent($wsSettings['headers']['Host']);
+            $output .= "&path={$config['path']}" . "&host={$config['host']}";
+        }
+        if ((string)$server['network'] === 'grpc') {
+            $grpcSettings = $server['network_settings'];
+            if (isset($grpcSettings['serviceName'])) $config['serviceName'] = Helper::encodeURIComponent($grpcSettings['serviceName']);
+            if (isset($grpcSettings['multiMode'])) $config['mode'] = $grpcSettings['multiMode'] ? "multi" : "gun";
+            $output .= "&serviceName={$config['serviceName']}" . "&mode={$config['mode']}";
+        }
+
+        $output .= "&fp={$config['fp']}" . "#" . $config['name'];
+
+        return $output . "\r\n";
     }
 
     public static function buildTrojan($password, $server)
@@ -88,8 +164,23 @@ class SSRPlus
             'peer' => $server['server_name'],
             'sni' => $server['server_name']
         ]);
-        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}#{$name}";
-        $uri .= "\r\n";
+        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}";
+        if(isset($server['network']) && in_array($server['network'], ["grpc", "ws"])){
+            $uri .= "&type={$server['network']}";
+            if($server['network'] === "grpc" && isset($server['network_settings']['serviceName'])) {
+                $uri .= "&serviceName={$server['network_settings']['serviceName']}";
+            }
+            if($server['network'] === "ws") {
+                if(isset($server['network_settings']['path'])) {
+                    $uri .= "&path={$server['network_settings']['path']}";
+                }
+                if(isset($server['network_settings']['headers']['Host'])) {
+                    $uri .= "&host={$server['network_settings']['headers']['Host']}";
+                }
+            }
+        }
+
+        $uri .= "#{$name}\r\n";
         return $uri;
     }
 
