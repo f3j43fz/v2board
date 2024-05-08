@@ -71,21 +71,6 @@ class Clash
                 array_push($proxies, $item['name']);
             }
 
-            if (($item['type'] === 'vless' || $item['type'] === 'hysteria') && !$infoPrinted) {
-                $info1 = '本客户端不支持直连套餐';
-                array_push($proxy, self::buildErrorInfo($info1));
-                array_push($proxies, $info1);
-
-                $info2 = '请您下载其他客户端';
-                array_push($proxy, self::buildErrorInfo($info2));
-                array_push($proxies, $info2);
-
-                $info3 = '然后在新的客户端导入订阅';
-                array_push($proxy, self::buildErrorInfo($info3));
-                array_push($proxies, $info3);
-
-                $infoPrinted = true; // 设置信息已打印
-            }
         }
 
         $config['proxies'] = array_merge($config['proxies'] ? $config['proxies'] : [], $proxy);
@@ -203,21 +188,6 @@ class Clash
         if (!empty($server['server_name'])) $array['sni'] = $server['server_name'];
         if (!empty($server['allow_insecure'])) $array['skip-cert-verify'] = ($server['allow_insecure'] ? true : false);
         return $array;
-    }
-
-
-    private static function buildErrorInfo($info)
-    {
-        $array = [];
-        $array['name'] = $info;
-        $array['type'] = 'ss';
-        $array['server'] = 'baidu.com';
-        $array['port'] = 8080;
-        $array['cipher'] = 'aes-256-gcm';
-        $array['password'] = 'password';
-        $array['udp'] = true;
-        return $array;
-
     }
 
 

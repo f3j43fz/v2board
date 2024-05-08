@@ -104,7 +104,7 @@ class ClientController extends Controller
             $servers[] = $array1;
             $servers[] = $array2;
             $servers[] = $array3;
-        }elseif ( $userService->hasDirectPlan($user) && strpos($flag, 'shadowrocket') && $this->extractShadowrocketVersion($flag) < 1947){
+        }elseif ($userService->hasDirectPlan($user) && strpos($flag, 'shadowrocket') && $this->extractShadowrocketVersion($flag) < 1947){
             $array1['name'] = "您的小火箭本版不支持直连套餐";
             $array2['name'] = "请更新小火箭";
             $array3['name'] = "然后再更新订阅";
@@ -112,7 +112,15 @@ class ClientController extends Controller
             $servers[] = $array1;
             $servers[] = $array2;
             $servers[] = $array3;
-        }else{
+        }elseif ($userService->hasDirectPlan($user) && !$this->isContainMeta($flag) ){
+            $array1['name'] = "本客户端不支持直连套餐";
+            $array2['name'] = "请您下载其他客户端";
+            $array3['name'] = "然后在新的客户端导入订阅";
+
+            $servers[] = $array1;
+            $servers[] = $array2;
+            $servers[] = $array3;
+        } else{
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
             $this->setSubscribeInfoToServers($servers, $user, $userISPInfo);
@@ -310,5 +318,14 @@ class ClientController extends Controller
         return $matches[1] ?? '未知版本';
     }
 
+    private function isContainMeta($flag) {
+        $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing'];
+        foreach ($keywords as $keyword) {
+            if (strpos($flag, $keyword) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
