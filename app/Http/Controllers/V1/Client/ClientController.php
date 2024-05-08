@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tokenrequest;
-//use App\Models\User;
 use App\Protocols\General;
 use App\Services\ServerService;
 use App\Services\UserService;
@@ -185,8 +184,6 @@ class ClientController extends Controller
     }
 
 
-
-
     private function checkTokenRequest($userID, $userIP, $userISPInfo): bool
     {
         $hourAgo = time() - 6 * 3600; // 6小时前的时间
@@ -210,16 +207,6 @@ class ClientController extends Controller
         return true;
     }
 
-//    private function getUserISP($userIP){
-//        $ip2region = new \Ip2Region();
-//        try {
-//            return $ip2region->simple($userIP);
-//        } catch (\Exception $e) {
-//            // 处理异常情况
-//            // 可以输出错误信息或执行其他逻辑
-//            return "未知地区";
-//        }
-//    }
 
     private function getUserISP($userIP){
 
