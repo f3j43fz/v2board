@@ -319,7 +319,7 @@ class ClientController extends Controller
     }
 
     private function isContainMeta($flag) {
-        $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing'];
+        $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing', 'passwall'];
         foreach ($keywords as $keyword) {
             if (strpos($flag, $keyword) !== false) {
                 return true;
