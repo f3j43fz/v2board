@@ -111,7 +111,7 @@ class ClientController extends Controller
             $servers[] = $array1;
             $servers[] = $array2;
             $servers[] = $array3;
-        }elseif ($userService->hasDirectPlan($user) && !$this->isContainMeta($flag) ){
+        }elseif ($userService->hasDirectPlan($user) && !$this->supportRalityAndHisteria2($flag) ){
             $array1['name'] = "本客户端不支持直连套餐";
             $array2['name'] = "请您下载其他客户端";
             $array3['name'] = "然后在新的客户端导入订阅";
@@ -305,7 +305,7 @@ class ClientController extends Controller
         return $matches[1] ?? '未知版本';
     }
 
-    private function isContainMeta($flag) {
+    private function supportRalityAndHisteria2($flag) {
         $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing', 'passwall'];
         foreach ($keywords as $keyword) {
             if (strpos($flag, $keyword) !== false) {
