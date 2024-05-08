@@ -306,7 +306,7 @@ class ClientController extends Controller
     }
 
     private function supportRalityAndHisteria2($flag) {
-        $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing', 'passwall'];
+        $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing', 'passwall', 'shadowrocket'];
         foreach ($keywords as $keyword) {
             if (strpos($flag, $keyword) !== false) {
                 return true;
