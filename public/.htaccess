@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 处理公共资源文件(js, css)，设置缓存
+    <FilesMatch "\.(js|css)$">
+        Header set Cache-Control "max-age=3600"
+    </FilesMatch>
+
+    # 处理主请求重定向
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+
+    # 关闭特定目录的日志记录，但Apache不直接支持关闭单个目录的日志
+    # 需要在 Apache 的主配置中进行更复杂的设置
+</IfModule>
