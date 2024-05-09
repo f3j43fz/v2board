@@ -157,21 +157,21 @@ class ClientController extends Controller
         $rate=config('v2board.invite_commission');
 
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "💫邀请好友得 {$rate} % 佣金 ",
+            'name' => "💰 邀请好友得 {$rate} % 佣金 ",
         ]));
 
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "套餐到期：{$expiredDate}",
+            'name' => "⏳ 套餐到期：{$expiredDate}",
         ]));
 
         if ($resetDay) {
             array_unshift($servers, array_merge($servers[0], [
-                'name' => "距离下次重置剩余：{$resetDay} 天",
+                'name' => "🔄 距离下次重置剩余：{$resetDay} 天",
             ]));
         }
 
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "您的网络：{$info} ",
+            'name' => "📶 您的网络：{$info} ",
         ]));
     }
 
