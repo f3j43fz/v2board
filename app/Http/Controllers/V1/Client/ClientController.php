@@ -164,10 +164,16 @@ class ClientController extends Controller
             'name' => "⏳ 套餐到期：{$expiredDate}",
         ]));
 
-        if ($resetDay) {
-            array_unshift($servers, array_merge($servers[0], [
-                'name' => "🔄 距离下次重置剩余：{$resetDay} 天",
-            ]));
+        if($user->expired_at !== NULL){
+            $expireMonth = date('m', $user->expired_at);
+            $currentMonth = date('m');
+            if ($expireMonth != $currentMonth) {
+                if ($resetDay) {
+                    array_unshift($servers, array_merge($servers[0], [
+                        'name' => "🔄 距离下次重置剩余：{$resetDay} 天",
+                    ]));
+                }
+            }
         }
 
         array_unshift($servers, array_merge($servers[0], [
