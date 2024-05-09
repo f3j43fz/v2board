@@ -159,6 +159,7 @@ class ClientController extends Controller
         array_unshift($servers, array_merge($servers[0], [
             'name' => "💫邀请好友得 {$rate} % 佣金 ",
         ]));
+
         array_unshift($servers, array_merge($servers[0], [
             'name' => "套餐到期：{$expiredDate}",
         ]));
@@ -168,9 +169,7 @@ class ClientController extends Controller
                 'name' => "距离下次重置剩余：{$resetDay} 天",
             ]));
         }
-//        array_unshift($servers, array_merge($servers[0], [
-//            'name' => "剩余流量：{$remainingTraffic}",
-//        ]));
+
         array_unshift($servers, array_merge($servers[0], [
             'name' => "您的网络：{$info} ",
         ]));
