@@ -21,28 +21,12 @@ Route::get('/', function (Request $request) {
         }
     }
 
-    $newLogoURL = "";
-    if (config('v2board.logo') !== null){
-        $oldLogoURL = config('v2board.logo');
-
-        // 提取 $oldLogoURL 中的域名部分，得到旧域名
-        $prefix = 'https://';
-        $oldDomain = substr($oldLogoURL, strlen($prefix));
-        $oldDomain = strtok($oldDomain, '/');
-
-        //提取请求中的域名，得到新域名
-        $newDomain = $request->getHost();
-
-        $newLogoURL = ($oldDomain != $newDomain ? str_replace($oldDomain, $newDomain, $oldLogoURL) : $newLogoURL );
-
-    }
-
     $renderParams = [
         'title' => config('v2board.app_name', 'V2Board'),
         'theme' => config('v2board.frontend_theme', 'v2board'),
         'version' => config('app.version'),
         'description' => config('v2board.app_description', 'V2Board is best'),
-        'logo' => $newLogoURL
+        'logo' => config('v2board.logo')
     ];
 
     if (!config("theme.{$renderParams['theme']}")) {
