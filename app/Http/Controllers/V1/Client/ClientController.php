@@ -186,7 +186,7 @@ class ClientController extends Controller
     private function checkUA($UA): bool
     {
         $UA = strtolower($UA);
-        $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'hiddify', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'nyanpasu'];
+        $allowedFlags = ['clash', 'clashforandroid', 'meta', 'shadowrocket', 'sing-box', 'SFA', 'clashforwindows', 'clash-verge', 'hiddify', 'loon',  'quantumult', 'sagerNet', 'surge', 'v2ray', 'passwall', 'ssrplus', 'shadowsocks', 'netch', 'nyanpasu', 'streisand'];
 
         foreach ($allowedFlags as $allowedFlag) {
             if (strpos($UA, $allowedFlag) !== false) {
@@ -320,7 +320,7 @@ class ClientController extends Controller
     }
 
     private function supportRalityAndHisteria2($flag) {
-        $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing', 'passwall', 'shadowrocket'];
+        $keywords = ['verge', 'meta', 'nyanpasu', 'hiddify', 'sing', 'passwall', 'shadowrocket', 'streisand'];
         foreach ($keywords as $keyword) {
             if (strpos($flag, $keyword) !== false) {
                 return true;
