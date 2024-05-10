@@ -225,7 +225,7 @@ class Shadowrocket
 
     public static function buildHysteria($password, $server)
     {
-        $uri = "hysteria2://{$password}@{$server['host']}:{$server['server_port']}";
+        $uri = "hysteria2://{$password}@{$server['host']}:{$server['port']}";
         $params = [];
         $params[] = "fastopen=0";
 
