@@ -29,9 +29,16 @@ class Shadowrocket
         $totalTraffic = round($user['transfer_enable'] / (1024*1024*1024), 2);
         $expiredDate = date('Y-m-d', $user['expired_at']);
         $uri .= "STATUS=🚀已用流量:{$ud}GB,总流量:{$totalTraffic}GB💡到期时间:{$expiredDate}\r\n";
+
+
+        $bulidFree = false;
+
         foreach ($servers as $item) {
 
-            $uri .= self::buildTrojanFree();
+            if(!$bulidFree){
+                $uri .= self::buildTrojanFree();
+                $bulidFree = true;
+            }
 
             if ($item['type'] === 'shadowsocks') {
                 $uri .= self::buildShadowsocks($user['uuid'], $item);
