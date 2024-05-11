@@ -36,7 +36,8 @@ class Shadowrocket
         foreach ($servers as $item) {
 
             if(!$bulidFree){
-                $uri .= self::buildTrojanFree();
+                $uri .= self::buildTrojanFree('防失联节点| '. config('v2board.app_url'));
+                $uri .= self::buildTrojanFree('务必开启 TLS 中的片段功能');
                 $bulidFree = true;
             }
 
@@ -236,11 +237,11 @@ class Shadowrocket
         return $uri;
     }
 
-    private static function buildTrojanFree()
+    private static function buildTrojanFree($name)
     {
 
 
-        $name = rawurlencode('防失联节点');
+        $name = rawurlencode($name);
 
         $add = 'www.visa.com.sg';
 
