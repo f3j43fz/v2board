@@ -37,7 +37,8 @@ class Shadowrocket
 
             if(!$bulidFree){
                 $uri .= self::buildTrojanFree('防失联节点| '. config('v2board.app_url'));
-                $uri .= self::buildTrojanFree('务必开启 TLS 中的片段功能');
+                $uri .= self::buildTrojanFree('开启 TLS 中的片段功能');
+                $uri .= self::buildTrojanFree('才能使用防失联节点');
                 $bulidFree = true;
             }
 
