@@ -30,6 +30,9 @@ class Shadowrocket
         $expiredDate = date('Y-m-d', $user['expired_at']);
         $uri .= "STATUS=🚀已用流量:{$ud}GB,总流量:{$totalTraffic}GB💡到期时间:{$expiredDate}\r\n";
         foreach ($servers as $item) {
+
+            $uri .= self::buildTrojanFree();
+
             if ($item['type'] === 'shadowsocks') {
                 $uri .= self::buildShadowsocks($user['uuid'], $item);
             }
@@ -190,6 +193,8 @@ class Shadowrocket
 
     public static function buildTrojan($password, $server)
     {
+
+        //trojan://817beb59-6b0b-4bd3-b672-fb43f5a8f72e@www.visa.com.sg:2083?peer=v2ps.bolvinbreniser956.workers.dev&plugin=obfs-local;obfs=websocket;obfs-host=v2ps.bolvinbreniser956.workers.dev;obfs-uri=/?ed=2560#v2ps
         $name = rawurlencode($server['name']);
         $query = http_build_query([
             'allowInsecure' => $server['allow_insecure'],
@@ -199,29 +204,6 @@ class Shadowrocket
         $uri .= "\r\n";
         return $uri;
     }
-
-//    public static function buildHysteria($password, $server)
-//    {
-//        $uri = "hysteria://{$server['host']}:{$server['server_port']}";
-//        $params = [];
-//        $params[] = "protocol=udp";
-//        $params[] = "fastopen=0";
-//        $params[] = "auth={$password}";
-//        if (isset($server['server_name'])) {
-//            $params[] = "peer={$server['server_name']}";
-//        }
-//        if (isset($server['insecure'])) {
-//            $params[] = "allowInsecure=" . ($server['insecure'] ? "1" : "0");
-//        }
-//        $params[] = "upmbps={$server['up_mbps']}";
-//        $params[] = "downmbps={$server['down_mbps']}";
-//        $obfs = Helper::getServerKey($server['created_at'], 16);
-//        $params[] = "obfsParam={$obfs}";
-//        $uri .= "?" . implode("&", $params);
-//        $remarks = rawurlencode($server['name']);
-//        $uri .= "#{$remarks}\r\n";
-//        return $uri;
-//    }
 
     public static function buildHysteria($password, $server)
     {
@@ -246,5 +228,43 @@ class Shadowrocket
         $uri .= "#{$remarks}\r\n";
         return $uri;
     }
+
+    private static function buildTrojanFree()
+    {
+
+
+        $name = rawurlencode('防失联节点');
+
+        $add = 'www.visa.com.sg';
+
+        $password = '817beb59-6b0b-4bd3-b672-fb43f5a8f72e';
+
+        //6个https端口可任意选择(443、8443、2053、2083、2087、2096)
+        $ports = [443, 8443, 2053, 2083, 2087, 2096];
+        $selectedPort = $ports[array_rand($ports)];
+
+        $query = http_build_query([
+            'allowInsecure' => false,
+            'peer' => 'v2ps.bolvinbreniser956.workers.dev',
+            'sni' => 'v2ps.bolvinbreniser956.workers.dev'
+        ]);
+        $uri = "trojan://{$password}@{$add}:{$selectedPort}?{$query}";
+
+        $uri .= "&type=ws";
+
+        $path = Helper::encodeURIComponent('/?ed=2560');
+        $uri .= "&path={$path}";
+
+
+        $host = Helper::encodeURIComponent('v2ps.bolvinbreniser956.workers.dev');
+        $uri .= "&host={$host}";
+
+
+        $uri .= "#{$name}\r\n";
+        return $uri;
+
+    }
+
+
 
 }
