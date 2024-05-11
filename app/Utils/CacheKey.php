@@ -33,7 +33,8 @@ class CacheKey
         'Domain_IP' => '域名对应的IP',
         'PLAN' => '套餐信息',
         'LOGIN_UPDATES' => '登录信息更新',
-        'BLACKLISTED_SESSIONS' => '黑名单会话'
+        'BLACKLISTED_SESSIONS' => '黑名单会话',
+        'USD_TO_CNY_RATE' => '美元兑人民币汇率'
     ];
 
     public static function get(string $key, $uniqueValue)
