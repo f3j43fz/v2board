@@ -16,7 +16,7 @@ class ChangeUserCurrencyFromCnyToUsd extends Command
      *
      * @var string
      */
-    protected $signature = 'ccustomFunction:ChangeUserCNYtoUSD';
+    protected $signature = 'customFunction:ChangeUserCNYtoUSD';
 
     /**
      * The console command description.
