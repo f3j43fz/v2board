@@ -62,6 +62,7 @@ proxy-groups:
   - { name: "🍿Netflix", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🍿Disney", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🎞️HBO", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
+  - { name: "🧱SSH", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "自动选择", type: url-test, proxies: [], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
   - { name: "故障转移", type: fallback, proxies: [], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
 rule-providers:
@@ -608,6 +609,12 @@ rules:
   - 'DOMAIN-SUFFIX,jifeng3267.xyz,REJECT'
   #去广告
   - 'RULE-SET,ad_reject,REJECT'
+  # SSH
+  - 'DST-PORT,22,🧱SSH'
+  - 'DST-PORT,3536,🧱SSH'
+  - 'DST-PORT,12407,🧱SSH'
+  - 'DST-PORT,7412,🧱SSH'
+  - 'DST-PORT,2344,🧱SSH'
   #icloud
   - 'RULE-SET,icloud,DIRECT'
   #apple
