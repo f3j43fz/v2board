@@ -47,7 +47,7 @@ class EPUSDT {
         if(config('v2board.currency') === 'USD'){
             $rate = $this->get_usd_to_cny_rate();
             $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.22);
-            $money = round($money * $rate, 2);
+            $money = round($money * $rate, 4);
         }
 
         $params = [
