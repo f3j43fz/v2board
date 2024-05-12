@@ -54,6 +54,8 @@ class RankUserCommission extends Command
     {
         $telegramService = new TelegramService();
         $chatID = config('v2board.telegram_group_id');
+        $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
+
         $text = "\n\n📈今日佣金排行榜：\n\n";
 
         $maxUserIdLength = max(array_map('strlen', $users->pluck('id')->toArray()));
@@ -62,7 +64,7 @@ class RankUserCommission extends Command
             $userId = "用户 #" . str_pad($user->id, $maxUserIdLength, ' ', STR_PAD_RIGHT);
             $spaces = str_repeat(' ', $maxUserIdLength - strlen($user->id) + 1); // Calculate the number of spaces needed
             $commissionFormatted = number_format($user->commission_balance/100, 2); // Format commission balance with 2 decimal places
-            $text .= "{$userId}{$spaces}， 佣金：" . $commissionFormatted . " 元\n";
+            $text .= "{$userId}{$spaces}， 佣金：" . $commissionFormatted . ' ' . $currency . "\n";
         }
 
         $telegramService->sendMessage($chatID, $text, false,'markdown');

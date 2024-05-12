@@ -44,6 +44,9 @@ class Choujiang extends Command
     {
         ini_set('memory_limit', -1);
 
+        // 获取货币单位
+        $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
+
         $start = $this->argument('start');
         $end = $this->argument('end');
         $timestampStart = strtotime($start);
@@ -75,11 +78,11 @@ class Choujiang extends Command
         $telegramMessage = "🥳五一赠金活动已开奖，恭喜以下用户中奖：\n\n";
         foreach ($giftedUsers as $user) {
             $randomMoney = mt_rand(300, 500);  // 3到5元之间
-            $this->info("用户【#" . $user->id . "】的原始余额：" . ($user->balance / 100) . " 元");
-            $this->info("用户【#" . $user->id . "】的赠金为：" . ($randomMoney / 100) . " 元");
-            $this->info("用户【#" . $user->id . "】的最新余额：" . ($user->balance + $randomMoney) / 100 . " 元");
+            $this->info("用户【#" . $user->id . "】的原始余额：" . ($user->balance / 100) . " $currency");
+            $this->info("用户【#" . $user->id . "】的赠金为：" . ($randomMoney / 100) . " $currency");
+            $this->info("用户【#" . $user->id . "】的最新余额：" . ($user->balance + $randomMoney) / 100 . " $currency");
             $userUpdates[$user->id] = $randomMoney;
-            $telegramMessage .= "#{$user->id} 获赠 " . ($randomMoney / 100) . " 元\n";
+            $telegramMessage .= "#{$user->id} 获赠 " . ($randomMoney / 100) . " $currency\n";
         }
 
         // 使用数据库事务处理用户余额更新

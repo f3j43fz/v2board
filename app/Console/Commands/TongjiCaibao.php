@@ -77,6 +77,10 @@ class TongjiCaibao extends Command
         $startOfDay = $yesterday->setTime(0, 0, 0)->getTimestamp();
         $endOfDay = $yesterday->setTime(23, 59, 59)->getTimestamp();
 
+        // 获取货币单位
+        $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
+
+
         // 获取符合条件的订单
         $orders = Order::whereBetween('created_at', [$startOfDay, $endOfDay])
             ->orderBy('created_at', 'ASC')
@@ -120,10 +124,10 @@ class TongjiCaibao extends Command
 
         // 构建消息内容
         $message = "1）财务：\n\n";
-        $message .= "总收入： {$totalIncome} 元 | 支付订单数： {$totalOrders} 个 | 取消订单数： {$cancelledOrders} 个\n\n";
+        $message .= "总收入： {$totalIncome} {$currency} | 支付订单数： {$totalOrders} 个 | 取消订单数： {$cancelledOrders} 个\n\n";
         foreach ($paymentTotals as $paymentName => $totalMoney) {
             $paymentCount = $paymentCounts[$paymentName];
-            $message .= "通过【{$paymentName}】收款 {$paymentCount} 笔，共计： {$totalMoney} 元\n\n";
+            $message .= "通过【{$paymentName}】收款 {$paymentCount} 笔，共计： {$totalMoney} {$currency}\n\n";
         }
 
         return $message;

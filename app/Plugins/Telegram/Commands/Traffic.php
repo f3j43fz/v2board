@@ -13,6 +13,8 @@ class Traffic extends Telegram {
 
     public function handle($message, $match = []) {
         $telegramService = $this->telegramService;
+        // 获取货币单位
+        $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
         if (!$message->is_private) return;
         $user = User::where('telegram_id', $message->chat_id)->first();
         if (!$user) {
@@ -37,7 +39,7 @@ class Traffic extends Telegram {
 
         if ($user->is_PAGO == 1) {
             $balance= $user->balance / 100;
-            $text = "🚥个人信息\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n余额：`{$balance}` 元";
+            $text = "🚥个人信息\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n余额：`{$balance}` {$currency}";
         }else{
             $text = "🚥个人信息\n———————————————\n订阅计划：`{$planName}`\n到期时间：`{$expiredTime}`\n计划流量：`{$transferEnable}`\n已用上行：`{$up}`\n已用下行：`{$down}`\n剩余流量：`{$remaining}`";
         }

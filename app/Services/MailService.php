@@ -141,6 +141,7 @@ class MailService
     public function remindCommissionGotten(User $user, $commission)
     {
         $userName = explode('@', $user->email)[0];
+        $withdrawLimit = config('v2board.commission_withdraw_limit',100);
         SendEmailJob::dispatch([
             'email' => $user->email,
             'subject' => __('佣金已到账~', [
@@ -152,7 +153,8 @@ class MailService
                 'url' => config('v2board.app_url'),
                 'rate' => config('v2board.invite_commission'),
                 'commission' => $commission,
-                'userName' => $userName
+                'userName' => $userName,
+                'withdrawLimit' => $withdrawLimit
             ]
         ]);
     }

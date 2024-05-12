@@ -51,6 +51,7 @@ class AutoRenewPlan extends Command
         $chunkSize = 100;
 
         User::chunk($chunkSize, function ($users) {
+            $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
             foreach ($users as $user) {
                 //跳过【未开启自动续费】的用户
                 //跳过封禁的用户
@@ -72,7 +73,7 @@ class AutoRenewPlan extends Command
                         if ($this->startAutoRenew($user, $plan)) {
                             $telegramService = new TelegramService();
                             $message = sprintf(
-                                "💰自动续费提醒\n———————————————\n邮箱： `%s`\n套餐： %s\n续费金额：%s 元",
+                                "💰自动续费提醒\n———————————————\n邮箱： `%s`\n套餐： %s\n续费金额：%s $currency",
                                 $user->mail,
                                 $plan->name,
                                 $plan->month_price / 100

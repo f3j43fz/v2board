@@ -14273,7 +14273,7 @@
                 }, a.a.createElement("p", {
                     className: "mb-0"
                 }, Object(c["formatMessage"])({
-                    id: "\u5355\u7b14\u5145\u503c\u91d1\u989d\u533a\u95f4\u0020\u0028\u00a5\u0035\u0030\u0020\u002d\u0020\u00a5\u0031\u002c\u0030\u0030\u0030\u0029"
+                    id: "\u5355\u7b14\u5145\u503c\u91d1\u989d\u533a\u95f4\u0020\u0028\u0024\u0035\u0020\u002d\u0020\u0024\u0033\u0030\u0030\u0029"
                 }, {
                     title: window.settings.title
                 })))), a.a.createElement("div", {

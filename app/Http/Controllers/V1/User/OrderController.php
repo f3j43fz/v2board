@@ -74,6 +74,10 @@ class OrderController extends Controller
 
     public function save(OrderSave $request)
     {
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            abort(500, '非法IP地址');
+        }
+
         $userService = new UserService();
         if ($userService->isNotCompleteOrderByUserId($request->user['id'])) {
             abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
@@ -199,6 +203,9 @@ class OrderController extends Controller
 
     public function saveForRecharge(RechargeSave $request)
     {
+        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+            abort(500, '非法IP地址');
+        }
 
         $user = User::find($request->user['id']);
         $userService = new UserService();
@@ -212,7 +219,8 @@ class OrderController extends Controller
             abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
         }
 
-
+        // 获取货币单位
+        $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
 
         //注意：前端提交的数据已经乘以过100了，如用户充值5元，下面获取到的是 500
         $rechargeAmount = $request->input('recharge_amount');
@@ -220,8 +228,8 @@ class OrderController extends Controller
         $notification = "✍️记录充值历史\n"
             . "———————————————\n"
             . "邮箱： `{$user->email}`\n"
-            . "原始余额： `" . ($user->balance / 100) . " 元`\n"
-            . "欲充值金额： `" . ($rechargeAmount / 100) . " 元`\n";
+            . "原始余额： `" . ($user->balance / 100) . " $currency`\n"
+            . "欲充值金额： `" . ($rechargeAmount / 100) . " $currency`\n";
 
         $telegramService->sendMessageWithAdmin($notification, true);
 
@@ -270,6 +278,7 @@ class OrderController extends Controller
         if ($order->total_amount <= 0) {
             $orderService = new OrderService($order);
             if (!$orderService->paid($order->trade_no)) abort(500, '');
+            $this->notify($order);
             return response([
                 'type' => -1,
                 'data' => true
@@ -356,16 +365,121 @@ class OrderController extends Controller
 
         $user = User::find($order->user_id);
         $telegramService = new TelegramService();
+
+        // 获取货币单位
+        $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
+
         $notification = "❌订单取消\n"
             . "———————————————\n"
             . "订单号： `{$request->input('trade_no')}`\n"
             . "邮箱： `{$user->email}`\n"
-            . "余额： `" . ($user->balance / 100) . "` 元\n";
+            . "余额： `" . ($user->balance / 100) . "` $currency\n";
 
         $telegramService->sendMessageWithAdmin($notification, true);
 
         return response([
             'data' => true
         ]);
+    }
+
+    private function notify(Order $order){
+        // type
+        $types = [1 => "新购", 2 => "续费", 3 => "变更" , 4 => "流量包"];
+        $type = $types[$order->type] ?? "未知";
+
+        // planName
+        $planName = "";
+        $plan = Plan::find($order->plan_id);
+        if ($plan) {
+            $planName = $plan->name;
+        }
+
+        // period
+        // 定义英文到中文的映射关系
+        $periodMapping = [
+            'month_price' => '月付',
+            'quarter_price' => '季付',
+            'half_year_price' => '半年付',
+            'year_price' => '年付',
+            'two_year_price' => '2年付',
+            'three_year_price' => '3年付',
+            'onetime_price' => '一次性付款',
+            'setup_price' => '设置费',
+            'reset_price' => '流量重置包'
+        ];
+        $period = $periodMapping[$order->period] ?? "未知";
+
+        // email
+        $userEmail = "";
+        $user = User::find($order->user_id);
+        if ($user){
+            $userEmail = $user->email;
+        }
+
+        // inviterEmail  inviterCommission
+        $inviterEmail = '';
+        $getAmount = 0; // 本次佣金
+        $anotherInfo = "邀请人：该用户不存在邀请人";
+
+
+        // 获取货币单位
+        $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
+
+        if (!empty($order->invite_user_id)) {
+            $inviter = User::find($order->invite_user_id);
+            if ($inviter) {
+                $inviterEmail = $inviter->email;
+                $getAmount = $this->getCommission($inviter->id, $order); // 本次佣金
+
+                if ((int)config('v2board.withdraw_close_enable', 0)) {
+                    $inviterBalance = $inviter->balance / 100 + $getAmount; // 总余额 （关闭提现）
+                    $anotherInfo = "邀请人总余额：" . $inviterBalance. " $currency";
+                } else {
+                    $inviterCommissionBalance = $inviter->commission_balance / 100 + $getAmount; // 总佣金 （允许提现）
+                    $anotherInfo = "邀请人总佣金：" . $inviterCommissionBalance. " $currency";
+
+                }
+            }
+        }
+
+        $message = sprintf(
+            "💰成功收款 %s $currency\n———————————————\n订单号：`%s`\n邮箱： `%s`\n套餐：%s\n类型：%s\n周期：%s\n邀请人邮箱： `%s`\n本次佣金：%s $currency\n%s",
+            $order->total_amount / 100,
+            $order->trade_no,
+            $userEmail,
+            $planName,
+            $type,
+            $period,
+            $inviterEmail,
+            $getAmount,
+            $anotherInfo
+        );
+        $telegramService = new TelegramService();
+        $telegramService->sendMessageWithAdmin($message,true);
+    }
+
+    private function getCommission($inviteUserId, $order)
+    {
+        $getAmount = 0;
+        $level = 3;
+        if ((int)config('v2board.commission_distribution_enable', 0)) {
+            $commissionShareLevels = [
+                0 => (int)config('v2board.commission_distribution_l1'),
+                1 => (int)config('v2board.commission_distribution_l2'),
+                2 => (int)config('v2board.commission_distribution_l3')
+            ];
+        } else {
+            $commissionShareLevels = [
+                0 => 100
+            ];
+        }
+        for ($l = 0; $l < $level; $l++) {
+            $inviter = User::find($inviteUserId);
+            if (!$inviter) continue;
+            if (!isset($commissionShareLevels[$l])) continue;
+            $getAmount = $order->commission_balance * ($commissionShareLevels[$l] / 100);
+            if (!$getAmount) continue;
+        }
+        return $getAmount / 100;
     }
 }
