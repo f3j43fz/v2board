@@ -18,7 +18,7 @@
     "Close failed": "关闭失败",
     "Unsupported withdrawal method": "不支持的提现方式",
     "Unsupported USDT-TRC20 address": "请输入正确的 USDT-TRC20 地址",
-    "The current required minimum withdrawal commission is :limit": "当前系统要求的最少提现佣金为：$:limit USD",
+    "The current required minimum withdrawal commission is :limit :currency": "当前的提现门槛为：:limit :currency",
     "[Commission Withdrawal Request] This ticket is opened by the system": "[提现申请] 本工单由系统发出",
     "Withdrawal method": "提现方式",
     "Withdrawal account": "提现账号",

@@ -233,7 +233,8 @@ class TicketController extends Controller
         $user = User::find($request->user['id']);
         $limit = config('v2board.commission_withdraw_limit', 100);
         if ($limit > ($user->commission_balance / 100)) {
-            abort(500, __('The current required minimum withdrawal commission is :limit', ['limit' => $limit]));
+            $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
+            abort(500, __('The current required minimum withdrawal commission is :limit :currency', ['limit' => $limit, 'currency' => $currency]));
         }
         DB::beginTransaction();
         $subject = __('[Commission Withdrawal Request] This ticket is opened by the system');
