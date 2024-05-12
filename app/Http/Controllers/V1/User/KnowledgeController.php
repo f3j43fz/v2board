@@ -28,6 +28,9 @@ class KnowledgeController extends Controller
             $knowledge['body'] = str_replace('{{siteName}}', config('v2board.app_name', 'V2Board'), $knowledge['body']);
             $knowledge['body'] = str_replace('{{subscribeUrl}}', $subscribeUrl, $knowledge['body']);
             $knowledge['body'] = str_replace('{{urlEncodeSubscribeUrl}}', urlencode($subscribeUrl), $knowledge['body']);
+            $knowledge['body'] = str_replace('{{withdrawLimit}}', config('v2board.commission_withdraw_limit',100), $knowledge['body']);
+            $currency = (config('v2board.currency') === 'USD') ? '美元' : '元';
+            $knowledge['body'] = str_replace('{{currency}}', $currency, $knowledge['body']);
             $knowledge['body'] = str_replace(
                 '{{safeBase64SubscribeUrl}}',
                 str_replace(
