@@ -2,7 +2,10 @@
 
 namespace App\Payments;
 
+use App\Utils\CacheKey;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Cache;
 
 class EPUSDT {
 
@@ -36,8 +39,19 @@ class EPUSDT {
 
     public function pay($order)
     {
+
+        // 默认情况下，$money 为人民币
+        $money = $order['total_amount'] / 100;
+
+        // 如果是美元，则按照汇率换算成人民币
+        if(config('v2board.currency') === 'USD'){
+            $rate = $this->get_usd_to_cny_rate();
+            $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.22);
+            $money = round($money * $rate, 2);
+        }
+
         $params = [
-            'amount' => $order['total_amount'] / 100,
+            'amount' => $money,
             'notify_url' => $order['notify_url'],
             'redirect_url' => $order['return_url'],
             'order_id' => $order['trade_no']
@@ -87,5 +101,38 @@ class EPUSDT {
             'callback_no' => $params['trade_id'],
             'custom_result' => 'ok'
         ];
+    }
+
+
+    private function get_usd_to_cny_rate()
+    {
+        $cacheKey = CacheKey::get('USD_TO_CNY_RATE', 'global');
+        $rate = Cache::get($cacheKey);
+
+        if (!$rate) {
+            try {
+                // Attempt to fetch data from the API
+                $response = $this->client->get('https://cdn.moneyconvert.net/api/latest.json');
+                $data = json_decode($response->getBody()->getContents(), true);
+
+                if (!isset($data['rates']['CNY']) || !isset($data['rates']['USD'])) {
+                    throw new \Exception("Required currency rates not found in the API response");
+                }
+
+                // Calculate the conversion rate
+                $rate = $data['rates']['CNY'] / $data['rates']['USD'];
+                Cache::put($cacheKey, $rate, 3600); // Cache the rate
+            } catch (GuzzleException $e) {
+                // Handle Guzzle HTTP client errors using the project's logging convention
+                \Log::error($e->getMessage(), ['exception' => $e]);
+                return null;
+            } catch (\Exception $e) {
+                // Handle other general exceptions using the project's logging convention
+                \Log::error($e->getMessage(), ['exception' => $e]);
+                return null;
+            }
+        }
+
+        return (float) $rate;
     }
 }
