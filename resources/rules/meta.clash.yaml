@@ -58,7 +58,7 @@ proxy-groups:
   - { name: "😻动画疯", type: select, disable-udp: false, proxies: [/TW/,"故障转移"]}
   - { name: "🎴Instagram", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🎮Twitch", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
-  - { name: "🎜Spotify", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
+  - { name: "🎧Spotify", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🍿Netflix", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🍿Disney", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🎞️HBO", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
@@ -636,7 +636,7 @@ rules:
   #Disney
   - 'RULE-SET,Disney,🍿Disney'
   #Spotify
-  - 'RULE-SET,Spotify,🎜Spotify'
+  - 'RULE-SET,Spotify,🎧Spotify'
   #HBO
   - 'RULE-SET,HBO,🎞️HBO'
   #TG
