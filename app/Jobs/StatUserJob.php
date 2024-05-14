@@ -51,58 +51,72 @@ class StatUserJob implements ShouldQueue
             // Add logic if needed for monthly records
         }
 
-        try {
-            DB::beginTransaction();
+        $attempt = 0;
+        $maxAttempts = 3; //最多重试3次
+        $waitTime = 2; // seconds
 
-            $updateData = [];
-            $insertData = [];
+        while ($attempt < $maxAttempts) {
+            try {
+                DB::beginTransaction();
 
-            foreach(array_keys($this->data) as $userId) {
-                $userdata = StatUser::where('record_at', $recordAt)
-                    ->where('server_rate', $this->server['rate'])
-                    ->where('user_id', $userId)
-                    ->lockForUpdate()->first();
+                $updateData = [];
+                $insertData = [];
 
-                if ($userdata) {
-                    $updateData[] = [
-                        'user_id' => $userId,
-                        'server_rate' => $this->server['rate'],
-                        'record_at' => $recordAt,
-                        'u' => $userdata['u'] + $this->data[$userId][0],
-                        'd' => $userdata['d'] + $this->data[$userId][1],
-                        'updated_at' => $currentTime
-                    ];
-                } else {
-                    $insertData[] = [
-                        'user_id' => $userId,
-                        'server_rate' => $this->server['rate'],
-                        'u' => $this->data[$userId][0],
-                        'd' => $this->data[$userId][1],
-                        'record_type' => $this->recordType,
-                        'record_at' => $recordAt,
-                        'created_at' => $currentTime,
-                        'updated_at' => $currentTime
-                    ];
+                foreach(array_keys($this->data) as $userId) {
+                    $userdata = StatUser::where('record_at', $recordAt)
+                        ->where('server_rate', $this->server['rate'])
+                        ->where('user_id', $userId)
+                        ->lockForUpdate()->first();
+
+                    if ($userdata) {
+                        $updateData[] = [
+                            'user_id' => $userId,
+                            'server_rate' => $this->server['rate'],
+                            'record_at' => $recordAt,
+                            'u' => $userdata['u'] + $this->data[$userId][0],
+                            'd' => $userdata['d'] + $this->data[$userId][1],
+                            'updated_at' => $currentTime
+                        ];
+                    } else {
+                        $insertData[] = [
+                            'user_id' => $userId,
+                            'server_rate' => $this->server['rate'],
+                            'u' => $this->data[$userId][0],
+                            'd' => $this->data[$userId][1],
+                            'record_type' => $this->recordType,
+                            'record_at' => $recordAt,
+                            'created_at' => $currentTime,
+                            'updated_at' => $currentTime
+                        ];
+                    }
                 }
-            }
 
-            if (!empty($updateData)) {
-                foreach ($updateData as $data) {
-                    StatUser::where('user_id', $data['user_id'])
-                        ->where('server_rate', $data['server_rate'])
-                        ->where('record_at', $data['record_at'])
-                        ->update(['u' => $data['u'], 'd' => $data['d'], 'updated_at' => $data['updated_at']]);
+                if (!empty($updateData)) {
+                    foreach ($updateData as $data) {
+                        StatUser::where('user_id', $data['user_id'])
+                            ->where('server_rate', $data['server_rate'])
+                            ->where('record_at', $data['record_at'])
+                            ->update(['u' => $data['u'], 'd' => $data['d'], 'updated_at' => $data['updated_at']]);
+                    }
                 }
-            }
 
-            if (!empty($insertData)) {
-                StatUser::insert($insertData);
-            }
+                if (!empty($insertData)) {
+                    StatUser::insert($insertData);
+                }
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            abort(500, '用户统计数据失败: ' . $e->getMessage());
+                DB::commit();
+                break;
+            } catch (\Exception $e) {
+                DB::rollback();
+                if (str_contains($e->getMessage(), 'Deadlock found when trying to get lock')) {
+                    $attempt++;
+                    if ($attempt < $maxAttempts) {
+                        sleep($waitTime);
+                        continue;
+                    }
+                }
+                abort(500, '用户统计数据失败: ' . $e->getMessage());
+            }
         }
     }
 }
