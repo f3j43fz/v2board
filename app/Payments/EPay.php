@@ -54,7 +54,7 @@ class EPay {
             $money = round($money * $rate, 2);
         }
 
-        $name = $order['trade_no'] . "订单/售后问题请发邮件联系：support@v2pass.net 其他联系方式均无效！";
+        $name = $order['trade_no'] . "订单问题请发邮件联系：support@v2pass.net 其他联系方式均无效！";
 
         $params = [
             'money' => $money,
