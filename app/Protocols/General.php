@@ -144,8 +144,25 @@ class General
             'peer' => $server['server_name'],
             'sni' => $server['server_name']
         ]);
-        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}#{$name}";
-        $uri .= "\r\n";
+        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}";
+        if(isset($server['network']) && in_array($server['network'], ["grpc", "ws"])){
+            $uri .= "&type={$server['network']}";
+            if($server['network'] === "grpc" && isset($server['network_settings']['serviceName'])) {
+                $uri .= "&serviceName={$server['network_settings']['serviceName']}";
+            }
+            if($server['network'] === "ws") {
+                if(isset($server['network_settings']['path'])) {
+                    $path = Helper::encodeURIComponent($server['network_settings']['path']);
+                    $uri .= "&path={$path}";
+                }
+                if(isset($server['network_settings']['headers']['Host'])) {
+                    $host = Helper::encodeURIComponent($server['network_settings']['headers']['Host']);
+                    $uri .= "&host={$host}";
+                }
+            }
+        }
+
+        $uri .= "#{$name}\r\n";
         return $uri;
     }
 

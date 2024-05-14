@@ -202,15 +202,31 @@ class Shadowrocket
 
     public static function buildTrojan($password, $server)
     {
-
-        //trojan://817beb59-6b0b-4bd3-b672-fb43f5a8f72e@www.visa.com.sg:2083?peer=v2ps.bolvinbreniser956.workers.dev&plugin=obfs-local;obfs=websocket;obfs-host=v2ps.bolvinbreniser956.workers.dev;obfs-uri=/?ed=2560#v2ps
         $name = rawurlencode($server['name']);
         $query = http_build_query([
             'allowInsecure' => $server['allow_insecure'],
-            'peer' => $server['server_name']
+            'peer' => $server['server_name'],
+            'sni' => $server['server_name']
         ]);
-        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}&tfo=1#{$name}";
-        $uri .= "\r\n";
+        $uri = "trojan://{$password}@{$server['host']}:{$server['port']}?{$query}";
+        if(isset($server['network']) && in_array($server['network'], ["grpc", "ws"])){
+            $uri .= "&type={$server['network']}";
+            if($server['network'] === "grpc" && isset($server['network_settings']['serviceName'])) {
+                $uri .= "&serviceName={$server['network_settings']['serviceName']}";
+            }
+            if($server['network'] === "ws") {
+                if(isset($server['network_settings']['path'])) {
+                    $path = Helper::encodeURIComponent($server['network_settings']['path']);
+                    $uri .= "&path={$path}";
+                }
+                if(isset($server['network_settings']['headers']['Host'])) {
+                    $host = Helper::encodeURIComponent($server['network_settings']['headers']['Host']);
+                    $uri .= "&host={$host}";
+                }
+            }
+        }
+
+        $uri .= "#{$name}\r\n";
         return $uri;
     }
 
