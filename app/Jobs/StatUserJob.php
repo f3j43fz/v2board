@@ -45,6 +45,7 @@ class StatUserJob implements ShouldQueue
     public function handle()
     {
         $recordAt = strtotime(date('Y-m-d'));
+        $currentTime = Carbon::now()->timestamp;
 
         if ($this->recordType === 'm') {
             // Add logic if needed for monthly records
@@ -69,7 +70,7 @@ class StatUserJob implements ShouldQueue
                         'record_at' => $recordAt,
                         'u' => $userdata['u'] + $this->data[$userId][0],
                         'd' => $userdata['d'] + $this->data[$userId][1],
-                        'updated_at' => Carbon::now()
+                        'updated_at' => $currentTime
                     ];
                 } else {
                     $insertData[] = [
@@ -79,8 +80,8 @@ class StatUserJob implements ShouldQueue
                         'd' => $this->data[$userId][1],
                         'record_type' => $this->recordType,
                         'record_at' => $recordAt,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now()
+                        'created_at' => $currentTime,
+                        'updated_at' => $currentTime
                     ];
                 }
             }
