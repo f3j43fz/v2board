@@ -30,7 +30,7 @@ class StatUserJob implements ShouldQueue
     public function __construct(array $data, array $server, $protocol, $recordType = 'd')
     {
         $this->onQueue('stat');
-        $this->data =$data;
+        $this->data = $data;
         $this->server = $server;
         $this->protocol = $protocol;
         $this->recordType = $recordType;
@@ -44,21 +44,31 @@ class StatUserJob implements ShouldQueue
     public function handle()
     {
         $recordAt = strtotime(date('Y-m-d'));
+
         if ($this->recordType === 'm') {
-            //
+            // Add logic if needed for monthly records
         }
+
         try {
             DB::beginTransaction();
-            foreach(array_keys($this->data) as $userId){
+
+            $updateData = [];
+            $insertData = [];
+
+            foreach(array_keys($this->data) as $userId) {
                 $userdata = StatUser::where('record_at', $recordAt)
                     ->where('server_rate', $this->server['rate'])
                     ->where('user_id', $userId)
                     ->lockForUpdate()->first();
+
                 if ($userdata) {
-                    $userdata->update([
+                    $updateData[] = [
+                        'user_id' => $userId,
+                        'server_rate' => $this->server['rate'],
+                        'record_at' => $recordAt,
                         'u' => $userdata['u'] + $this->data[$userId][0],
                         'd' => $userdata['d'] + $this->data[$userId][1]
-                    ]);
+                    ];
                 } else {
                     $insertData[] = [
                         'user_id' => $userId,
@@ -70,13 +80,24 @@ class StatUserJob implements ShouldQueue
                     ];
                 }
             }
-            if (!empty($insertData)) {
-                StatUser::upsert($insertData, ['user_id', 'server_rate', 'record_at']);
+
+            if (!empty($updateData)) {
+                foreach ($updateData as $data) {
+                    StatUser::where('user_id', $data['user_id'])
+                        ->where('server_rate', $data['server_rate'])
+                        ->where('record_at', $data['record_at'])
+                        ->update(['u' => $data['u'], 'd' => $data['d']]);
+                }
             }
+
+            if (!empty($insertData)) {
+                StatUser::insert($insertData);
+            }
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            abort(500, '用户统计数据失败'. $e->getMessage());
+            abort(500, '用户统计数据失败: ' . $e->getMessage());
         }
     }
 }
