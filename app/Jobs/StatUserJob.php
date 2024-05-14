@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\DB;
 class StatUserJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    //protected $u;
-    //protected $d;
-    //protected $userId;
     protected $data;
     protected $server;
     protected $protocol;
@@ -33,9 +30,6 @@ class StatUserJob implements ShouldQueue
     public function __construct(array $data, array $server, $protocol, $recordType = 'd')
     {
         $this->onQueue('stat');
-        //$this->u = $u;
-        //$this->d = $d;
-        //$this->userId = $userId;
         $this->data =$data;
         $this->server = $server;
         $this->protocol = $protocol;
