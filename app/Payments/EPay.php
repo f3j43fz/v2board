@@ -54,7 +54,7 @@ class EPay {
             $money = round($money * $rate, 2);
         }
 
-        $name = $order['trade_no'] . "使用 QQ/微信 会导致您陷入危险的境地。订单/售后问题请邮件联系：support@v2pass.net 其他联系方式均无效！客服会第一时间处理您的邮件请求。";
+        $name = $order['trade_no'] . "订单/售后问题请发邮件联系：support@v2pass.net 其他联系方式均无效！";
 
         $params = [
             'money' => $money,
