@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class StatUserJob implements ShouldQueue
 {
@@ -67,7 +68,8 @@ class StatUserJob implements ShouldQueue
                         'server_rate' => $this->server['rate'],
                         'record_at' => $recordAt,
                         'u' => $userdata['u'] + $this->data[$userId][0],
-                        'd' => $userdata['d'] + $this->data[$userId][1]
+                        'd' => $userdata['d'] + $this->data[$userId][1],
+                        'updated_at' => Carbon::now()
                     ];
                 } else {
                     $insertData[] = [
@@ -76,7 +78,9 @@ class StatUserJob implements ShouldQueue
                         'u' => $this->data[$userId][0],
                         'd' => $this->data[$userId][1],
                         'record_type' => $this->recordType,
-                        'record_at' => $recordAt
+                        'record_at' => $recordAt,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now()
                     ];
                 }
             }
@@ -86,7 +90,7 @@ class StatUserJob implements ShouldQueue
                     StatUser::where('user_id', $data['user_id'])
                         ->where('server_rate', $data['server_rate'])
                         ->where('record_at', $data['record_at'])
-                        ->update(['u' => $data['u'], 'd' => $data['d']]);
+                        ->update(['u' => $data['u'], 'd' => $data['d'], 'updated_at' => $data['updated_at']]);
                 }
             }
 
