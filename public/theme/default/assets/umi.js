@@ -28659,10 +28659,13 @@
                 })
             }
             couponCheck() {
+                var period = this.props.plan.selectPeriod;
+                console.log("Selected period: ", period);
                 this.props.dispatch({
                     type: "coupon/check",
                     code: this.refs.coupon.value,
-                    planId: this.props.match.params.plan_id
+                    planId: this.props.match.params.plan_id,
+                    period: period
                 })
             }
             couponProcess(e, t, n) {
@@ -35119,11 +35122,11 @@
             effects: {
                 check(e, t) {
                     return a().mark(function n() {
-                        var r, o, s, c;
+                        var r, o, p, s, c;
                         return a().wrap(function(n) {
                             while (1) switch (n.prev = n.next) {
                                 case 0:
-                                    return r = e.code, o = e.planId, s = t.put, n.next = 4, s({
+                                    return r = e.code, o = e.planId, p = e.period, s = t.put, n.next = 4, s({
                                         type: "setState",
                                         payload: {
                                             checkLoading: !0
@@ -35132,7 +35135,8 @@
                                 case 4:
                                     return n.next = 6, Object(i["b"])("/user/coupon/check", {
                                         code: r,
-                                        plan_id: o
+                                        plan_id: o,
+                                        period: p
                                     });
                                 case 6:
                                     return c = n.sent, n.next = 9, s({

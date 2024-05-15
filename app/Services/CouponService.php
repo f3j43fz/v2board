@@ -12,6 +12,8 @@ class CouponService
     public $planId;
     public $userId;
     public $period;
+    public $userOrderStatus;
+    public $userInviterId;
 
     public function __construct($code)
     {
@@ -72,6 +74,16 @@ class CouponService
         $this->period = $period;
     }
 
+    public function setUserOrderStatus($user)
+    {
+        $this->userOrderStatus = ($user->has_Purchased_Plan_Before) ? 1 : 0;
+    }
+
+    public function setUserInviterId($user)
+    {
+        $this->userInviterId = $user->invite_user_id;
+    }
+
     public function checkLimitUseWithUser():bool
     {
         $usedCount = Order::where('coupon_id', $this->coupon->id)
@@ -113,5 +125,24 @@ class CouponService
                 ]));
             }
         }
+
+        // 检查用户是否为新注册用户（从来没有买过套餐）
+        if ($this->coupon->only_for_new_user) {
+            if($this->userOrderStatus) abort(500, __('该优惠券仅限新用户使用'));
+        }
+
+        // 检查邀请人限制
+        if ($this->coupon->limit_inviter_ids) {
+            $inviterIds = explode(',', $this->coupon->limit_inviter_ids);
+            if(empty($this->userInviterId)){
+                abort(500, __('由于您没有邀请人，无法判断您是否有资格使用本优惠券'));
+            }
+            if (!in_array($this->userInviterId, $inviterIds)) {
+                abort(500, __('您没有资格使用本优惠券'));
+            }
+        }
+
     }
+
+
 }

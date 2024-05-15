@@ -33010,6 +33010,33 @@
                 })), b.a.createElement("div", {
                     className: "form-group"
                 }, b.a.createElement("label", {
+                    htmlFor: "example-switch-input"
+                }, "\u662f\u5426\u4ec5\u9650\u65b0\u7528\u6237"), b.a.createElement("div", null, b.a.createElement(m["a"], {
+                    checked: this.state.submit.only_for_new_user === 1,
+                    onChange: e => {
+                        this.setState({
+                            submit: v()({}, this.state.submit, {
+                                only_for_new_user: e ? 1 : 0
+                            })
+                        })
+                    }
+                }))), b.a.createElement("div", {
+                    className: "form-group"
+                }, b.a.createElement("label", {
+                    htmlFor: "example-text-input-alt"
+                }, "\u6307\u5b9a\u9080\u8bf7\u4eba\uff08\u0041\u0066\u0066\u006d\u0061\u006e\uff09\u0049\u0044"), b.a.createElement(s["a"], {
+                    placeholder: "\u8f93\u5165\u9080\u8bf7\u4eba\u0049\u0044\uff0c\u591a\u4e2a\u0049\u0044\u7528\u82f1\u6587\u9017\u53f7\u5206\u9694",
+                    value: this.state.submit.limit_inviter_ids,
+                    onChange: e => {
+                        this.setState({
+                            submit: v()({}, this.state.submit, {
+                                limit_inviter_ids: e.target.value
+                            })
+                        })
+                    }
+                })), b.a.createElement("div", {
+                    className: "form-group"
+                }, b.a.createElement("label", {
                     for: "example-text-input-alt"
                 }, "\u6307\u5b9a\u8ba2\u9605"), b.a.createElement("div", null, b.a.createElement(a["a"], {
                     value: this.state.submit.limit_plan_ids || [],
