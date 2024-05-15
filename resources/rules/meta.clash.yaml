@@ -27,7 +27,9 @@ dns:
     - '*.lan'
     - localhost.ptlogin2.qq.com
   nameserver-policy:
+    # 防污染
     'mirror.ghproxy.com': https://doh.pub/dns-query
+    # 防止 DNS 泄露
     'geosite:gfw,geolocation-!cn': [1.1.1.1, 8.8.8.8]
     'geosite:private,cn': [223.5.5.5, 119.29.29.29]
   nameserver:
@@ -37,6 +39,7 @@ dns:
     - 8.8.8.8
     - 1.1.1.1
   proxy-server-nameserver:
+    # 防止入口域名 DNS 污染
     - https://dns.alidns.com/dns-query
     - https://doh.pub/dns-query
   fallback-filter:
