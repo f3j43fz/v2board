@@ -24,8 +24,8 @@ class Streisand
 
         $appName = config('v2board.app_name', 'V2Board');
         header('profile-title: ' . $appName);
-//        header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
-//        header('profile-update-interval: 12');
+        header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
+        header('profile-update-interval: 12');
 
 
         $uri = '';
