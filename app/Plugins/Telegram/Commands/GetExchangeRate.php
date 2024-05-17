@@ -24,6 +24,7 @@ class GetExchangeRate extends Telegram {
         if ($message->is_private) {
             $text = "请加群后获取";
             $telegramService->sendMessage($message->chat_id, $text, false, 'markdown');
+            return;
         }
 
         $rate = $this->getExchangeRate();
