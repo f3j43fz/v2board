@@ -22,12 +22,11 @@ class GetExchangeRate extends Telegram {
 
     public function handle($message, $match = []) {
 
-        if (!$message->is_private) {
-            $this->notify('请加群后获取');
-            return;
+        if ($message->is_private) {
+            abort(500, '请在我们的群组中发送本命令噢~');
         }
 
-        $rate = $this->getExchangeRate();
+        $rate = $this->get_usd_to_cny_rate();
 
         if ($rate === null) {
             $this->notify("无法获取汇率信息，请稍后再试。");
@@ -37,12 +36,14 @@ class GetExchangeRate extends Telegram {
         }
     }
 
-    private function getExchangeRate() {
+    private function get_usd_to_cny_rate()
+    {
         $cacheKey = CacheKey::get('USD_TO_CNY_RATE', 'global');
         $rate = Cache::get($cacheKey);
 
         if (!$rate) {
             try {
+                // Attempt to fetch data from the API
                 $response = $this->client->get('https://cdn.moneyconvert.net/api/latest.json');
                 $data = json_decode($response->getBody()->getContents(), true);
 
@@ -50,13 +51,16 @@ class GetExchangeRate extends Telegram {
                     throw new \Exception("Required currency rates not found in the API response");
                 }
 
+                // Calculate the conversion rate
                 $rate = $data['rates']['CNY'] / $data['rates']['USD'];
                 Cache::put($cacheKey, $rate, 3600); // Cache the rate
             } catch (GuzzleException $e) {
-                Log::error($e->getMessage(), ['exception' => $e]);
+                // Handle Guzzle HTTP client errors using the project's logging convention
+                \Log::error($e->getMessage(), ['exception' => $e]);
                 return null;
             } catch (\Exception $e) {
-                Log::error($e->getMessage(), ['exception' => $e]);
+                // Handle other general exceptions using the project's logging convention
+                \Log::error($e->getMessage(), ['exception' => $e]);
                 return null;
             }
         }
