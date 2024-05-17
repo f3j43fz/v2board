@@ -22,7 +22,7 @@ class GetExchangeRate extends Telegram {
 
     public function handle($message, $match = []) {
 
-        if ($message->is_private) {
+        if (!$message->is_private) {
             $this->notify('请加群后获取');
             return;
         }
