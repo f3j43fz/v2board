@@ -2,6 +2,7 @@
 
 namespace App\Plugins\Telegram\Commands;
 
+use App\Services\TelegramService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use App\Plugins\Telegram\Telegram;
@@ -20,20 +21,19 @@ class GetExchangeRate extends Telegram {
     }
 
     public function handle($message, $match = []) {
-        $telegramService = $this->telegramService;
+
         if ($message->is_private) {
-            $text = "请加群后获取";
-            $telegramService->sendMessage($message->chat_id, $text, false, 'markdown');
+            $this->notify('请加群后获取');
             return;
         }
 
         $rate = $this->getExchangeRate();
 
         if ($rate === null) {
-            $telegramService->sendMessage($message->chat_id, "无法获取汇率信息，请稍后再试。", false, 'markdown');
+            $this->notify("无法获取汇率信息，请稍后再试。");
         } else {
             $text = "当前美元对人民币汇率为：`{$rate}`";
-            $telegramService->sendMessage($message->chat_id, $text, false, 'markdown');
+            $this->notify($text);
         }
     }
 
@@ -63,4 +63,12 @@ class GetExchangeRate extends Telegram {
 
         return (float) $rate;
     }
+
+    private function notify($text){
+        $telegramService = new TelegramService();
+        // 修改成你的TG群组的ID
+        $chatID =config('v2board.telegram_group_id');
+        $telegramService->sendMessage($chatID, $text,false,'markdown');
+    }
+
 }
