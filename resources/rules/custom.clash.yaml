@@ -128,7 +128,7 @@ proxy-groups:
     - { name: 🍿Disney, type: select, proxies: [自动选择, 故障转移]}
     - { name: 🎞️HBO, type: select, proxies: [自动选择, 故障转移]}
     - { name: 自动选择, type: url-test, proxies: [/^(?!.*专线).*$/], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
-    - { name: 故障转移, type: fallback, proxies: [], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
+    - { name: 故障转移, type: fallback, proxies: [/^(?!.*专线).*$/], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
 rule-providers:
 
   ad_reject:
