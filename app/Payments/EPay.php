@@ -101,26 +101,37 @@ class EPay {
         $rate = Cache::get($cacheKey);
 
         if (!$rate) {
-            try {
-                // Attempt to fetch data from the API
-                $response = $this->client->get('https://cdn.moneyconvert.net/api/latest.json');
-                $data = json_decode($response->getBody()->getContents(), true);
+            // 尝试从两个不同的API源获取汇率
+            $urls = [
+                'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+                'https://latest.currency-api.pages.dev/v1/currencies/usd.json'
+            ];
 
-                if (!isset($data['rates']['CNY']) || !isset($data['rates']['USD'])) {
-                    throw new \Exception("Required currency rates not found in the API response");
+            foreach ($urls as $url) {
+                try {
+                    $response = $this->client->get($url);
+                    $data = json_decode($response->getBody()->getContents(), true);
+
+                    // 检查API响应中是否包含CNY汇率
+                    if (isset($data['usd']['cny'])) {
+                        $rate = $data['usd']['cny'];
+                        Cache::put($cacheKey, $rate, 3600); // 缓存汇率
+                        break; // 成功获取到汇率后跳出循环
+                    }
+                } catch (GuzzleException $e) {
+                    // 处理Guzzle HTTP客户端错误
+                    \Log::error("Attempt to fetch from $url failed: " . $e->getMessage(), ['exception' => $e]);
+                    continue; // 尝试下一个URL
+                } catch (\Exception $e) {
+                    // 处理其他异常
+                    \Log::error("Error during rate fetching from $url: " . $e->getMessage(), ['exception' => $e]);
+                    continue; // 尝试下一个URL
                 }
+            }
 
-                // Calculate the conversion rate
-                $rate = $data['rates']['CNY'] / $data['rates']['USD'];
-                Cache::put($cacheKey, $rate, 3600); // Cache the rate
-            } catch (GuzzleException $e) {
-                // Handle Guzzle HTTP client errors using the project's logging convention
-                \Log::error($e->getMessage(), ['exception' => $e]);
-                return null;
-            } catch (\Exception $e) {
-                // Handle other general exceptions using the project's logging convention
-                \Log::error($e->getMessage(), ['exception' => $e]);
-                return null;
+            if (!$rate) {
+                \Log::error("Failed to retrieve USD to CNY rate from all sources.");
+                return null; // 如果所有源都失败，则返回null
             }
         }
 
