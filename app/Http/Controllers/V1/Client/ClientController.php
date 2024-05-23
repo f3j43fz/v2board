@@ -17,7 +17,14 @@ class ClientController extends Controller
 {
     public function subscribe(Request $request)
     {
-        if (!filter_var($request->ip(), FILTER_VALIDATE_IP)) {
+
+        $client_ip = $request->ip();
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $client_ip = trim($ips[0]);  // 获取列表中的第一个 IP 地址
+        }
+
+        if (!filter_var($client_ip, FILTER_VALIDATE_IP)) {
             $response = [
                 'error' => '非法IP地址'
             ];
@@ -42,7 +49,7 @@ class ClientController extends Controller
             return response()->json($response, Response::HTTP_FORBIDDEN);
         }
 
-        $userIP = $request->ip();
+        $userIP = $client_ip;
         $userID = $user->id;
 
         // 获取用户IP所在的地区
