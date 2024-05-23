@@ -617,6 +617,7 @@ rules:
   - 'DST-PORT,12407,🧱SSH'
   - 'DST-PORT,7412,🧱SSH'
   - 'DST-PORT,2344,🧱SSH'
+  - 'DST-PORT,45963,🧱SSH'
   #icloud
   - 'RULE-SET,icloud,DIRECT'
   #apple
