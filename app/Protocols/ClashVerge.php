@@ -80,8 +80,15 @@ class ClashVerge
             return $group['proxies'];
         });
         $config['proxy-groups'] = array_values($config['proxy-groups']);
+
+
         // Force the current subscription domain to be a direct rule
-        $subsDomain = $_SERVER['HTTP_HOST'];
+        $subsDomain = '';
+        if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+            $subsDomain = $_SERVER['HTTP_X_FORWARDED_HOST'];
+        } elseif (isset($_SERVER['HTTP_HOST'])) {
+            $subsDomain = $_SERVER['HTTP_HOST'];
+        }
         if ($subsDomain) {
             array_unshift($config['rules'], "DOMAIN,{$subsDomain},DIRECT");
         }
