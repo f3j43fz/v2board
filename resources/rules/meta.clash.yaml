@@ -65,6 +65,7 @@ proxy-groups:
   - { name: "🍿Disney", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🎞️HBO", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🧱SSH", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
+  - { name: "☁️azure", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "自动选择", type: url-test, proxies: [/^(?!.*专线).*$/], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
   - { name: "故障转移", type: fallback, proxies: [/^(?!.*专线).*$/], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
 rule-providers:
@@ -618,6 +619,8 @@ rules:
   - 'DST-PORT,7412,🧱SSH'
   - 'DST-PORT,2344,🧱SSH'
   - 'DST-PORT,45963,🧱SSH'
+  # azure
+  - 'GEOSITE,azure,☁️azure'
   #icloud
   - 'RULE-SET,icloud,DIRECT'
   #apple
