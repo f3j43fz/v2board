@@ -149,7 +149,12 @@ class OrderController extends Controller
         $orderService = new OrderService($order);
         $order->user_id = $request->user['id'];
         //记录下单IP
-        if(!$user->is_admin) $order->user_ip = $request->ip();
+        $client_ip = $request->ip();
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $client_ip = trim($ips[0]);  // 获取列表中的第一个 IP 地址
+        }
+        if(!$user->is_admin) $order->user_ip = $client_ip;
 
         $order->plan_id = $plan->id;
         $order->period = $request->input('period');
