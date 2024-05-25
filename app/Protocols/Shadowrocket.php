@@ -21,7 +21,8 @@ class Shadowrocket
         $servers = $this->servers;
         $user = $this->user;
 
-        header("Cache-Control: private, max-age=60, s-maxage=60, must-revalidate");
+        header('Content-Type', 'text/plain');
+        header('Cache-Control', 'max-age=60, s-maxage=60, must-revalidate');
 
         $uri = '';
         //display remaining traffic and expire date
@@ -62,13 +63,7 @@ class Shadowrocket
         }
 //        return base64_encode($uri);
 
-        $encodedUri = base64_encode($uri);
-
-        // 使用短缓存时间
-        return response($encodedUri, 200)
-            ->header('Content-Type', 'text/plain')
-            ->header('Cache-Control', 'max-age=60, s-maxage=60, must-revalidate');
-
+        return base64_encode($uri);
     }
 
 
