@@ -20,10 +20,7 @@ class Shadowrocket
     {
         $servers = $this->servers;
         $user = $this->user;
-
-        header('Content-Type', 'text/plain');
-        header('Cache-Control', 'max-age=60, s-maxage=60, must-revalidate');
-
+        
         $uri = '';
         //display remaining traffic and expire date
         $upload = round($user['u'] / (1024*1024*1024), 2);
@@ -61,7 +58,6 @@ class Shadowrocket
                 $uri .= self::buildhysteria($user['uuid'], $item);
             }
         }
-//        return base64_encode($uri);
 
         return base64_encode($uri);
     }
