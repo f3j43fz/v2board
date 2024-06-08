@@ -135,10 +135,10 @@ class OrderService
         // 路径：/config/v2board.php
         // 之后，记得修改管理员前端，方便后续修改
 
-        // 门槛： 30 美元   不够30则没有优惠，即充多少是多少。
-        $discountThreshold = config('v2board.discount_threshold', 30 * 100);
+        // 门槛： 50 美元   不够50则没有优惠，即充多少是多少。
+        $discountThreshold = config('v2board.discount_threshold', 50 * 100);
         // 优惠比例： 20%
-        $discount = config('v2board.recharge_discount', 20) * 0.01;
+        $discount = config('v2board.recharge_discount', 15) * 0.01;
 
 
         $order = $this->order;
