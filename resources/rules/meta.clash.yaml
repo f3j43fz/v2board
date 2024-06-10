@@ -627,12 +627,12 @@ rules:
   - 'PROCESS-NAME,xdman,DIRECT'
   - 'PROCESS-NAME,xdman.exe,DIRECT'
   # 先于去广告的白名单
-  #- 'RULE-SET,DirectBypassAd,DIRECT'
+  #- 'RULE-SET,DirectBypassAd,DIRECT,no-resolve'
   # Dashboard 白名单
   - 'DOMAIN,clash.razord.top,DIRECT'
   - 'DOMAIN,yacd.haishan.me,DIRECT'
   #本地私有地址
-  - 'RULE-SET,private,DIRECT'
+  - 'RULE-SET,private,DIRECT,no-resolve'
   #黑黑黑名单
   - 'DOMAIN-SUFFIX,tly.llc,REJECT'
   - 'DOMAIN-SUFFIX,tly.bet,REJECT'
@@ -700,7 +700,7 @@ rules:
   - 'DOMAIN-SUFFIX,cute-cloud.top,REJECT'
   - 'DOMAIN-SUFFIX,jifeng3267.xyz,REJECT'
   #去广告
-  - 'RULE-SET,ad_reject,REJECT'
+  - 'RULE-SET,ad_reject,REJECT,no-resolve'
   # SSH
   - 'DST-PORT,22,🧱SSH'
   - 'DST-PORT,3536,🧱SSH'
@@ -709,56 +709,56 @@ rules:
   - 'DST-PORT,2344,🧱SSH'
   - 'DST-PORT,45963,🧱SSH'
   # azure
-  - 'GEOSITE,azure,☁️azure'
+  - 'GEOSITE,azure,☁️azure,no-resolve'
   #icloud
-  - 'RULE-SET,icloud,DIRECT'
+  - 'RULE-SET,icloud,DIRECT,no-resolve'
   #apple
-  - 'RULE-SET,apple,DIRECT'
+  - 'RULE-SET,apple,DIRECT,no-resolve'
   #Youtube
-  - 'RULE-SET,YouTube,🌎谷歌系'
+  - 'RULE-SET,YouTube,🌎谷歌系,no-resolve'
   #Google 可直连服务
-  - 'RULE-SET,google,🌎谷歌系'
+  - 'RULE-SET,google,🌎谷歌系,no-resolve'
   #OpenAI
-  - 'RULE-SET,OpenAI,🤖OpenAI'
+  - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
   #Twitch
-  - 'RULE-SET,Twitch,🎮Twitch'
+  - 'RULE-SET,Twitch,🎮Twitch,no-resolve'
   #巴哈姆特
-  - 'RULE-SET,Bahamut,😻动画疯'
+  - 'RULE-SET,Bahamut,😻动画疯,no-resolve'
   #ins
-  - 'RULE-SET,Instagram,🎴Instagram'
+  - 'RULE-SET,Instagram,🎴Instagram,no-resolve'
   #Netflix
-  - 'RULE-SET,Netflix,🍿Netflix'
+  - 'RULE-SET,Netflix,🍿Netflix,no-resolve'
   #Disney
-  - 'RULE-SET,Disney,🍿Disney'
+  - 'RULE-SET,Disney,🍿Disney,no-resolve'
   #Spotify
-  - 'RULE-SET,Spotify,🎧Spotify'
+  - 'RULE-SET,Spotify,🎧Spotify,no-resolve'
   #HBO
-  - 'RULE-SET,HBO,🎞️HBO'
+  - 'RULE-SET,HBO,🎞️HBO,no-resolve'
   #TG
-  - 'RULE-SET,telegram,$app_name'
+  - 'RULE-SET,telegram,$app_name,no-resolve'
   #国外网站
-  - 'RULE-SET,proxy,$app_name'
+  - 'RULE-SET,proxy,$app_name,no-resolve'
   #国内网站
-  - 'RULE-SET,direct,DIRECT'
+  - 'RULE-SET,direct,DIRECT,no-resolve'
   #lancidr
-  - 'IP-CIDR,0.0.0.0/8,DIRECT'
-  - 'IP-CIDR,10.0.0.0/8,DIRECT'
-  - 'IP-CIDR,100.64.0.0/10,DIRECT'
-  - 'IP-CIDR,127.0.0.0/8,DIRECT'
-  - 'IP-CIDR,169.254.0.0/16,DIRECT'
-  - 'IP-CIDR,172.16.0.0/12,DIRECT'
-  - 'IP-CIDR,192.0.0.0/24,DIRECT'
-  - 'IP-CIDR,192.0.2.0/24,DIRECT'
-  - 'IP-CIDR,192.88.99.0/24,DIRECT'
-  - 'IP-CIDR,192.168.0.0/16,DIRECT'
-  - 'IP-CIDR,198.18.0.0/15,DIRECT'
-  - 'IP-CIDR,198.51.100.0/24,DIRECT'
-  - 'IP-CIDR,203.0.113.0/24,DIRECT'
-  - 'IP-CIDR,224.0.0.0/3,DIRECT'
-  - 'IP-CIDR,::1/128,DIRECT'
-  - 'IP-CIDR,fc00::/7,DIRECT'
-  - 'IP-CIDR,fe80::/10,DIRECT'
-  - 'RULE-SET,cncidr,DIRECT'
-  - 'GEOIP,LAN,DIRECT'
-  - 'GEOIP,CN,DIRECT'
+  - 'IP-CIDR,0.0.0.0/8,DIRECT,no-resolve'
+  - 'IP-CIDR,10.0.0.0/8,DIRECT,no-resolve'
+  - 'IP-CIDR,100.64.0.0/10,DIRECT,no-resolve'
+  - 'IP-CIDR,127.0.0.0/8,DIRECT,no-resolve'
+  - 'IP-CIDR,169.254.0.0/16,DIRECT,no-resolve'
+  - 'IP-CIDR,172.16.0.0/12,DIRECT,no-resolve'
+  - 'IP-CIDR,192.0.0.0/24,DIRECT,no-resolve'
+  - 'IP-CIDR,192.0.2.0/24,DIRECT,no-resolve'
+  - 'IP-CIDR,192.88.99.0/24,DIRECT,no-resolve'
+  - 'IP-CIDR,192.168.0.0/16,DIRECT,no-resolve'
+  - 'IP-CIDR,198.18.0.0/15,DIRECT,no-resolve'
+  - 'IP-CIDR,198.51.100.0/24,DIRECT,no-resolve'
+  - 'IP-CIDR,203.0.113.0/24,DIRECT,no-resolve'
+  - 'IP-CIDR,224.0.0.0/3,DIRECT,no-resolve'
+  - 'IP-CIDR,::1/128,DIRECT,no-resolve'
+  - 'IP-CIDR,fc00::/7,DIRECT,no-resolve'
+  - 'IP-CIDR,fe80::/10,DIRECT,no-resolve'
+  - 'RULE-SET,cncidr,DIRECT,no-resolve'
+  - 'GEOIP,LAN,DIRECT,no-resolve'
+  - 'GEOIP,CN,DIRECT,no-resolve'
   - 'MATCH,$app_name'
