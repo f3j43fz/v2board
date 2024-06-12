@@ -25,8 +25,8 @@ class GetExchangeRate extends Telegram {
             abort(500, '请在我们的群组中发送本命令噢~');
         }
 
-        // 上浮 3 毛钱
-        $rate = $this->get_usd_to_cny_rate() + 0.30 ;
+        // 上浮 2 毛钱
+        $rate = $this->get_usd_to_cny_rate() + 0.20 ;
 
         if ($rate === null) {
             $this->notify("无法获取汇率信息，请稍后再试。");
