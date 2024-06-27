@@ -243,6 +243,13 @@ rule-providers:
     path: ./ruleset/OpenAI.yaml
     interval: 86400
 
+  gemini:
+    type: http
+    behavior: classical
+    url: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml"
+    path: ./ruleset/gemini.yaml
+    interval: 86400
+
   Twitch:
     type: http
     behavior: classical
@@ -720,6 +727,8 @@ rules:
   - 'RULE-SET,google,🌎谷歌系,no-resolve'
   #OpenAI
   - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
+  # Gemini
+  - 'RULE-SET,gemini,🤖Gemini,no-resolve'
   #Twitch
   - 'RULE-SET,Twitch,🎮Twitch,no-resolve'
   #巴哈姆特
