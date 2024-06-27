@@ -146,6 +146,7 @@ proxy-groups:
   - { name: $app_name, type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🌎谷歌系", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🤖OpenAI", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
+  - { name: "🤖Gemini", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "😻动画疯", type: select, disable-udp: false, proxies: [/TW/,"故障转移"]}
   - { name: "🎴Instagram", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🎮Twitch", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
