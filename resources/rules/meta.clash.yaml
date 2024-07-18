@@ -302,8 +302,6 @@ rule-providers:
     interval: 86400
 
 rules:
-  #国内网站
-  - 'RULE-SET,direct,DIRECT,no-resolve'
   # block all outgoing traffic to these IPs to avoid their connection attempts being logged by the GFW.
   - 'IP-CIDR,118.5.49.6/32,REJECT,no-resolve'
   - 'IP-CIDR,173.252.100.21/32,REJECT,no-resolve'
@@ -719,6 +717,8 @@ rules:
   - 'DOMAIN-SUFFIX,jifeng3267.xyz,REJECT'
   #去广告
   - 'RULE-SET,ad_reject,REJECT,no-resolve'
+  #国内网站
+  - 'RULE-SET,direct,DIRECT,no-resolve'
   # SSH
   - 'DST-PORT,22,🧱SSH'
   - 'DST-PORT,3536,🧱SSH'
