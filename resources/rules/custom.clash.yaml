@@ -159,7 +159,7 @@ rule-providers:
 
   direct:
     type: http
-    behavior: classical
+    behavior: domain
     url: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
     path: ./ruleset/direct.yaml
     interval: 86400
