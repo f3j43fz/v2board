@@ -76,6 +76,8 @@ class UserController extends Controller
         if (!$user->save()) {
             abort(500, __('Save failed'));
         }
+        $authService = new AuthService($user);
+        $authService->removeAllSession();
         return response([
             'data' => true
         ]);
