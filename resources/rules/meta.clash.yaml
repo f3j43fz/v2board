@@ -562,7 +562,8 @@ rules:
   - 'DOMAIN-SUFFIX,mendeley.com,DIRECT'
   - 'DOMAIN-SUFFIX,reaxys.com,DIRECT'
   - 'DOMAIN-SUFFIX,worldscientific.com,DIRECT'
-  - 'DOMAIN-SUFFIX,ibllc.com.cn,DIRECT'
+  - 'DOMAIN-SUFFIX,mcgw1.ibllc.com.cn,DIRECT'
+  - 'DOMAIN-SUFFIX,mcgw1_hb1.ibllc.com.cn,DIRECT'
   # Applicatons 进程白名单
   - 'PROCESS-NAME,hysteria,DIRECT'
   - 'PROCESS-NAME,hysteria.exe,DIRECT'
@@ -729,6 +730,9 @@ rules:
   - 'DST-PORT,45963,🧱SSH'
   # azure
   - 'GEOSITE,azure,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,interactivebrokers.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,hdc1.ibllc.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,hdc1_hb1.ibllc.com,☁️azure,no-resolve'
   #icloud
   - 'RULE-SET,icloud,DIRECT,no-resolve'
   #apple
