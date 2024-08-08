@@ -731,6 +731,7 @@ rules:
   # azure
   - 'GEOSITE,azure,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,interactivebrokers.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,interactivebrokers.com.hk,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,hdc1.ibllc.com,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,hdc1_hb1.ibllc.com,☁️azure,no-resolve'
   #icloud
