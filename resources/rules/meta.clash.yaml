@@ -732,9 +732,18 @@ rules:
   - 'GEOSITE,azure,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,interactivebrokers.com,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,api.ibkr.com,☁️azure,no-resolve'
-  - 'DOMAIN-SUFFIX,interactivebrokers.com.hk,☁️azure,no-resolve'
+  # ASIA
   - 'DOMAIN-SUFFIX,hdc1.ibllc.com,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,hdc1_hb1.ibllc.com,☁️azure,no-resolve'
+  # AMERICA - EAST
+  - 'DOMAIN-SUFFIX,ndc1.ibllc.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,ndc1_hb1.ibllc.com,☁️azure,no-resolve'
+  # AMERICA - CENTRAL
+  - 'DOMAIN-SUFFIX,cdc1.ibllc.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,cdc1_hb1.ibllc.com,☁️azure,no-resolve'
+  # EUROPE
+  - 'DOMAIN-SUFFIX,zdc1.ibllc.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,zdc1_hb1.ibllc.com,☁️azure,no-resolve'
   #icloud
   - 'RULE-SET,icloud,DIRECT,no-resolve'
   #apple
