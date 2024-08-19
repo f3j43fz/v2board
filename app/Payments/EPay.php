@@ -51,8 +51,8 @@ class EPay {
         if(config('v2board.currency') === 'USD'){
             $rate = $this->get_usd_to_cny_rate();
             $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.22);
-            // 上浮 2 毛钱
-            $money = round($money * ($rate + 0.20), 2);
+            // 上浮 3 毛钱
+            $money = round($money * ($rate + 0.3), 2);
         }
 
         $name = "使用QQ/微信很危险，如有订单问题请发邮件联系：support@v2pass.net 其他联系方式均无效！";
@@ -102,41 +102,31 @@ class EPay {
         $rate = Cache::get($cacheKey);
 
         if (!$rate) {
-            // 尝试从两个不同的API源获取汇率
-            $urls = [
-                'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
-                'https://latest.currency-api.pages.dev/v1/currencies/usd.json'
-            ];
+            $url = 'https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side=sell&paymentMethod=aliPay&userType=all&receivingAds=false&quoteMinAmountPerOrder=100&t=' . time();
 
-            foreach ($urls as $url) {
-                try {
-                    $response = $this->client->get($url);
-                    $data = json_decode($response->getBody()->getContents(), true);
+            try {
+                $response = $this->client->get($url);
+                $data = json_decode($response->getBody()->getContents(), true);
 
-                    // 检查API响应中是否包含CNY汇率
-                    if (isset($data['usd']['cny'])) {
-                        $rate = $data['usd']['cny'];
-                        Cache::put($cacheKey, $rate, 3600); // 缓存汇率
-                        break; // 成功获取到汇率后跳出循环
-                    }
-                } catch (GuzzleException $e) {
-                    // 处理Guzzle HTTP客户端错误
-                    \Log::error("Attempt to fetch from $url failed: " . $e->getMessage(), ['exception' => $e]);
-                    continue; // 尝试下一个URL
-                } catch (\Exception $e) {
-                    // 处理其他异常
-                    \Log::error("Error during rate fetching from $url: " . $e->getMessage(), ['exception' => $e]);
-                    continue; // 尝试下一个URL
+                // 获取第一个卖家的汇率价格 (sell-0)
+                if (isset($data['data']['sell'][0]['price'])) {
+                    $rate = $data['data']['sell'][0]['price'];
+                    Cache::put($cacheKey, $rate, 60); // 缓存汇率
+                } else {
+                    \Log::error("Failed to retrieve USD to CNY rate from the API response.");
+                    return null;
                 }
-            }
-
-            if (!$rate) {
-                \Log::error("Failed to retrieve USD to CNY rate from all sources.");
-                return null; // 如果所有源都失败，则返回null
+            } catch (GuzzleException $e) {
+                \Log::error("Attempt to fetch from $url failed: " . $e->getMessage(), ['exception' => $e]);
+                return null;
+            } catch (\Exception $e) {
+                \Log::error("Error during rate fetching from $url: " . $e->getMessage(), ['exception' => $e]);
+                return null;
             }
         }
 
         return (float) $rate;
     }
+
 
 }
