@@ -31095,6 +31095,7 @@
                 this.props.dispatch({
                     type: "passport/sendEmailVerify",
                     email: this.getEmail(),
+                    isforget: 0,
                     recaptchaData: e,
                     callback: () => {
                         n()
@@ -42975,6 +42976,7 @@
                 this.props.dispatch({
                     type: "passport/sendEmailVerify",
                     email: this.refs.email.value,
+                    isforget: 1,
                     recaptchaData: e,
                     callback: () => {
                         n()
@@ -49344,7 +49346,7 @@
                                         }
                                     });
                                 case 4:
-                                    return l = {}, l["email"] = r, a && (l["recaptcha_data"] = a), n.next = 9, Object(i["b"])("/passport/comm/sendEmailVerify", l);
+                                    return l = {}, l["email"] = r, a && (l["recaptcha_data"] = a), l["isforget"] = e.isforget, n.next = 9, Object(i["b"])("/passport/comm/sendEmailVerify", l);
                                 case 9:
                                     return f = n.sent, n.next = 12, s({
                                         type: "setState",

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Passport\CommSendEmailVerify;
 use App\Jobs\SendEmailJob;
 use App\Models\InviteCode;
+use App\Models\User;
 use App\Utils\CacheKey;
 use App\Utils\Dict;
 use App\Utils\Helper;
@@ -14,6 +15,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use ReCaptcha\ReCaptcha;
+
+use function PHPUnit\Framework\isEmpty;
+
 use Illuminate\Support\Facades\Http;
 
 class CommController extends Controller
@@ -56,12 +60,16 @@ class CommController extends Controller
 
         $email = $this->antiXss->xss_clean($request->input('email'));
 
-        if ((int)config('v2board.email_whitelist_enable', 0)) {
-            if (!Helper::emailSuffixVerify(
-                $email,
-                config('v2board.email_whitelist_suffix', Dict::EMAIL_WHITELIST_SUFFIX_DEFAULT))
-            ) {
-                abort(500, __('Email suffix is not in the Whitelist'));
+        $isforget = $request->input('isforget');
+        $email_exists = User::where('email', $email)->exists();
+        if (isset($isforget)) {
+            // 重复注册
+            if ($isforget == 0 && $email_exists) {
+                abort(500, __('Fuck you'));
+            }
+            // 忘记密码，恶意刷验证码
+            if ($isforget == 1 && !$email_exists) {
+                abort(500, __('Fuck you'));
             }
         }
 
