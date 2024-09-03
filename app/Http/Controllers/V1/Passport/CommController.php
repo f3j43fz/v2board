@@ -8,6 +8,7 @@ use App\Jobs\SendEmailJob;
 use App\Models\InviteCode;
 use App\Utils\CacheKey;
 use App\Utils\Dict;
+use App\Utils\Helper;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -54,6 +55,16 @@ class CommController extends Controller
         }
 
         $email = $this->antiXss->xss_clean($request->input('email'));
+
+        if ((int)config('v2board.email_whitelist_enable', 0)) {
+            if (!Helper::emailSuffixVerify(
+                $email,
+                config('v2board.email_whitelist_suffix', Dict::EMAIL_WHITELIST_SUFFIX_DEFAULT))
+            ) {
+                abort(500, __('Email suffix is not in the Whitelist'));
+            }
+        }
+
         if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
             abort(500, __('Email verification code has been sent, please request again later'));
         }
