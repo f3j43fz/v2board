@@ -50,9 +50,9 @@ class EPay {
         // 如果是美元，则按照汇率换算成人民币
         if(config('v2board.currency') === 'USD'){
             $rate = $this->get_usd_to_cny_rate();
-            $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.10); // api 出错后，默认7.10
-            // 上浮 3毛5
-            $money = round($money * ($rate + 0.35), 2);
+            $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.05); // api 出错后，默认7.10
+            // 上浮 2毛
+            $money = round($money * ($rate + 0.2), 2);
         }
 
         $name = "使用QQ/微信很危险，如有订单问题请发邮件联系：support@v2pass.net 其他联系方式均无效！";
