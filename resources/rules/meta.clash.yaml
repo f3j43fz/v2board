@@ -154,6 +154,7 @@ proxy-groups:
   - { name: "🎧Spotify", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🍿Netflix", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🍿Disney", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
+  - { name: "🍿Amazon", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🎞️HBO", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "🧱SSH", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
   - { name: "☁️azure", type: select, disable-udp: false, proxies: ["自动选择", "故障转移"]}
@@ -299,6 +300,13 @@ rule-providers:
     behavior: domain
     url: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/google.txt"
     path: ./ruleset/google.yaml
+    interval: 86400
+
+  AmazonPrimeVideo:
+    type: http
+    behavior: classical
+    url: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonPrimeVideo/AmazonPrimeVideo.yaml"
+    path: ./ruleset/amazonprimevideo.yaml
     interval: 86400
 
 rules:
@@ -768,6 +776,8 @@ rules:
   - 'RULE-SET,Netflix,🍿Netflix,no-resolve'
   #Disney
   - 'RULE-SET,Disney,🍿Disney,no-resolve'
+  #Amazon
+  - 'RULE-SET,AmazonPrimeVideo,🍿Amazon,no-resolve'
   #Spotify
   - 'RULE-SET,Spotify,🎧Spotify,no-resolve'
   #HBO
