@@ -8,6 +8,7 @@ use App\Protocols\General;
 use App\Services\ServerService;
 use App\Services\UserService;
 use App\Utils\Helper;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Ip2Region;
@@ -229,96 +230,101 @@ class ClientController extends Controller
     }
 
 
-    private function getUserISP($userIP){
+//        private function getUserISP($userIP){
+//
+//        // 中国IP ，则优先掉用 Ip2Region 库
+//        if($this->isFromChina($userIP)){
+//            // 大多数情况 ipv4 以及少量 ipv6
+//            $ip2region = new \Ip2Region();
+//            try {
+//                $text =  $ip2region->simple($userIP);
+//                // 检查字符串中是否包含“中国”二字
+//                if (strpos($text, "中国") !== false) {
+//                    // 如果包含，则去掉“中国”二字
+//                    $text = str_replace("中国", "", $text);
+//                }
+//                return $text;
+//            } catch (\Exception $e) {
+//                // 查不到的情况，主要是 ipv6，调用在线 API
+//                return $this->getUserISPException($userIP);
+//            }
+//        } else {
+//            // 国外ip，调用在线 API
+//            return $this->getUserISPException($userIP);
+//        }
+//
+//    }
 
-        // 中国IP ，则优先掉用 Ip2Region 库
-        if($this->isFromChina($userIP)){
-            // 大多数情况 ipv4 以及少量 ipv6
-            $ip2region = new \Ip2Region();
-            try {
-                $text =  $ip2region->simple($userIP);
-                // 检查字符串中是否包含“中国”二字
-                if (strpos($text, "中国") !== false) {
-                    // 如果包含，则去掉“中国”二字
-                    $text = str_replace("中国", "", $text);
-                }
-                return $text;
-            } catch (\Exception $e) {
-                // 查不到的情况，主要是 ipv6，调用在线 API
-                return $this->getUserISPException($userIP);
-            }
-        } else {
-            // 国外ip，调用在线 API
-            return $this->getUserISPException($userIP);
-        }
-
-    }
-
-    private function isFromChina($ip): bool
+    private function getUserISP($userIP): string
     {
-        // 创建一个Reader对象，用于查询IP地址的地理位置
-        $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
+        // 美图API的URL
+        $apiUrl = "https://webapi-pc.meitu.com/common/ip_location?ip={$userIP}";
+
+        // 使用GuzzleHttp或其他HTTP库进行GET请求
+        $client = new Client();
 
         try {
-            // 查询IP地址的地理位置信息
-            $record = $reader->country($ip);
+            // 发起请求
+            $response = $client->request('GET', $apiUrl);
+            $responseBody = json_decode($response->getBody(), true);
 
-            // 判断是否来自中国
-            if ($record->country->isoCode === 'CN') {
-                return true;
+            // 检查请求结果
+            if ($responseBody['code'] === 0) {
+                // 解析返回的数据
+                $ipData = reset($responseBody['data']); // 获取第一个元素的数据
+
+                // 判断国家代码是否为中国
+                if (isset($ipData['nation_code']) && $ipData['nation_code'] === 'CN') {
+                    // 拼接省份、城市和ISP信息
+                    $province = $ipData['province'] ?? '';
+                    $city = $ipData['subdivision_2_name'] ?? $ipData['city'] ?? ''; // subdivision_2_name 或 city
+                    $isp = $ipData['isp'] ?? '';
+
+                    return "{$province}{$city}{$isp}";
+                } else {
+                    // 如果国家代码不是中国，调用备用方法
+                    return $this->getUserISPOutsideChina($userIP);
+                }
             } else {
-                return false;
+                // API返回错误时的处理
+                return 'IP信息查询失败';
             }
-        } catch (GeoIp2\Exception\AddressNotFoundException $e) {
-            // 处理IP地址未找到的情况
-            return false;
-        } catch (GeoIp2\Exception\GeoIp2Exception $e) {
-            // 处理其他异常
-            return false;
+        } catch (\Exception $e) {
+            // 捕获异常，处理错误
+            return 'IP信息查询异常';
         }
     }
 
-    private function getUserISPException($userIP){
-        // 其他情况
-        // 请求频率： 45次/min/单IP
-        $url = "http://ip-api.com/json/{$userIP}?fields=status,message,country,regionName,city,isp&lang=zh-CN";
-        $response = file_get_contents($url);
-        $ipinfo_json = json_decode($response, true);
+   // 备用的IP归属查询方法
+    private function getUserISPOutsideChina($userIP): string
+    {
+        // IP.SB API的URL
+        $apiUrl = "https://api.ip.sb/geoip/{$userIP}";
 
-        if ($ipinfo_json["status"] == "fail") {
-            return "未知地区";
-        } elseif ($ipinfo_json["status"] == "success") {
-            $country = $ipinfo_json["country"];
-            $region = $ipinfo_json["regionName"];
-            $city = $ipinfo_json["city"];
-            $isp = $ipinfo_json["isp"];
+        // 使用GuzzleHttp或其他HTTP库进行GET请求
+        $client = new Client();
 
-            // Translate ISP keywords
-            if (stripos($isp, 'Unicom') !== false) {
-                $translatedISP = "【联通】";
-            } elseif (stripos($isp, 'Telecom') !== false) {
-                $translatedISP = "【电信】";
-            } elseif (stripos($isp, 'CHINANET') !== false) {
-                $translatedISP = "【电信】";
-            } elseif (stripos($isp, 'Mobile') !== false) {
-                $translatedISP = "【移动】";
-            } elseif (stripos($isp, 'CERNET2') !== false) {
-                $translatedISP = "【教育网】";
-            } elseif (stripos($isp, 'CERNET') !== false) {
-                $translatedISP = "【教育网】";
-            } elseif (stripos($isp, 'CNIC-CAS') !== false) {
-                $translatedISP = "【科技网】";
+        try {
+            // 发起请求
+            $response = $client->request('GET', $apiUrl);
+            $responseBody = json_decode($response->getBody(), true);
+
+            // 检查返回结果是否包含必要的信息
+            if (isset($responseBody['country']) && isset($responseBody['isp'])) {
+                $country = $responseBody['country'];
+                $isp = $responseBody['isp'];
+
+                // 返回拼接后的国家和ISP信息
+                return "{$country} {$isp}";
             } else {
-                $translatedISP = "|$isp";
+                // 返回信息不全时的处理
+                return 'IP信息查询失败';
             }
-
-            $result = "{$country}{$region}{$city}{$translatedISP}";
-            return $result;
-        } else {
-            return "未知地区";
+        } catch (\Exception $e) {
+            // 捕获异常，处理错误
+            return 'IP信息查询异常';
         }
     }
-
 
     private function extractShadowrocketVersion($ua) {
         $pattern = '/Shadowrocket\/(\d+)/';
