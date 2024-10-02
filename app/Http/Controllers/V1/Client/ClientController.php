@@ -228,33 +228,6 @@ class ClientController extends Controller
 
         return true;
     }
-
-
-//        private function getUserISP($userIP){
-//
-//        // 中国IP ，则优先掉用 Ip2Region 库
-//        if($this->isFromChina($userIP)){
-//            // 大多数情况 ipv4 以及少量 ipv6
-//            $ip2region = new \Ip2Region();
-//            try {
-//                $text =  $ip2region->simple($userIP);
-//                // 检查字符串中是否包含“中国”二字
-//                if (strpos($text, "中国") !== false) {
-//                    // 如果包含，则去掉“中国”二字
-//                    $text = str_replace("中国", "", $text);
-//                }
-//                return $text;
-//            } catch (\Exception $e) {
-//                // 查不到的情况，主要是 ipv6，调用在线 API
-//                return $this->getUserISPException($userIP);
-//            }
-//        } else {
-//            // 国外ip，调用在线 API
-//            return $this->getUserISPException($userIP);
-//        }
-//
-//    }
-
     private function getUserISP($userIP): string
     {
         // 美图API的URL
