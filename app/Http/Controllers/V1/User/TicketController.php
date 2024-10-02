@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\TelegramService;
 use App\Services\TicketService;
 use App\Utils\Dict;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Ip2Region;
@@ -306,13 +307,72 @@ class TicketController extends Controller
     }
 
     private function getISPInfo($userIP){
-        $ip2region = new \Ip2Region();
+        // 美图API的URL
+        $apiUrl = "https://webapi-pc.meitu.com/common/ip_location?ip={$userIP}";
+
+        // 使用GuzzleHttp或其他HTTP库进行GET请求
+        $client = new Client();
+
         try {
-            return $ip2region->simple($userIP);
+            // 发起请求
+            $response = $client->request('GET', $apiUrl);
+            $responseBody = json_decode($response->getBody(), true);
+
+            // 检查请求结果
+            if ($responseBody['code'] === 0) {
+                // 解析返回的数据
+                $ipData = reset($responseBody['data']); // 获取第一个元素的数据
+
+                // 判断国家代码是否为中国
+                if (isset($ipData['nation_code']) && $ipData['nation_code'] === 'CN') {
+                    // 拼接省份、城市和ISP信息
+                    $province = $ipData['province'] ?? '';
+                    $city = $ipData['subdivision_2_name'] ?? $ipData['city'] ?? ''; // subdivision_2_name 或 city
+                    $isp = $ipData['isp'] ?? '';
+
+                    return "{$province}{$city}{$isp}";
+                } else {
+                    // 如果国家代码不是中国，调用备用方法
+                    return $this->getUserISPOutsideChina($userIP);
+                }
+            } else {
+                // API返回错误时的处理
+                return 'IP信息查询失败';
+            }
         } catch (\Exception $e) {
-            // 处理异常情况
-            // 可以输出错误信息或执行其他逻辑
-            return "未知地区";
+            // 捕获异常，处理错误
+            return 'IP信息查询异常';
+        }
+    }
+
+    // 备用的IP归属查询方法
+    private function getUserISPOutsideChina($userIP): string
+    {
+        // IP.SB API的URL
+        $apiUrl = "https://api.ip.sb/geoip/{$userIP}";
+
+        // 使用GuzzleHttp或其他HTTP库进行GET请求
+        $client = new Client();
+
+        try {
+            // 发起请求
+            $response = $client->request('GET', $apiUrl);
+            $responseBody = json_decode($response->getBody(), true);
+
+            // 检查返回结果是否包含必要的信息
+            if (isset($responseBody['country']) && isset($responseBody['isp'])) {
+                $country = $responseBody['country'];
+                $isp = $responseBody['isp'];
+
+                // 返回拼接后的国家和ISP信息
+                return "{$country} {$isp}";
+            } else {
+                // 返回信息不全时的处理
+                return 'IP信息查询失败';
+            }
+        } catch (\Exception $e) {
+            // 捕获异常，处理错误
+            return 'IP信息查询异常';
         }
     }
 }
