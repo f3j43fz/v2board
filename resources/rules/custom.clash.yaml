@@ -529,6 +529,7 @@ rules:
   - 'DOMAIN-SUFFIX,mendeley.com,DIRECT'
   - 'DOMAIN-SUFFIX,reaxys.com,DIRECT'
   - 'DOMAIN-SUFFIX,worldscientific.com,DIRECT'
+  - 'DOMAIN-SUFFIX,originlab.com,DIRECT'
   # Applicatons 进程白名单
   - 'PROCESS-NAME,hysteria,DIRECT'
   - 'PROCESS-NAME,hysteria.exe,DIRECT'
