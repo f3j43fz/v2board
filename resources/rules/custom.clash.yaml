@@ -530,6 +530,13 @@ rules:
   - 'DOMAIN-SUFFIX,reaxys.com,DIRECT'
   - 'DOMAIN-SUFFIX,worldscientific.com,DIRECT'
   - 'DOMAIN-SUFFIX,originlab.com,DIRECT'
+  # adobe
+  - 'DOMAIN-SUFFIX,adobe.io,DIRECT'
+  - 'DOMAIN-SUFFIX,adobe.com,DIRECT'
+  - 'DOMAIN-SUFFIX,adobe.net,DIRECT'
+  - 'DOMAIN-SUFFIX,adobelogin.com,DIRECT'
+  - 'DOMAIN-SUFFIX,adobeconnect.com,DIRECT'
+  - 'DOMAIN-SUFFIX,adobestock.com,DIRECT'
   # Applicatons 进程白名单
   - 'PROCESS-NAME,hysteria,DIRECT'
   - 'PROCESS-NAME,hysteria.exe,DIRECT'
