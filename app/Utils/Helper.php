@@ -142,6 +142,12 @@ class Helper
 
     public static function getUserISP($userIP): string
     {
+        // 判断地址是否为 ipv6
+        if (filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            // 调用 ipv6 查询方法
+            return self::getUserISPV6($userIP);
+        }
+
         // 新的接口URL
         $apiUrl = "https://api.qjqq.cn/api/district?ip={$userIP}";
 
@@ -209,5 +215,40 @@ class Helper
             return 'IP信息查询异常';
         }
     }
+
+    public static function getUserISPV6($userIP): string
+    {
+        // 接口 URL
+        $apiUrl = "https://api.vore.top/api/IPv6?v6={$userIP}";
+
+        // 使用GuzzleHttp或其他HTTP库进行GET请求
+        $client = new Client();
+
+        try {
+            // 发起请求
+            $response = $client->request('GET', $apiUrl);
+            $responseBody = json_decode($response->getBody(), true);
+
+            // 检查 code 是否为 200
+            if (isset($responseBody['code']) && $responseBody['code'] == 200) {
+                $ipData = $responseBody['ipdata'] ?? [];
+
+                // 从 ipData 中获取省、市、ISP
+                $province = $ipData['info1'] ?? '';
+                $city     = $ipData['info2'] ?? '';
+                $isp      = $ipData['isp'] ?? '';
+
+                // 拼接后返回
+                return "{$province}{$city}{$isp}";
+            } else {
+                // API 返回错误时的处理
+                return 'IPv6信息查询失败';
+            }
+        } catch (\Exception $e) {
+            // 捕获异常，处理错误
+            return 'IPv6信息查询异常';
+        }
+    }
+
 
 }
