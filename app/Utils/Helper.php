@@ -142,8 +142,8 @@ class Helper
 
     public static function getUserISP($userIP): string
     {
-        // 美图API的URL
-        $apiUrl = "https://webapi-pc.meitu.com/common/ip_location?ip={$userIP}";
+        // 新的接口URL
+        $apiUrl = "https://api.qjqq.cn/api/district?ip={$userIP}";
 
         // 使用GuzzleHttp或其他HTTP库进行GET请求
         $client = new Client();
@@ -153,21 +153,20 @@ class Helper
             $response = $client->request('GET', $apiUrl);
             $responseBody = json_decode($response->getBody(), true);
 
-            // 检查请求结果
-            if ($responseBody['code'] === 0) {
-                // 解析返回的数据
-                $ipData = reset($responseBody['data']); // 获取第一个元素的数据
+            // 检查返回结果
+            if (isset($responseBody['code']) && $responseBody['code'] == 200) {
+                $ipData = $responseBody['data'] ?? [];
 
-                // 判断国家代码是否为中国
-                if (isset($ipData['nation_code']) && $ipData['nation_code'] === 'CN') {
+                // 判断国家是否为中国
+                if (isset($ipData['country']) && $ipData['country'] === '中国') {
                     // 拼接省份、城市和ISP信息
-                    $province = $ipData['province'] ?? '';
-                    $city = $ipData['subdivision_2_name'] ?? $ipData['city'] ?? ''; // subdivision_2_name 或 city
+                    $province = $ipData['prov'] ?? '';
+                    $city = $ipData['city'] ?? '';
                     $isp = $ipData['isp'] ?? '';
 
                     return "{$province}{$city}{$isp}";
                 } else {
-                    // 如果国家代码不是中国，调用备用方法
+                    // 如果国家不是中国，调用备用方法
                     return self::getUserISPOutsideChina($userIP);
                 }
             } else {
