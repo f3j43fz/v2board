@@ -88,7 +88,7 @@
     "Email can not be empty": "邮箱不能为空",
     "Email format is incorrect": "邮箱格式不正确",
     "Password can not be empty": "密码不能为空",
-    "The traffic usage in :app_name has reached 80%": "在 :app_name 的已用流量已达到 80%",
+    "The traffic usage in :app_name has reached 95%": "在 :app_name 的已用流量已达到 95%",
     "The service in :app_name is about to expire": "在 :app_name 的服务即将到期",
     "The service in :app_name has expired more than 3 days ago": "在 :app_name 的服务过期超过 3 天",
     "The service in :app_name has expired more than 7 days ago": "在 :app_name 的服务过期超过 7 天",
