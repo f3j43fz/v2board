@@ -22,9 +22,11 @@ class TicketController extends Controller
     public function fetch(Request $request)
     {
         $ticketID = $this->antiXss->xss_clean($request->input('id'));
+        $userId = $this->antiXss->xss_clean($request->user['id']);
 
         if ($ticketID) {
             $ticket = Ticket::where('id', $ticketID)
+                ->where('user_id', $userId)
                 ->firstOrFail();
             $ticket['message'] = TicketMessage::where('ticket_id', $ticket->id)->get();
             for ($i = 0; $i < count($ticket['message']); $i++) {
@@ -37,7 +39,7 @@ class TicketController extends Controller
             return response(['data' => $ticket]);
         }
 
-        $ticket = Ticket::where('user_id', $request->user['id'])
+        $ticket = Ticket::where('user_id', $userId)
             ->orderBy('created_at', 'DESC')
             ->get();
         return response([
