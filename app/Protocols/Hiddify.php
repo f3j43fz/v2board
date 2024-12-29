@@ -22,7 +22,7 @@ class Hiddify
         $servers = $this->servers;
         $user = $this->user;
         $appName = config('v2board.app_name', 'V2Board');
-        header('Profile-Title: ' . $appName);
+        header("profile-title:".rawurlencode($appName));
         header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
         header('profile-update-interval: 12');
         header("content-disposition:attachment;filename=" . "V2Pass_Sing" . ".json");
