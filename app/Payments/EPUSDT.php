@@ -41,10 +41,10 @@ class EPUSDT {
     public function pay($order)
     {
 
-        // 默认情况下，$money 为人民币
+        // 默认情况下，$money 为人民币 注：EPUSDT 那边固定汇率设置成了 7.3
         $money = $order['total_amount'] / 100;
 
-        // 如果是美元，则按照汇率换算成人民币
+        // 如果是美元，按照固定汇率（因为 EPUSDT 后端那边也设置成了固定汇率）换成人民币 这样一乘一除，就抵消了
         if(config('v2board.currency') === 'USD'){
             $money = round($money * 7.3, 4);
         }
