@@ -14,6 +14,7 @@ class EPUSDT {
     public function __construct($config)
     {
         $this->config = $config;
+        $this->client = new Client();
     }
 
     public function form()
@@ -46,7 +47,7 @@ class EPUSDT {
         // 如果是美元，则按照汇率换算成人民币
         if(config('v2board.currency') === 'USD'){
             $rate = $this->get_usd_to_cny_rate();
-            $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.22);
+            $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.31);
             $money = round($money * $rate, 4);
         }
 
@@ -110,25 +111,25 @@ class EPUSDT {
         $rate = Cache::get($cacheKey);
 
         if (!$rate) {
+            $url = 'https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side=sell&paymentMethod=aliPay&userType=all&receivingAds=false&quoteMinAmountPerOrder=100&t=' . time();
+
             try {
-                // Attempt to fetch data from the API
-                $response = $this->client->get('https://cdn.moneyconvert.net/api/latest.json');
+                $response = $this->client->get($url);
                 $data = json_decode($response->getBody()->getContents(), true);
 
-                if (!isset($data['rates']['CNY']) || !isset($data['rates']['USD'])) {
-                    throw new \Exception("Required currency rates not found in the API response");
+                // 获取第一个卖家的汇率价格 (sell-0)
+                if (isset($data['data']['sell'][0]['price'])) {
+                    $rate = $data['data']['sell'][0]['price'];
+                    Cache::put($cacheKey, $rate, 60); // 缓存汇率
+                } else {
+                    \Log::error("Failed to retrieve USD to CNY rate from the API response.");
+                    return null;
                 }
-
-                // Calculate the conversion rate
-                $rate = $data['rates']['CNY'] / $data['rates']['USD'];
-                Cache::put($cacheKey, $rate, 3600); // Cache the rate
             } catch (GuzzleException $e) {
-                // Handle Guzzle HTTP client errors using the project's logging convention
-                \Log::error($e->getMessage(), ['exception' => $e]);
+                \Log::error("Attempt to fetch from $url failed: " . $e->getMessage(), ['exception' => $e]);
                 return null;
             } catch (\Exception $e) {
-                // Handle other general exceptions using the project's logging convention
-                \Log::error($e->getMessage(), ['exception' => $e]);
+                \Log::error("Error during rate fetching from $url: " . $e->getMessage(), ['exception' => $e]);
                 return null;
             }
         }
