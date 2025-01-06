@@ -50,7 +50,7 @@ class EPay {
         // 如果是美元，则按照汇率换算成人民币
         if(config('v2board.currency') === 'USD'){
             $rate = $this->get_usd_to_cny_rate();
-            $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.26); // api 出错后，默认7.26
+            $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.35); // api 出错后，默认7.26
             // 上浮 2毛5
             $money = round($money * ($rate + 0.25), 2);
         }
