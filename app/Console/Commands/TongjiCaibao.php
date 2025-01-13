@@ -156,7 +156,10 @@ class TongjiCaibao extends Command
             ->count('user_id');
 
         // 转化率
-        $rate = round($orderingNewUsersCount / $newUsersCount * 100) . '%';
+        $rate = $newUsersCount === 0
+            ? '0%'
+            : round($orderingNewUsersCount / $newUsersCount * 100) . '%';
+
 
 
         // 下单老用户数
