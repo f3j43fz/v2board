@@ -760,6 +760,12 @@ rules:
   # EUROPE
   - 'DOMAIN-SUFFIX,zdc1.ibllc.com,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,zdc1_hb1.ibllc.com,☁️azure,no-resolve'
+  # mocha
+  - 'DOMAIN-SUFFIX,mocortech.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,mexcsensors.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,mexc.com,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,engagelab.cc,☁️azure,no-resolve'
+  - 'DOMAIN-SUFFIX,theengagelab.com,☁️azure,no-resolve'
   #icloud
   - 'RULE-SET,icloud,DIRECT,no-resolve'
   #apple
