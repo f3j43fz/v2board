@@ -201,10 +201,25 @@ class UserService
 
     public function trafficFetch(array $server, string $protocol, array $data)
     {
-        TrafficFetchJob::dispatch($data, $server, $protocol);
-        StatUserJob::dispatch($data, $server, $protocol, 'd');
-        StatServerJob::dispatch($data, $server, $protocol, 'd');
+        // 过滤掉总流量小于 8KB（8192 字节）的记录
+        $filteredData = array_filter($data, function ($item) {
+            // 获取上传流量和下载流量，若不存在则默认为 0
+            $up = isset($item['u']) ? $item['u'] : 0;
+            $down = isset($item['d']) ? $item['d'] : 0;
+            return (($up + $down) >= 8192);
+        });
+
+        // 如果过滤后没有数据，则直接返回，不执行队列任务
+        if (empty($filteredData)) {
+            return;
+        }
+
+        // 派发队列任务，将过滤后的数据传入
+        TrafficFetchJob::dispatch($filteredData, $server, $protocol);
+        StatUserJob::dispatch($filteredData, $server, $protocol, 'd');
+        StatServerJob::dispatch($filteredData, $server, $protocol, 'd');
     }
+
 
     public function updateLoginRecords(array $batch)
     {
@@ -215,6 +230,29 @@ class UserService
                     'last_login_ip' => $login['last_login_ip']
                 ]);
         }
+    }
+
+    public function getSubscriptionCount($userId){
+        $user = User::lockForUpdate()->find($userId);
+        if (!$user) {
+            return false;
+        }
+        return $user->sub_count;
+    }
+    public function checkSubscriptionLimit($userId, $count): bool
+    {
+        if ($count >= 120) {
+            return false;
+        }
+        $user = User::lockForUpdate()->find($userId);
+        if (!$user) {
+            return false;
+        }
+        $user->sub_count++;
+        if (!$user->save()) {
+            return false;
+        }
+        return true;
     }
 
 }
