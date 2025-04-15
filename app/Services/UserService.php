@@ -201,9 +201,31 @@ class UserService
 
     public function trafficFetch(array $server, string $protocol, array $data)
     {
-        TrafficFetchJob::dispatch($data, $server, $protocol);
-        StatUserJob::dispatch($data, $server, $protocol, 'd');
-        StatServerJob::dispatch($data, $server, $protocol, 'd');
+        // 设置阈值：8KB（单位：字节）
+        $threshold = 8 * 1024;
+
+        // 过滤流量数据，只保留流量大于等于 32KB 的记录
+        $filteredData = [];
+        foreach ($data as $userId => $traffic) {
+            // 确保上行与下行流量存在，若不存在则默认为0
+            $upstream = $traffic[0] ?? 0;
+            $downstream = $traffic[1] ?? 0;
+
+            // 如果上行和下行流量之和大于或等于阈值，则保留该数据
+            if (($upstream + $downstream) >= $threshold) {
+                $filteredData[$userId] = $traffic;
+            }
+        }
+
+        // 如果过滤后没有记录符合要求，则不执行队列操作
+        if (empty($filteredData)) {
+            return;
+        }
+
+        // 执行队列调度，传入过滤后的数据
+        TrafficFetchJob::dispatch($filteredData, $server, $protocol);
+        StatUserJob::dispatch($filteredData, $server, $protocol, 'd');
+        StatServerJob::dispatch($filteredData, $server, $protocol, 'd');
     }
 
 
