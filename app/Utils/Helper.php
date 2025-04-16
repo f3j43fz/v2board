@@ -143,9 +143,9 @@ class Helper
 
     public static function getUserISP($userIP): string
     {
-        // 判断地址是否为 ipv6
+        // 判断地址是否为 IPv6
         if (filter_var($userIP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            // 调用 ipv6 查询方法
+            // 调用 IPv6 查询方法
             return self::getUserISPV6($userIP);
         }
 
@@ -153,13 +153,16 @@ class Helper
         $ipdbPath = resource_path('ipdata/qqwry.ipdb');
 
         try {
-            // 通过 ipip\db\City 类进行查询（确保引入该命名空间：use ipip\db\City;）
+            // 通过 ipip\db\City 类进行查询（确保已引入该命名空间：use ipip\db\City;）
             $city = new City($ipdbPath);
             $ipInfo = $city->find($userIP, 'CN');
 
-            // 返回示例见测试 app/Console/Commands/Shiyishi.php
-            // 根据返回结果数组，其中：
-            // [1] => 省区、[2] => 城市、[5] => 运营商
+            // 判断如果返回的国家代码字段不为 CN，则调用备用方法
+            if (isset($ipInfo[6]) && strtoupper($ipInfo[6]) !== 'CN') {
+                return self::getUserISPOutsideChina($userIP);
+            }
+
+            // 根据返回结果数组获取省区、城市和运营商信息
             $province = $ipInfo[1] ?? '';
             $cityName = $ipInfo[2] ?? '';
             $isp = $ipInfo[5] ?? '';
@@ -170,6 +173,7 @@ class Helper
             return 'IP信息查询异常';
         }
     }
+
 
     // 备用的IP归属查询方法
     public static function getUserISPOutsideChina($userIP): string
