@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use GuzzleHttp\Client;
+use ipip\db\City;
 
 class Helper
 {
@@ -148,37 +149,21 @@ class Helper
             return self::getUserISPV6($userIP);
         }
 
-        // 新的接口URL
-        $apiUrl = "https://api.qjqq.cn/api/district?ip={$userIP}";
-
-        // 使用GuzzleHttp或其他HTTP库进行GET请求
-        $client = new Client();
+        // 离线查询：指定 IP 数据库文件路径
+        $ipdbPath = resource_path('ipdata/qqwry.ipdb');
 
         try {
-            // 发起请求
-            $response = $client->request('GET', $apiUrl);
-            $responseBody = json_decode($response->getBody(), true);
+            // 通过 ipip\db\City 类进行查询（确保引入该命名空间：use ipip\db\City;）
+            $city = new City($ipdbPath);
+            $ipInfo = $city->find($userIP, 'CN');
 
-            // 检查返回结果
-            if (isset($responseBody['code']) && $responseBody['code'] == 200) {
-                $ipData = $responseBody['data'] ?? [];
+            // 根据返回结果数组，其中：
+            // [1] => 省份（或区域名称）、[2] => 城市、[5] => 运营商（isp_domain）
+            $province = $ipInfo[1] ?? '';
+            $cityName = $ipInfo[2] ?? '';
+            $isp = $ipInfo[5] ?? '';
 
-                // 判断国家是否为中国
-                if (isset($ipData['country']) && $ipData['country'] === '中国') {
-                    // 拼接省份、城市和ISP信息
-                    $province = $ipData['prov'] ?? '';
-                    $city = $ipData['city'] ?? '';
-                    $isp = $ipData['isp'] ?? '';
-
-                    return "{$province}{$city}{$isp}";
-                } else {
-                    // 如果国家不是中国，调用备用方法
-                    return self::getUserISPOutsideChina($userIP);
-                }
-            } else {
-                // API返回错误时的处理
-                return 'IP信息查询失败';
-            }
+            return "{$province}{$cityName}{$isp}";
         } catch (\Exception $e) {
             // 捕获异常，处理错误
             return 'IP信息查询异常';
