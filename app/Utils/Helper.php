@@ -158,7 +158,7 @@ class Helper
             $ipInfo = $city->find($userIP, 'CN');
 
             // 判断如果返回的国家代码字段不为 CN，则调用备用方法
-            if (isset($ipInfo[6]) && $ipInfo[6] !== 'CN') {
+            if (isset($ipInfo[6]) && strtoupper($ipInfo[6]) != 'CN') {
                 return self::getUserISPOutsideChina($userIP);
             }
 
