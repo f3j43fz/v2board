@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use ipip\db\City;
+use ipip\db\District;
 class Shiyishi extends Command
 {
     /**
@@ -40,7 +40,7 @@ class Shiyishi extends Command
 
         $ipdbPath = resource_path('ipdata/qqwry.ipdb');
         // 使用 use 导入后的类名，直接 new
-        $city = new City($ipdbPath);
+        $city = new District($ipdbPath);
         var_dump($city->find('180.139.162.225', 'CN'));
     }
 }
