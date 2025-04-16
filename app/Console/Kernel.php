@@ -58,6 +58,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('customFunction:kick 7')->dailyAt('23:45'); //移除群组中过期超过 7 天的用户
         $schedule->command('customFunction:gerUserCommission')->dailyAt('0:05'); //群通知：统计佣金
         $schedule->command('customFunction:sendTrafficStatisticsToGroup')->dailyAt('0:13'); //推送流量排行到用户群
+        $schedule->command('ipdb:download')->weeklyOn(1, '03:00');// 每周一 03:00 执行下载任务
 
         //delete user token request more than 3 days ago
         $schedule->call(function () {
