@@ -11,7 +11,7 @@ class Shiyishi extends Command
      *
      * @var string
      */
-    protected $signature = 'shishi';
+    protected $signature = 'iptest';
 
     /**
      * The console command description.
@@ -43,6 +43,6 @@ class Shiyishi extends Command
         $ipdbPath = resource_path('ipdata/qqwry.ipdb');
         // 使用 use 导入后的类名，直接 new
         $city = new District($ipdbPath);
-        var_dump($city->find('1.1.1.1', 'CN'));
+        var_dump($city->find('82.152.167.45', 'CN'));
     }
 }

@@ -157,8 +157,9 @@ class Helper
             $city = new City($ipdbPath);
             $ipInfo = $city->find($userIP, 'CN');
 
+            // 返回示例见测试 app/Console/Commands/Shiyishi.php
             // 根据返回结果数组，其中：
-            // [1] => 省份（或区域名称）、[2] => 城市、[5] => 运营商（isp_domain）
+            // [1] => 省区、[2] => 城市、[5] => 运营商
             $province = $ipInfo[1] ?? '';
             $cityName = $ipInfo[2] ?? '';
             $isp = $ipInfo[5] ?? '';
