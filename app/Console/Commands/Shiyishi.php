@@ -38,9 +38,11 @@ class Shiyishi extends Command
     public function handle()
     {
 
+        //项目地址：https://github.com/ipipdotnet/ipdb-php
+
         $ipdbPath = resource_path('ipdata/qqwry.ipdb');
         // 使用 use 导入后的类名，直接 new
         $city = new District($ipdbPath);
-        var_dump($city->find('180.139.162.225', 'CN'));
+        var_dump($city->find('1.1.1.1', 'CN'));
     }
 }
