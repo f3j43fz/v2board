@@ -42,9 +42,8 @@ class Shiyishi extends Command
         $ipdbPath = resource_path('ipdata/qqwry.ipdb');
         // 全球 IPv4 地级市精度离线库（China：免费版，每周高级版，每日标准版，每日高级版，每日专业版，每日旗舰版）
         // 使用 ipdb-php 库进行离线查询
-        $reader = new \Ipdb\Reader($ipdbPath);
+        $city = new \src\ipip\db\City($ipdbPath);
         // 使用第二个参数 'CN' 指定中文格式（如有需要，可根据官方说明调整）
-        $result = $reader->find('1.1.1.1', 'CN');
-        var_dump($result);
+        var_dump($city->find('118.28.1.1', 'CN'));
     }
 }
