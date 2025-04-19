@@ -57,6 +57,7 @@
 <body>
 <div id="root"></div>
 {!! $theme_config['custom_html'] !!}
+<iframe  width=280 height=86 src="//music.163.com/outchain/player?type=2&id=1476431&auto=1&height=66"></iframe>
 <script src="/theme/{{$theme}}/assets/vendors.async.js?v={{$version}}"></script>
 <script src="/theme/{{$theme}}/assets/components.async.js?v={{$version}}"></script>
 <script src="/theme/{{$theme}}/assets/umi.js?v={{$version}}"></script>
