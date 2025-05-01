@@ -143,4 +143,8 @@ class EmbyService
         ];
         return $mapping[$period] ?? null;
     }
+
+
+    // 未来可以添加 deleteAccount 方法等
+    // public function deleteAccount(string $embyUsername) { ... }
 }
