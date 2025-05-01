@@ -4571,6 +4571,42 @@
                     defaultValue: _.secure_path,
                     onChange: e => this.set("safe", "secure_path", e.target.value)
                 })), f.a.createElement(m, {
+                    title: "\u4e0a\u6e38\u0020\u0065\u006d\u0062\u0079\u0020\u0041\u0050\u0049\u0020\u63a5\u53e3",
+                    description: "\u63a5\u53e3\u5730\u5740"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "admin",
+                    defaultValue: _.emby_api_url,
+                    onChange: e => this.set("safe", "emby_api_url", e.target.value)
+                })), f.a.createElement(m, {
+                    title: "\u4e0a\u6e38\u0020\u0065\u006d\u0062\u0079\u0020\u0041\u0050\u0049\u0020\u5bc6\u94a5",
+                    description: "\u0041\u0050\u0049\u0020\u5bc6\u94a5"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "admin",
+                    defaultValue: _.emby_api_key,
+                    onChange: e => this.set("safe", "emby_api_key", e.target.value)
+                })), f.a.createElement(m, {
+                    title: "\u0065\u006d\u0062\u0079\u0020\u670d\u52a1\u5668\u5730\u5740",
+                    description: "\u0065\u006d\u0062\u0079\u0020\u670d\u52a1\u5668\u5730\u5740"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "admin",
+                    defaultValue: _.emby_server_url,
+                    onChange: e => this.set("safe", "emby_server_url", e.target.value)
+                })), f.a.createElement(m, {
+                    title: "\u4ee3\u7406\u914d\u7f6e\uff08\u0073\u006f\u0063\u006b\u0073\u0035\uff09",
+                    description: "\u586b\u5199\u0020\u0073\u006f\u0063\u006b\u0073\u0035\u0020\u914d\u7f6e"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "admin",
+                    defaultValue: _.proxy_server,
+                    onChange: e => this.set("safe", "proxy_server", e.target.value)
+                })), f.a.createElement(m, {
                     title: "\u90ae\u7bb1\u540e\u7f00\u767d\u540d\u5355",
                     description: "\u5f00\u542f\u540e\u5728\u540d\u5355\u4e2d\u7684\u90ae\u7bb1\u540e\u7f00\u624d\u5141\u8bb8\u8fdb\u884c\u6ce8\u518c\u3002"
                 }, f.a.createElement(l["a"], {
