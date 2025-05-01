@@ -30,18 +30,13 @@
                                 <br />
                                 {{-- 使用一个稍微突出显示的区域来展示账号信息 --}}
                                 <div style="background-color: #f8f8f8; padding: 15px 20px; border-radius: 5px; border: 1px solid #eee; margin: 15px 0;">
-                                    <p style="margin: 5px 0; font-size: 15px;"><strong>服务器地址:</strong> <a href="{{ $emby_server_url }}" style="color: #007bff; text-decoration: none;">{{ $emby_server_url }}</a></p>
+                                    <p style="margin: 5px 0; font-size: 15px;"><strong>服务器地址:</strong> {{ $emby_server_url }}</p>
                                     <p style="margin: 5px 0; font-size: 15px;"><strong>登录用户名:</strong> {{ $emby_username }}</p>
                                     <p style="margin: 5px 0; font-size: 15px;"><strong>登录密码:</strong> {{ $emby_password }}</p>
-                                    {{-- 检查到期时间是否存在，存在则显示 --}}
-                                    @isset($emby_expire_time)
-                                        @if(!empty($emby_expire_time))
-                                            <p style="margin: 5px 0; font-size: 15px;"><strong>到期时间:</strong> {{ $emby_expire_time }}</p>
-                                        @endif
-                                    @endisset
+                                    <p style="margin: 5px 0; font-size: 15px;"><strong>到期时间:</strong> {{ $emby_expire_time }}</p>
                                 </div>
                                 <br />
-                                请妥善保管您的账号信息。您可以直接访问上方服务器地址进行登录。
+                                请妥善保管您的账号信息。请您在 emby 客户端中进行登录。
                                 <br />
                                 <br />
                                 如果您有任何疑问或者需要帮助，欢迎通过网站工单或邮件联系我们。
