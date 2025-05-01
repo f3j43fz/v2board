@@ -78,6 +78,25 @@ class Kernel extends ConsoleKernel
             }
         })->everyFiveMinutes();
 
+        // 添加：每日检查并发送 Emby 到期提醒邮件 (默认提前3天)
+        $schedule->call(function () {
+            // 实例化 MailService
+            $mailService = app(\App\Services\MailService::class);
+            // 只查询 emby_expired_at 不为空且未过期的用户，并分块处理
+            \App\Models\User::whereNotNull('emby_expired_at')
+                ->where('emby_expired_at', '>', time())
+                ->chunkById(200, function ($users) use ($mailService) { // 使用 chunkById 提高效率
+                    foreach ($users as $user) {
+                        try {
+                            $mailService->remindEmbyExpire($user);
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error("发送 Emby 到期提醒邮件失败 (用户ID: {$user->id}): " . $e->getMessage());
+                        }
+                    }
+                });
+            \Illuminate\Support\Facades\Log::info('每日 Emby 到期提醒邮件检查任务执行完毕。');
+        })->dailyAt('08:00'); // 设置合适的执行时间，例如每天早上8点
+
 
 
     }
