@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class EmbyService
 {
@@ -45,24 +46,27 @@ class EmbyService
     /**
      * 调用上游 API 创建 Emby 账号
      *
-     * @param User $user 需要创建账号的用户对象
-     * @param Order $order 关联的订单对象，用于获取 period
-     * @return array|null 返回包含账号信息的数组 (例如 ['username' => ..., 'password' => ..., 'server_url' => ..., 'expire_time' => ...])，失败则返回 null 或抛出异常
-     * @throws \Exception API 调用失败或配置错误时抛出异常
+     * @param User $user
+     * @param Order $order
+     * @return array|null 返回 ['username' => ..., 'password' => ..., 'server_url' => ..., 'expire_time' => ..., 'generated_username' => ...]
+     * @throws \Exception
      */
     public function createAccount(User $user, Order $order): ?array
     {
-        // 检查 API Key 是否有效 (如果构造函数中没有抛出异常)
         if ($this->apiKey === 'YOUR_DEFAULT_API_KEY' || empty($this->apiKey)) {
             throw new \Exception('Emby API Key 未配置, 无法创建账号');
         }
 
-        // 准备 API 请求数据
-        $embyUsername = explode('@', $user->email)[0];
-        if (empty($embyUsername)) {
-            Log::error("无法从用户邮箱 {$user->email} 提取前缀作为 Emby 用户名");
+        // 1. 生成 Emby 用户名 (邮箱前缀 + 4位随机码)
+        $emailPrefix = explode('@', $user->email)[0];
+        if (empty($emailPrefix)) {
+            Log::error("无法从用户邮箱 {$user->email} 提取前缀作为 Emby 用户名基础");
             throw new \Exception('无法生成 Emby 用户名');
         }
+        $randomSuffix = Str::random(4); // 生成4位随机字母数字
+        $generatedEmbyUsername = $emailPrefix . $randomSuffix; // << 新生成的用户名
+
+        // 2. 准备 API 请求数据
         $typeId = $this->mapPeriodToTypeId($order->period);
         if ($typeId === null) {
             Log::error("无法将订单周期 '{$order->period}' 映射到有效的 Emby type_id");
@@ -71,53 +75,52 @@ class EmbyService
         $requestData = [
             'type' => 'create',
             'api_key' => $this->apiKey,
-            'name' => $embyUsername,
+            'name' => $generatedEmbyUsername, // << 使用新生成的用户名
             'type_id' => $typeId,
         ];
-        // 日志中不记录完整的请求数据，尤其是 api_key
-        Log::info("准备调用 Emby API 创建账号", ['request_info' => "type=create, name={$embyUsername}, type_id={$typeId}"]);
+        Log::info("准备调用 Emby API 创建账号", ['request_info' => "type=create, name={$generatedEmbyUsername}, type_id={$typeId}"]);
 
-        // 1. 获取代理配置
-        $proxy = config('v2board.proxy_server', null); // 从配置中读取代理地址
+        // 3. 获取代理配置
+        $proxy = config('v2board.proxy_server', null); // << 确认这里使用了你配置的正确键名
 
-        // 2. 准备 HTTP 客户端选项
+        // 4. 准备 HTTP 客户端选项
         $httpOptions = [];
         if (!empty($proxy)) {
-            // 直接将 SOCKS5 代理字符串赋值给 proxy 选项
             $httpOptions['proxy'] = $proxy;
-            // 记录日志时，可以考虑隐藏密码部分，但这比较复杂，简单起见先记录完整信息或只记录类型和主机
             Log::info('Emby API 请求将使用代理', ['proxy_host' => parse_url($proxy, PHP_URL_HOST)]);
         }
 
-        // 3. 发送 HTTP POST 请求 (使用 asForm 并添加代理选项)
+        // 5. 发送 HTTP POST 请求
         try {
             $response = Http::asForm()
-                ->withOptions($httpOptions) // 应用代理等选项
+                ->withOptions($httpOptions)
                 ->post($this->apiUrl, $requestData);
 
-            // 处理响应
+            // 6. 处理响应
             $responseData = $response->json();
             if (!$response->successful() || !isset($responseData['code']) || $responseData['code'] != 200) {
-                Log::error("创建 Emby 账号失败 (用户: {$user->email})。API 状态码: " . $response->status() . ", 响应: " . $response->body());
+                Log::error("创建 Emby 账号失败 (用户: {$user->email}, 请求用户名: {$generatedEmbyUsername})。API 状态码: " . $response->status() . ", 响应: " . $response->body());
                 $errorMessage = $responseData['message'] ?? ('HTTP ' . $response->status());
                 throw new \Exception('调用 Emby API 创建账号失败: ' . $errorMessage);
             }
+            // 确保返回的数据结构符合预期 (API 返回的用户名可能与我们生成的不一样，以 API 返回为准)
             if (!isset($responseData['data']['name']) || !isset($responseData['data']['password'])) {
-                Log::error("创建 Emby 账号成功，但 API 响应数据格式不完整 (用户: {$user->email})", ['response_data' => $responseData]);
+                Log::error("创建 Emby 账号成功，但 API 响应数据格式不完整 (用户: {$user->email}, 请求用户名: {$generatedEmbyUsername})", ['response_data' => $responseData]);
                 throw new \Exception('Emby API 响应数据格式错误');
             }
+
             $accountDetails = [
-                'username' => $responseData['data']['name'],
+                'username' => $responseData['data']['name'], // 以 API 返回的为准
                 'password' => $responseData['data']['password'],
                 'server_url' => $this->serverUrl,
-                'expire_time' => $responseData['data']['expire_time'] ?? null, // 获取到期时间
+                'expire_time' => $responseData['data']['expire_time'] ?? null,
+                'generated_username' => $generatedEmbyUsername // << 返回我们生成的用户名，用于后续保存到 user 表
             ];
-            Log::info("成功为用户 {$user->email} 创建 Emby 账号。用户名: {$accountDetails['username']}");
+            Log::info("成功为用户 {$user->email} 创建 Emby 账号。API 返回用户名: {$accountDetails['username']}");
             return $accountDetails;
 
         } catch (\Illuminate\Http\Client\RequestException $e) {
             Log::error("调用 Emby API 时发生连接或请求异常 (用户: {$user->email}): " . $e->getMessage());
-            // 如果异常信息包含 "cURL error 7: Failed to connect to..." 且设置了代理，可能是代理连接问题
             if (!empty($proxy) && str_contains($e->getMessage(), 'Failed to connect to')) {
                 Log::error("请检查代理设置是否正确以及代理服务器是否可用: " . $proxy);
             }
@@ -127,6 +130,70 @@ class EmbyService
             throw $e;
         }
     }
+
+    /**
+     * 调用上游 API 删除 Emby 账号
+     *
+     * @param string $embyUsername 要删除的 Emby 用户名
+     * @return bool 成功返回 true，失败返回 false
+     */
+    public function deleteAccount(string $embyUsername): bool
+    {
+        if ($this->apiKey === 'YOUR_DEFAULT_API_KEY' || empty($this->apiKey)) {
+            Log::error('无法删除 Emby 账号：API Key 未配置');
+            return false;
+        }
+        if (empty($this->apiUrl)) {
+            Log::error('无法删除 Emby 账号：API URL 未配置');
+            return false;
+        }
+
+        // 1. 准备 API 请求数据
+        $requestData = [
+            'type' => 'delete',
+            'api_key' => $this->apiKey,
+            'name' => $embyUsername,
+        ];
+        Log::info("准备调用 Emby API 删除账号", ['username' => $embyUsername]);
+
+        // 2. 获取代理配置
+        $proxy = config('v2board.proxy_server', null); // << 确认这里使用了你配置的正确键名
+
+        // 3. 准备 HTTP 客户端选项
+        $httpOptions = [];
+        if (!empty($proxy)) {
+            $httpOptions['proxy'] = $proxy;
+            Log::info('Emby API 删除请求将使用代理', ['proxy_host' => parse_url($proxy, PHP_URL_HOST)]);
+        }
+
+        // 4. 发送 HTTP POST 请求
+        try {
+            $response = Http::asForm()
+                ->withOptions($httpOptions)
+                ->post($this->apiUrl, $requestData);
+
+            // 5. 处理响应
+            $responseData = $response->json();
+            // 假设删除成功的 code 也是 200，如果不是需要根据 API 文档调整
+            if ($response->successful() && isset($responseData['code']) && $responseData['code'] == 200) {
+                Log::info("成功删除 Emby 账号: {$embyUsername}");
+                return true;
+            } else {
+                Log::error("删除 Emby 账号失败: {$embyUsername}。API 状态码: " . $response->status() . ", 响应: " . $response->body());
+                return false;
+            }
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::error("调用 Emby API 删除账号时发生连接或请求异常 (用户名: {$embyUsername}): " . $e->getMessage());
+            if (!empty($proxy) && str_contains($e->getMessage(), 'Failed to connect to')) {
+                Log::error("请检查代理设置是否正确以及代理服务器是否可用: " . $proxy);
+            }
+            return false;
+        } catch (\Exception $e) {
+            Log::error("处理 Emby 账号删除时发生异常 (用户名: {$embyUsername}): " . $e->getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * 将订单周期字符串映射到 Emby API 的 type_id
@@ -143,8 +210,4 @@ class EmbyService
         ];
         return $mapping[$period] ?? null;
     }
-
-
-    // 未来可以添加 deleteAccount 方法等
-    // public function deleteAccount(string $embyUsername) { ... }
 }

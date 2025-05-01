@@ -34,7 +34,8 @@ class CacheKey
         'PLAN' => '套餐信息',
         'LOGIN_UPDATES' => '登录信息更新',
         'BLACKLISTED_SESSIONS' => '黑名单会话',
-        'USD_TO_CNY_RATE' => '美元兑人民币汇率'
+        'USD_TO_CNY_RATE' => '美元兑人民币汇率',
+        'LAST_SEND_EMAIL_REMIND_EMBY_EXPIRE' => '最后发送 Emby 到期邮件提醒',
     ];
 
     public static function get(string $key, $uniqueValue)
