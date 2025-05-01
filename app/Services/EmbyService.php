@@ -44,6 +44,68 @@ class EmbyService
     }
 
     /**
+     * 检查 Emby API 是否可用
+     *
+     * @return bool true 如果 API 可达 (即使返回业务错误), false 如果连接失败或超时
+     */
+    public function isApiAvailable(): bool
+    {
+        // 如果基础配置缺失，则无法检查
+        if (empty($this->apiUrl) || empty($this->apiKey)) {
+            Log::error('Emby API check failed: URL or API Key not configured.');
+            return false;
+        }
+
+        // 获取代理配置 (确保使用你最终确认的配置键)
+        $proxy = config('v2board.proxy_server', config('v2board.proxy_server', null)); // 优先尝试 emby_proxy，然后是 proxy_server
+        $httpOptions = [];
+        if (!empty($proxy)) {
+            $httpOptions['proxy'] = $proxy;
+        }
+        // 为健康检查设置较短的超时时间
+        $httpOptions['timeout'] = 5; // 总超时 5 秒
+        $httpOptions['connect_timeout'] = 3; // 连接超时 3 秒
+
+        try {
+            // 发送一个最小化的 POST 请求，类型设为一个 API 不会处理的值
+            // 目的是测试连接和服务器是否响应，而不是测试具体功能
+            Log::debug('Checking Emby API availability...', ['url' => $this->apiUrl, 'options' => $httpOptions]);
+            $response = Http::asForm()
+                ->withOptions($httpOptions)
+                ->post($this->apiUrl, [
+                    'api_key' => $this->apiKey,
+                    'type' => 'ping_test_' . Str::random(5) // 使用随机 type 避免缓存或意外匹配
+                ]);
+
+            // 只要请求没有因连接问题、超时或严重服务器错误 (5xx) 而失败，
+            // 就认为 API 端点本身是“可用的”。即使它返回 4xx 错误（如无效类型），也说明服务在运行。
+            if ($response->serverError()) {
+                Log::warning('Emby API availability check: Server error encountered.', ['status' => $response->status()]);
+                // 你可以选择将 5xx 视为不可用，如果上游服务不稳定的话
+                // return false;
+            }
+            // 如果没有抛出异常，就认为 API 是可达的
+            Log::debug('Emby API availability check successful.', ['status' => $response->status()]);
+            return true;
+
+        } catch (ConnectionException $e) {
+            // 连接异常 (DNS, Refused, Unreachable)
+            Log::warning('Emby API availability check failed: Connection Exception.', ['message' => $e->getMessage()]);
+            return false;
+        } catch (RequestException $e) {
+            // 其他请求异常 (如 Timeout)
+            // 对于健康检查，超时通常也意味着服务不可靠或不可用
+            Log::warning('Emby API availability check failed: Request Exception (Timeout or other).', ['message' => $e->getMessage()]);
+            return false;
+        } catch (\Exception $e) {
+            // 其他未预料的错误
+            Log::error('Emby API availability check failed: Unexpected Exception.', ['message' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+
+    /**
      * 调用上游 API 创建 Emby 账号
      *
      * @param User $user
