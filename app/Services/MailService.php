@@ -259,4 +259,26 @@ class MailService
         ]);
 
     }
+
+    public function sendEmbyAccountDetails(User $user, array $embyAccountDetails)
+    {
+        $userName = explode('@', $user->email)[0];
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('您的 Emby 账号已开通 - :app_name', [
+                'app_name' => config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'sendEmbyAccount', // 新的模板名称
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'userName' => $userName,
+                'emby_username' => $embyAccountDetails['username'],
+                'emby_password' => $embyAccountDetails['password'],
+                'emby_server_url' => $embyAccountDetails['server_url'],
+                'emby_expire_time' => $embyAccountDetails['expire_time'],
+                // 可以传递其他需要的信息到模板
+            ]
+        ]);
+    }
 }

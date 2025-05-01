@@ -9,6 +9,9 @@ use App\Models\User;
 use App\Utils\CacheKey;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Services\MailService;
+use App\Services\EmbyService;
+use Illuminate\Support\Facades\Log;
 
 class OrderService
 {
@@ -22,6 +25,9 @@ class OrderService
     ];
     public $order;
     public $user;
+
+    protected $embyService; // 声明依赖属性
+    protected $mailService; // 声明依赖属性
 
     public function __construct(Order $order)
     {
@@ -204,6 +210,58 @@ class OrderService
         $mailService->remindUpdateSub($this->user, $plan);//必须是这个参数
         ////调用邮件提醒
 
+    }
+
+
+    public function handleEmbyOrder()
+    {
+        $order = $this->order;
+        $user = User::find($order->user_id);
+        if (!$user) {
+            Log::error("处理 Emby 订单失败：找不到用户 {$order->user_id}，订单号 {$order->trade_no}");
+            return;
+        }
+
+
+        // 在方法内部使用 app() 获取实例
+        $embyService = app(EmbyService::class);
+        $mailService = app(MailService::class);
+
+        DB::beginTransaction();
+
+        try {
+            // 1. 调用 EmbyService 创建账号
+            $embyAccountDetails = $embyService->createAccount($user, $order);
+
+            if (empty($embyAccountDetails)) {
+                // EmbyService 内部应该已经记录了错误，或者抛出了异常
+                // 这里可以再增加一层保险判断或记录
+                throw new \Exception('EmbyService未能成功创建账号或返回空详情');
+            }
+
+            // 2. 调用 MailService 发送邮件
+            $mailService->sendEmbyAccountDetails($user, $embyAccountDetails);
+
+            // 3. 更新订单状态为已完成
+            $order->status = 3;
+            if (!$order->save()) {
+                throw new \Exception('更新订单状态失败');
+            }
+
+            // 4. 提交事务
+            DB::commit();
+
+            Log::info("Emby 订单处理成功：订单号 {$order->trade_no}，用户 {$user->email}");
+
+        } catch (\Exception $e) {
+            // 5. 如果出错则回滚事务
+            DB::rollBack();
+            // EmbyService 或其他地方抛出的异常会被捕获
+            Log::error("处理 Emby 订单失败：订单号 {$order->trade_no}，错误: " . $e->getMessage());
+            // 考虑更新订单状态为失败
+            // $order->status = -1;
+            // $order->save();
+        }
     }
 
 

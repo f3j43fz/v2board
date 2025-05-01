@@ -48,7 +48,10 @@ class OrderHandleJob implements ShouldQueue
                 break;
             case 1:
 
-                if ($this->order->plan_id == 100) {
+                if ($this->order->plan_id == 10) {
+                    // 调用 OrderService 处理 Emby 订单的方法
+                    $orderService->handleEmbyOrder();
+                } elseif ($this->order->plan_id == 100) {
                     // 充值余额
                     $orderService->recharge();
                 } else {
