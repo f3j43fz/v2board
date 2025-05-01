@@ -7,6 +7,7 @@ use App\Models\Plan;
 use App\Models\User;
 use App\Utils\CacheKey;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class MailService
 {
