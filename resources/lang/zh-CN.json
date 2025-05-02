@@ -58,6 +58,7 @@
     "Gmail alias is not supported": "不支持 Gmail 别名邮箱",
     "Registration has closed": "本站已关闭注册",
     "You must use the invitation code to register": "必须使用邀请码才可以注册",
+    "The inviter account has been banned": "邀请人已被封禁",
     "Email verification code cannot be empty": "邮箱验证码不能为空",
     "Incorrect email verification code": "邮箱验证码有误",
     "Email already exists": "邮箱已在系统中存在",
