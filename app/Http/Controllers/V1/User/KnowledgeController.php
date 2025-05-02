@@ -79,33 +79,5 @@ class KnowledgeController extends Controller
     }
 
 
-    /**
-     * 格式化 Emby 访问数据，隐藏无权访问的内容
-     * @param string $body 知识库文章内容 (引用传递)
-     */
-    private function formatEmbyAccessData(&$body)
-    {
-        $startTag = '';
-        $endTag = '';
-        // 使用循环处理可能存在的多个 emby-access 块
-        while (($startPos = strpos($body, $startTag)) !== false) {
-            $endPos = strpos($body, $endTag, $startPos);
 
-            // 如果找不到结束标签或标签顺序错误，则跳出循环防止死循环
-            if ($endPos === false || $endPos <= $startPos) {
-                break;
-            }
-
-            // 提取包括开始和结束标签在内的整个块
-            $block = substr($body, $startPos, $endPos - $startPos + strlen($endTag));
-
-            // 替换为无权限提示信息 (可以自定义样式和文字)
-            $noAccessMessage = '<div class="v2board-no-access" style="padding: 15px; margin-bottom: 20px; border: 1px dashed #dc3545; background-color: #f8d7da; color: #721c24; border-radius: 4px;">'
-                . '<p style="margin:0;">🔒 ' . __("此部分内容需要有效的 Emby 订阅才能查看。") . '</p>'
-                // 可选：添加购买链接，指向你的 Emby 套餐购买页面 (如果 Emby 套餐有单独页面)
-                // . '<br><a class="btn btn-sm btn-danger" style="color:white; text-decoration:none;" href="#/plan/' . 1003 . '">前往购买/续费 Emby 订阅</a>'
-                . '</div>';
-            $body = str_replace($block, $noAccessMessage, $body);
-        }
-    }
 }
