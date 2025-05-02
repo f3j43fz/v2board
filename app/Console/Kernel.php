@@ -96,7 +96,7 @@ class Kernel extends ConsoleKernel
                     }
                 });
             \Illuminate\Support\Facades\Log::info('每日 Emby 到期提醒邮件检查任务执行完毕。');
-        })->dailyAt('08:00'); // 设置合适的执行时间，例如每天早上8点
+        })->dailyAt('10:00'); // 设置合适的执行时间，例如每天早上10点
 
 
 
