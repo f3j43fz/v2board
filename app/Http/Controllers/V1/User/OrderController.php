@@ -97,6 +97,11 @@ class OrderController extends Controller
             abort(500, __('This plan does not require repeated purchases; just maintain a sufficient balance'));
         }
 
+        // 防止 Emby 套餐重复购买
+        if ($plan->id == 10 && !empty($user->emby_user_name) && $user->emby_expired_at > time()) {
+            abort(500, __('This plan does not require repeated purchases; just maintain a sufficient balance'));
+        }
+
         if ($user->plan_id !== $plan->id && !$planService->haveCapacity() && $request->input('period') !== 'reset_price') {
             abort(500, __('Current product is sold out'));
         }
