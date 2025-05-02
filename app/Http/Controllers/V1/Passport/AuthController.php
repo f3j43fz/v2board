@@ -165,17 +165,42 @@ class AuthController extends Controller
         $user->password = password_hash($password, PASSWORD_DEFAULT);
         $user->uuid = Helper::guid(true);
         $user->token = Helper::guid();
+//        if ($invite_code) {
+//            $inviteCode = InviteCode::where('code', $invite_code)
+//                ->where('status', 0)
+//                ->first();
+//            if (!$inviteCode) {
+//                if ((int)config('v2board.invite_force', 0)) {
+//                    abort(500, __('Invalid invitation code'));
+//                }
+//            } else {
+//                $user->invite_user_id = $inviteCode->user_id ? $inviteCode->user_id : null;
+//                if (!(int)config('v2board.invite_never_expire', 0)) {
+//                    $inviteCode->status = 1;
+//                    $inviteCode->save();
+//                }
+//                $this->addInviterTime($inviteCode->user_id);
+//            }
+//        }
+
         if ($invite_code) {
             $inviteCode = InviteCode::where('code', $invite_code)
                 ->where('status', 0)
                 ->first();
-            if (!$inviteCode) {
+
+            if (! $inviteCode) {
                 if ((int)config('v2board.invite_force', 0)) {
                     abort(500, __('Invalid invitation code'));
                 }
             } else {
-                $user->invite_user_id = $inviteCode->user_id ? $inviteCode->user_id : null;
-                if (!(int)config('v2board.invite_never_expire', 0)) {
+                // —— 新增：检查邀请人是否被封禁 ——
+                $inviter = User::find($inviteCode->user_id);
+                if ($inviter && $inviter->banned) {
+                    abort(500, __('The inviter account has been banned'));
+                }
+                // —— 至此，才真正绑定邀请人 ——
+                $user->invite_user_id = $inviteCode->user_id;
+                if (! (int)config('v2board.invite_never_expire', 0)) {
                     $inviteCode->status = 1;
                     $inviteCode->save();
                 }
