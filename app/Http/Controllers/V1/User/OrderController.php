@@ -99,7 +99,7 @@ class OrderController extends Controller
 
         // 防止 Emby 套餐重复购买
         if ($plan->id == 10 && !empty($user->emby_user_name) && $user->emby_expired_at > time()) {
-            abort(500, __('This plan does not require repeated purchases; just maintain a sufficient balance'));
+            abort(500, __('Your Emby subscription has not expired yet, so there’s no need to purchase it again.'));
         }
 
         if ($user->plan_id !== $plan->id && !$planService->haveCapacity() && $request->input('period') !== 'reset_price') {
