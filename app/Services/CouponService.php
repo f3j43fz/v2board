@@ -153,9 +153,10 @@ class CouponService
 
         // Emby 优惠码仅供购买过VPN订阅套餐的用户使用
         if($this->coupon->id == 133){
-            if(!$this->userPlanPurchasedStatus){
-                abort(500, __('您从未购买过其他订阅，没有资格使用本优惠券'));
-            }
+//            if(!$this->userPlanPurchasedStatus){
+//                abort(500, __('您从未购买过其他订阅，没有资格使用本优惠券'));
+//            }
+            abort(500, __('您从未购买过其他订阅，没有资格使用本优惠券'));
         }
 
     }
