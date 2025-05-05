@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CouponService
@@ -12,6 +13,7 @@ class CouponService
     public $planId;
     public $userId;
     public $period;
+    public $userPlanPurchasedStatus;
     public $userOrderStatus;
     public $userInviterId;
 
@@ -27,6 +29,7 @@ class CouponService
         $this->setPlanId($order->plan_id);
         $this->setUserId($order->user_id);
         $this->setPeriod($order->period);
+        $this->setPlanPurchased($order->user_id);
         $this->check();
         switch ($this->coupon->type) {
             case 1:
@@ -84,6 +87,12 @@ class CouponService
         $this->userInviterId = $user->invite_user_id;
     }
 
+    public function setPlanPurchased($userId)
+    {
+        $user = User::find($userId);
+        $this->userPlanPurchasedStatus = $user->has_Purchased_Plan_Before;
+    }
+
     public function checkLimitUseWithUser():bool
     {
         $usedCount = Order::where('coupon_id', $this->coupon->id)
@@ -139,6 +148,13 @@ class CouponService
             }
             if (!in_array($this->userInviterId, $inviterIds)) {
                 abort(500, __('您没有资格使用本优惠券'));
+            }
+        }
+
+        // Emby 优惠码仅供购买过VPN订阅套餐的用户使用
+        if($this->coupon->id == 133){
+            if(!$this->userPlanPurchasedStatus){
+                abort(500, __('您从未购买过其他订阅，没有资格使用本优惠券'));
             }
         }
 
