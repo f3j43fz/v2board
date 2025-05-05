@@ -147,7 +147,7 @@ class CouponService
                 abort(500, __('由于您没有邀请人，无法判断您是否有资格使用本优惠券'));
             }
             if (!in_array($this->userInviterId, $inviterIds)) {
-                abort(500, __('您没有资格使用本优惠券'));
+                abort(500, __('您没有资格使用该邀请人的优惠券'));
             }
         }
 
@@ -155,7 +155,7 @@ class CouponService
         // 133 为 Emby 专属优惠券的 id
         if($this->coupon->id == 133){
             if((int) $this->userPlanPurchasedStatus === 0){
-                abort(500, __('您从未购买过其他订阅，没有资格使用本优惠券'));
+                abort(500, __('您从未购买过其他订阅，暂无资格使用本优惠券'));
             }
         }
 
