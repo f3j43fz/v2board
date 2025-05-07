@@ -29,7 +29,7 @@ class CouponService
         $this->setPlanId($order->plan_id);
         $this->setUserId($order->user_id);
         $this->setPeriod($order->period);
-        $this->setPlanPurchased($order->user_id);
+        $this->setPlanPurchased($order->user);
         $this->check();
         switch ($this->coupon->type) {
             case 1:
@@ -87,9 +87,8 @@ class CouponService
         $this->userInviterId = $user->invite_user_id;
     }
 
-    public function setPlanPurchased($userId)
+    public function setPlanPurchased(User $user)
     {
-        $user = User::find($userId);
         $this->userPlanPurchasedStatus = $user->has_Purchased_Plan_Before;
     }
 
