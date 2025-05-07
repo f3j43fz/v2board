@@ -574,6 +574,7 @@ rules:
   - 'DOMAIN-SUFFIX,mcgw1.ibllc.com.cn,DIRECT'
   - 'DOMAIN-SUFFIX,mcgw1_hb1.ibllc.com.cn,DIRECT'
   - 'DOMAIN-SUFFIX,originlab.com,DIRECT'
+  - 'DOMAIN-SUFFIX,sciencedirectassets.com,DIRECT'
   # adobe
   - 'DOMAIN-SUFFIX,adobe.io,DIRECT'
   - 'DOMAIN-SUFFIX,adobe.com,DIRECT'
