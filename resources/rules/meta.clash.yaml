@@ -669,6 +669,8 @@ rules:
   - 'DOMAIN,yacd.haishan.me,DIRECT'
   #本地私有地址
   - 'RULE-SET,private,DIRECT,no-resolve'
+  # qq
+  - 'DOMAIN,zyx.qq.com,REJECT'
   #黑黑黑名单
   - 'DOMAIN-SUFFIX,tly.llc,REJECT'
   - 'DOMAIN-SUFFIX,tly.bet,REJECT'
