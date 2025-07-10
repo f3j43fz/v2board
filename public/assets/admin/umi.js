@@ -4482,6 +4482,15 @@
                     defaultValue: t.subscribe_url,
                     onChange: e => this.set("site", "subscribe_url", e.target.value)
                 })), f.a.createElement(m, {
+                    title: "\u8ba2\u9605\u8def\u5f84",
+                    description: "\u7528\u4e8e\u8ba2\u9605\u4f7f\u7528\uff0c\u52a0\u5728\u9ed8\u8ba4\u7684\u0061\u0070\u0069\u002f\u0076\u0031\u002f\u0063\u006c\u0069\u0065\u006e\u0074\u002f\u0073\u0075\u0062\u0073\u0063\u0072\u0069\u0062\u0065\u7684\u540e\u9762\uff0c\u5982\u002f\u0073\u0075\u0062\u0073\u0063\u0072\u0069\u0062\u0065\u002f\u0070\u0061\u0074\u0068\u0031\u002f\u0070\u0061\u0074\u0068\u0032\uff0c\u7559\u7a7a\u5219\u8868\u793a\u7ef4\u6301\u9ed8\u8ba4\u8def\u5f84"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "\u8bf7\u8f93\u5165\u8def\u5f84\uff0c\u9ed8\u8ba4\u4e3a\u7a7a",
+                    defaultValue: t.sub_path,
+                    onChange: e => this.set("site", "sub_path", e.target.value)
+                })), f.a.createElement(m, {
                     title: "\u7528\u6237\u6761\u6b3e(TOS)URL",
                     description: "\u7528\u4e8e\u8df3\u8f6c\u5230\u7528\u6237\u6761\u6b3e(TOS)"
                 }, f.a.createElement("input", {

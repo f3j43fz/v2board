@@ -154,7 +154,7 @@ class UserController extends Controller
                 abort(500, __('Subscription plan does not exist'));
             }
         }
-        $user['subscribe_url'] = Helper::getSubscribeUrl("/api/v1/client/subscribe?token={$user['token']}");
+        $user['subscribe_url'] = Helper::buildSubscribeUrl($user['token']);
 //        if (($user['expired_at'] === NULL ||($user['expired_at'] != NULL && $user['expired_at'] < time())) && $user['is_PAGO'] == 0) {
 //            $user['subscribe_url'] = 'ni hai mei you tao can huo zhe tao can yi guo qi, qing gou mai tao can';
 //        }
@@ -177,7 +177,7 @@ class UserController extends Controller
             abort(500, __('Reset failed'));
         }
         return response([
-            'data' => Helper::getSubscribeUrl('/api/v1/client/subscribe?token=' . $user->token)
+            'data' => Helper::buildSubscribeUrl($user->token)
         ]);
     }
 

@@ -111,12 +111,23 @@ class Helper
         }
     }
 
-    public static function getSubscribeUrl($path)
+    // ① 先求去掉域名的「纯路径」
+    public static function buildSubscribePath(): string
     {
-        $subscribeUrls = explode(',', config('v2board.subscribe_url'));
-        $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)];
-        if ($subscribeUrl) return $subscribeUrl . $path;
-        return url($path);
+        return route('client.subscribe', [], false);
+    }
+
+    // ② 再拼域名、随机分流、token
+    public static function buildSubscribeUrl(string $token): string
+    {
+        $path = self::buildSubscribePath() . '?token=' . $token;
+
+        // 支持多个加速域名，用 , 分隔
+        $domains = array_filter(explode(',', config('v2board.subscribe_url', '')));
+        if ($domains) {
+            return $domains[array_rand($domains)] . $path;
+        }
+        return url($path);      // 没配分流域名就走站点默认域名
     }
     public static function randomPort($range) {
         $portRange = explode('-', $range);

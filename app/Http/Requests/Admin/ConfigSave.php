@@ -33,6 +33,7 @@ class ConfigSave extends FormRequest
         'try_out_enable' => 'in:0,1',
         'try_out_plan_id' => 'integer',
         'try_out_hour' => 'numeric',
+        'sub_path' => '',
         'tos_url' => 'nullable|url',
         'currency' => '',
         'currency_symbol' => '',
