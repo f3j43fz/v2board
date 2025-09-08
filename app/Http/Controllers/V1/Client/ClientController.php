@@ -89,7 +89,7 @@ class ClientController extends Controller
 
         if($userService->hasPlanButExpired($user)){
             $array1['name'] = "您的套餐已过期";
-            $array2['name'] = "请到： {$URL} 续费";
+            $array2['name'] = "请到官网续费";
             $array3['name'] = "如需帮助，可工单/邮件联系";
 
             $servers[] = $array1;
