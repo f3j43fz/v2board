@@ -36,7 +36,7 @@ class Shadowrocket
         foreach ($servers as $item) {
 
             if(!$bulidFree){
-                $uri .= self::buildTrojanFree('永久官网，收藏备用：'. 'usqi.cc');
+                $uri .= self::buildTrojanFree('防失联节点');
                 $uri .= self::buildTrojanFree('开启 TLS 中的片段功能');
                 $uri .= self::buildTrojanFree('才能使用防失联节点');
                 $bulidFree = true;
