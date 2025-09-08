@@ -97,7 +97,7 @@ class ClientController extends Controller
             $servers[] = $array3;
         }elseif ($userService->hasPlanButExhausted($user)){
             $array1['name'] = "您的流量已耗尽";
-            $array2['name'] = "请到： {$URL} 续费";
+            $array2['name'] = "请到官网续费";
             $array3['name'] = "如需帮助，可工单/邮件联系";
 
             $servers[] = $array1;
@@ -105,7 +105,7 @@ class ClientController extends Controller
             $servers[] = $array3;
         }elseif (($user->is_PAGO == 1 && $user->balance == 0)){
             $array1['name'] = "您的余额不足";
-            $array2['name'] = "请到： {$URL} 充值";
+            $array2['name'] = "请到官网充值";
             $array3['name'] = "如需帮助，可工单/邮件联系";
 
             $servers[] = $array1;
