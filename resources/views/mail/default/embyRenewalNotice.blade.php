@@ -14,7 +14,7 @@
                         <tbody>
                         <tr>
                             <td style="font-size:24px; line-height:1.5; color:#000; padding-bottom: 20px; font-weight: bold;">
-                                Emby 服务到期提醒
+                                Emby 服务续费成功
                             </td>
                         </tr>
                         <tr>
@@ -22,26 +22,27 @@
                                 尊敬的用户 <strong>{{$userName}}</strong>，
                                 <br />
                                 <br />
-                                我们注意到您在{{$name}}的媒体库服务将在 <strong>{{ $remind_days }} 天内</strong> ({{ $emby_expire_date }}) 到期。
+                                感谢您的续费！您的 Emby 媒体库服务已成功延期，服务详情如下：
                                 <br />
                                 <br />
-                                为了确保您能够继续访问我们的媒体库服务，请及时访问我们的网站进行续费。
-                                <br />
-                                <br />
-                                <div style="background-color: #e8f5e8; padding: 15px 20px; border-radius: 5px; border: 1px solid #c3e6c3; margin: 15px 0;">
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;"><strong>温馨提示：</strong></p>
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;">• 续费后您的 Emby 用户名和密码保持不变</p>
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;">• 无需重新设置或重新登录客户端</p>
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;">• 服务将立即延期，不会中断您的观影体验</p>
+                                {{-- 使用一个稍微突出显示的区域来展示服务信息 --}}
+                                <div style="background-color: #f8f8f8; padding: 15px 20px; border-radius: 5px; border: 1px solid #eee; margin: 15px 0;">
+                                    <p style="margin: 5px 0; font-size: 15px;"><strong>服务器地址:</strong> {{ $emby_server_url }}</p>
+                                    <p style="margin: 5px 0; font-size: 15px;"><strong>登录用户名:</strong> {{ $emby_username }}</p>
+                                    <p style="margin: 5px 0; font-size: 15px;"><strong>登录密码:</strong> 保持不变（请使用之前的密码）</p>
+                                    <p style="margin: 5px 0; font-size: 15px;"><strong>新到期时间:</strong> {{ $emby_expire_time }}</p>
                                 </div>
                                 <br />
-                                如果您已经续费，请忽略此邮件。如果您有任何疑问或者需要帮助，欢迎通过网站工单或邮件联系我们。
+                                您的账号和密码保持不变，可以继续使用原有的登录信息访问 Emby 服务。
+                                <br />
+                                <br />
+                                如果您有任何疑问或者需要帮助，欢迎通过网站工单或邮件联系我们。
                                 <br />
                                 <br />
                                 -----------------
                                 <br />
                                 <br />
-                                {{$name}} 团队敬上<br />祝您生活愉快！
+                                {{$name}} 团队敬上<br />祝您观影愉快！
                             </td>
                         </tr>
                         </tbody>
@@ -54,7 +55,7 @@
                         <tbody>
                         <tr>
                             <td style="text-align: center;">
-                                <a href="{{$url}}" style="font-size:14px; color:#929292; text-decoration: none;">访问 {{$name}} 官网进行续费</a>
+                                <a href="{{$url}}" style="font-size:14px; color:#929292; text-decoration: none;">访问 {{$name}} 官网</a>
                             </td>
                         </tr>
                         </tbody>

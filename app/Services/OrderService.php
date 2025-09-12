@@ -212,59 +212,6 @@ class OrderService
 
     }
 
-
-//    public function handleEmbyOrder()
-//    {
-//        $order = $this->order;
-//        $user = User::find($order->user_id);
-//        if (!$user) {
-//            Log::error("处理 Emby 订单失败：找不到用户 {$order->user_id}，订单号 {$order->trade_no}");
-//            return;
-//        }
-//
-//
-//        // 在方法内部使用 app() 获取实例
-//        $embyService = app(EmbyService::class);
-//        $mailService = app(MailService::class);
-//
-//        DB::beginTransaction();
-//
-//        try {
-//            // 1. 调用 EmbyService 创建账号
-//            $embyAccountDetails = $embyService->createAccount($user, $order);
-//
-//            if (empty($embyAccountDetails)) {
-//                // EmbyService 内部应该已经记录了错误，或者抛出了异常
-//                // 这里可以再增加一层保险判断或记录
-//                throw new \Exception('EmbyService未能成功创建账号或返回空详情');
-//            }
-//
-//            // 2. 调用 MailService 发送邮件
-//            $mailService->sendEmbyAccountDetails($user, $embyAccountDetails);
-//
-//            // 3. 更新订单状态为已完成
-//            $order->status = 3;
-//            if (!$order->save()) {
-//                throw new \Exception('更新订单状态失败');
-//            }
-//
-//            // 4. 提交事务
-//            DB::commit();
-//
-//            Log::info("Emby 订单处理成功：订单号 {$order->trade_no}，用户 {$user->email}");
-//
-//        } catch (\Exception $e) {
-//            // 5. 如果出错则回滚事务
-//            DB::rollBack();
-//            // EmbyService 或其他地方抛出的异常会被捕获
-//            Log::error("处理 Emby 订单失败：订单号 {$order->trade_no}，错误: " . $e->getMessage());
-//            // 考虑更新订单状态为失败
-//            // $order->status = -1;
-//            // $order->save();
-//        }
-//    }
-
-
     public function handleEmbyOrder()
     {
         $order = $this->order;
@@ -280,43 +227,79 @@ class OrderService
         DB::beginTransaction();
 
         try {
-            // 1. 调用 EmbyService 创建账号
-            $embyAccountDetails = $embyService->createAccount($user, $order);
+            // 判断是首次购买还是续费
+            $isFirstTimePurchase = empty($user->emby_user_name);
 
-            if (empty($embyAccountDetails) || !isset($embyAccountDetails['generated_username'])) {
-                throw new \Exception('EmbyService 未能成功创建账号或未返回生成的用户名');
+            if ($isFirstTimePurchase) {
+                // 首次购买：调用创建账号API
+                $embyAccountDetails = $embyService->createAccount($user, $order);
+
+                if (empty($embyAccountDetails) || !isset($embyAccountDetails['generated_username'])) {
+                    throw new \Exception('EmbyService 未能成功创建账号或未返回生成的用户名');
+                }
+
+                // 计算新的 Emby 到期时间戳
+                $newEmbyExpiredAt = $this->calculateEmbyExpireTime($order->period, $user);
+                if ($newEmbyExpiredAt === null) {
+                    throw new \Exception("无法为订单 {$order->trade_no} 计算 Emby 到期时间，周期: {$order->period}");
+                }
+
+                // 更新用户信息：保存用户名、到期时间、状态
+                $user->emby_user_name = $embyAccountDetails['generated_username'];
+                $user->emby_expired_at = $newEmbyExpiredAt;
+                $user->emby_status = 'active';
+
+                if (!$user->save()) {
+                    throw new \Exception('更新用户 Emby 信息失败');
+                }
+
+                // 发送首次开通邮件
+                $mailService->sendEmbyAccountDetails($user, $embyAccountDetails);
+
+                Log::info("Emby 首次开通成功：订单号 {$order->trade_no}，用户 {$user->email}，Emby用户名 {$user->emby_user_name}, 到期时间: " . date('Y-m-d H:i:s', $newEmbyExpiredAt));
+
+            } else {
+                // 续费：区分提前续费和到期后续费
+                $currentTime = time();
+                $isExpired = ($user->emby_expired_at < $currentTime);
+
+                $newEmbyExpiredAt = $this->calculateEmbyExpireTime($order->period, $user);
+                if ($newEmbyExpiredAt === null) {
+                    throw new \Exception("无法为订单 {$order->trade_no} 计算 Emby 到期时间，周期: {$order->period}");
+                }
+
+                // 更新到期时间和状态
+                $user->emby_expired_at = $newEmbyExpiredAt;
+                $user->emby_status = 'active';
+
+                if (!$user->save()) {
+                    throw new \Exception('更新用户 Emby 信息失败');
+                }
+
+                // 如果是到期后续费，需要调用启用API
+                if ($isExpired) {
+                    if (!$embyService->enableAccount($user->emby_user_name)) {
+                        Log::warning("启用 Emby 账号失败，但订单继续处理：用户 {$user->email}，用户名 {$user->emby_user_name}");
+                    }
+                    Log::info("Emby 到期后续费成功：订单号 {$order->trade_no}，用户 {$user->email}，已重新启用账号");
+                } else {
+                    Log::info("Emby 提前续费成功：订单号 {$order->trade_no}，用户 {$user->email}");
+                }
+
+                // 发送续费邮件（账号密码不变）
+                $mailService->sendEmbyRenewalNotice($user, $order);
+
+                Log::info("Emby 续费成功：订单号 {$order->trade_no}，用户 {$user->email}，Emby用户名 {$user->emby_user_name}, 到期时间: " . date('Y-m-d H:i:s', $newEmbyExpiredAt));
             }
 
-            // 2. 计算新的 Emby 到期时间戳 (传入 user 对象以获取当前的到期时间)
-            $newEmbyExpiredAt = $this->calculateEmbyExpireTime($order->period, $user); // << 传入 $user
-            if ($newEmbyExpiredAt === null) {
-                Log::warning("无法为订单 {$order->trade_no} 计算 Emby 到期时间，周期: {$order->period}");
-                // 如果无法计算到期时间，可以选择不更新，或者抛出错误，取决于业务逻辑
-                // 这里我们选择不更新，但可能需要根据实际需求调整
-            }
-
-            // 3. 更新 User 模型的 Emby 相关字段
-            $user->emby_user_name = $embyAccountDetails['generated_username']; // 保存生成的用户名
-            if ($newEmbyExpiredAt !== null) {
-                $user->emby_expired_at = $newEmbyExpiredAt; // << 保存计算出的新到期时间戳
-            }
-            if (!$user->save()) {
-                throw new \Exception('更新用户 Emby 信息失败');
-            }
-
-            // 4. 调用 MailService 发送邮件
-            $mailService->sendEmbyAccountDetails($user, $embyAccountDetails);
-
-            // 5. 更新订单状态为已完成
+            // 更新订单状态为已完成
             $order->status = 3;
             if (!$order->save()) {
                 throw new \Exception('更新订单状态失败');
             }
 
-            // 6. 提交事务
+            // 提交事务
             DB::commit();
-
-            Log::info("Emby 订单处理成功：订单号 {$order->trade_no}，用户 {$user->email}，Emby用户名 {$user->emby_user_name}, Emby新到期时间: " . ($newEmbyExpiredAt ? date('Y-m-d H:i:s', $newEmbyExpiredAt) : '未更新'));
 
         } catch (\Exception $e) {
             DB::rollBack();

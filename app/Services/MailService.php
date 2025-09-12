@@ -330,4 +330,64 @@ class MailService
             ]
         ]);
     }
+
+    /**
+     * 发送 Emby 续费成功通知邮件
+     *
+     * @param User $user
+     * @param \App\Models\Order $order
+     */
+    public function sendEmbyRenewalNotice(User $user, $order)
+    {
+        $userName = explode('@', $user->email)[0];
+        
+        // 获取 Emby 服务器地址
+        $embyServerUrl = config('v2board.emby_server_url', 'http://emby.yourdomain.com:8096');
+        
+        // 格式化到期时间
+        $expireTime = $user->emby_expired_at ? date('Y-m-d H:i:s', $user->emby_expired_at) : '未知';
+        
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('Emby 服务续费成功 - :app_name', [
+                'app_name' => config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'embyRenewalNotice',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'userName' => $userName,
+                'emby_username' => $user->emby_user_name,
+                'emby_server_url' => $embyServerUrl,
+                'emby_expire_time' => $expireTime,
+            ]
+        ]);
+    }
+
+    /**
+     * 发送 Emby 服务过期通知邮件
+     *
+     * @param User $user
+     */
+    public function sendEmbyExpirationNotice(User $user)
+    {
+        $userName = explode('@', $user->email)[0];
+        
+        // 格式化过期时间
+        $expireDate = $user->emby_expired_at ? date('Y-m-d H:i:s', $user->emby_expired_at) : '未知';
+        
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => __('Emby 服务已过期 - :app_name', [
+                'app_name' => config('v2board.app_name', 'V2board')
+            ]),
+            'template_name' => 'embyExpirationNotice',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
+                'userName' => $userName,
+                'emby_expire_date' => $expireDate,
+            ]
+        ]);
+    }
 }

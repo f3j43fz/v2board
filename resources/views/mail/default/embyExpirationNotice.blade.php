@@ -13,8 +13,8 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                         <tr>
-                            <td style="font-size:24px; line-height:1.5; color:#000; padding-bottom: 20px; font-weight: bold;">
-                                Emby 服务到期提醒
+                            <td style="font-size:24px; line-height:1.5; color:#e74c3c; padding-bottom: 20px; font-weight: bold;">
+                                Emby 服务已过期
                             </td>
                         </tr>
                         <tr>
@@ -22,26 +22,26 @@
                                 尊敬的用户 <strong>{{$userName}}</strong>，
                                 <br />
                                 <br />
-                                我们注意到您在{{$name}}的媒体库服务将在 <strong>{{ $remind_days }} 天内</strong> ({{ $emby_expire_date }}) 到期。
+                                我们遗憾地通知您，您的 Emby 媒体库服务已于 <strong>{{ $emby_expire_date }}</strong> 过期。
                                 <br />
                                 <br />
-                                为了确保您能够继续访问我们的媒体库服务，请及时访问我们的网站进行续费。
-                                <br />
-                                <br />
-                                <div style="background-color: #e8f5e8; padding: 15px 20px; border-radius: 5px; border: 1px solid #c3e6c3; margin: 15px 0;">
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;"><strong>温馨提示：</strong></p>
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;">• 续费后您的 Emby 用户名和密码保持不变</p>
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;">• 无需重新设置或重新登录客户端</p>
-                                    <p style="margin: 5px 0; font-size: 15px; color: #2d5d2d;">• 服务将立即延期，不会中断您的观影体验</p>
+                                <div style="background-color: #fff2f2; padding: 15px 20px; border-radius: 5px; border: 1px solid #f5c6cb; margin: 15px 0;">
+                                    <p style="margin: 5px 0; font-size: 15px; color: #721c24;"><strong>重要提醒：</strong></p>
+                                    <p style="margin: 5px 0; font-size: 15px; color: #721c24;">• 您的 Emby 账号已被暂停，暂时无法访问服务</p>
+                                    <p style="margin: 5px 0; font-size: 15px; color: #721c24;">• 您的账号和数据仍然保留，续费后即可恢复正常使用</p>
+                                    <p style="margin: 5px 0; font-size: 15px; color: #721c24;">• 续费后无需重新设置，原有账号密码继续有效</p>
                                 </div>
                                 <br />
-                                如果您已经续费，请忽略此邮件。如果您有任何疑问或者需要帮助，欢迎通过网站工单或邮件联系我们。
+                                为了恢复您的 Emby 服务，请尽快访问我们的网站进行续费。续费后，您的服务将立即恢复，无需重新配置。
+                                <br />
+                                <br />
+                                如果您有任何疑问或者需要帮助，欢迎通过网站工单或邮件联系我们。
                                 <br />
                                 <br />
                                 -----------------
                                 <br />
                                 <br />
-                                {{$name}} 团队敬上<br />祝您生活愉快！
+                                {{$name}} 团队敬上
                             </td>
                         </tr>
                         </tbody>

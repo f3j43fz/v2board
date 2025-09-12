@@ -210,38 +210,64 @@ class EmbyService
     }
 
     /**
-     * 调用上游 API 删除 Emby 账号
+     * 调用上游 API 启用 Emby 账号
      *
-     * @param string $embyUsername 要删除的 Emby 用户名
+     * @param string $embyUsername 要启用的 Emby 用户名
      * @return bool 成功返回 true，失败返回 false
      */
-    public function deleteAccount(string $embyUsername): bool
+    public function enableAccount(string $embyUsername): bool
+    {
+        return $this->setPolicyStatus($embyUsername, 'enable');
+    }
+
+    /**
+     * 调用上游 API 禁用 Emby 账号
+     *
+     * @param string $embyUsername 要禁用的 Emby 用户名
+     * @return bool 成功返回 true，失败返回 false
+     */
+    public function disableAccount(string $embyUsername): bool
+    {
+        return $this->setPolicyStatus($embyUsername, 'disable');
+    }
+
+    /**
+     * 调用上游 API 设置用户策略状态（启用/禁用）
+     *
+     * @param string $embyUsername 用户名
+     * @param string $status 状态：'enable' 或 'disable'
+     * @return bool 成功返回 true，失败返回 false
+     */
+    private function setPolicyStatus(string $embyUsername, string $status): bool
     {
         if ($this->apiKey === 'YOUR_DEFAULT_API_KEY' || empty($this->apiKey)) {
-            Log::error('无法删除 Emby 账号：API Key 未配置');
+            Log::error("无法{$status} Emby 账号：API Key 未配置");
             return false;
         }
         if (empty($this->apiUrl)) {
-            Log::error('无法删除 Emby 账号：API URL 未配置');
+            Log::error("无法{$status} Emby 账号：API URL 未配置");
             return false;
         }
 
+        $actionText = $status === 'enable' ? '启用' : '禁用';
+
         // 1. 准备 API 请求数据
         $requestData = [
-            'type' => 'delete',
+            'type' => 'policy',
             'api_key' => $this->apiKey,
             'name' => $embyUsername,
+            'status' => $status,
         ];
-        Log::info("准备调用 Emby API 删除账号", ['username' => $embyUsername]);
+        Log::info("准备调用 Emby API {$actionText}账号", ['username' => $embyUsername, 'status' => $status]);
 
         // 2. 获取代理配置
-        $proxy = config('v2board.proxy_server', null); // << 确认这里使用了你配置的正确键名
+        $proxy = config('v2board.proxy_server', null);
 
         // 3. 准备 HTTP 客户端选项
         $httpOptions = [];
         if (!empty($proxy)) {
             $httpOptions['proxy'] = $proxy;
-            Log::info('Emby API 删除请求将使用代理', ['proxy_host' => parse_url($proxy, PHP_URL_HOST)]);
+            Log::info("Emby API {$actionText}请求将使用代理", ['proxy_host' => parse_url($proxy, PHP_URL_HOST)]);
         }
 
         // 4. 发送 HTTP POST 请求
@@ -252,25 +278,88 @@ class EmbyService
 
             // 5. 处理响应
             $responseData = $response->json();
-            // 假设删除成功的 code 也是 200，如果不是需要根据 API 文档调整
             if ($response->successful() && isset($responseData['code']) && $responseData['code'] == 200) {
-                Log::info("成功删除 Emby 账号: {$embyUsername}");
+                Log::info("成功{$actionText} Emby 账号: {$embyUsername}");
                 return true;
             } else {
-                Log::error("删除 Emby 账号失败: {$embyUsername}。API 状态码: " . $response->status() . ", 响应: " . $response->body());
+                Log::error("{$actionText} Emby 账号失败: {$embyUsername}。API 状态码: " . $response->status() . ", 响应: " . $response->body());
                 return false;
             }
         } catch (\Illuminate\Http\Client\RequestException $e) {
-            Log::error("调用 Emby API 删除账号时发生连接或请求异常 (用户名: {$embyUsername}): " . $e->getMessage());
+            Log::error("调用 Emby API {$actionText}账号时发生连接或请求异常 (用户名: {$embyUsername}): " . $e->getMessage());
             if (!empty($proxy) && str_contains($e->getMessage(), 'Failed to connect to')) {
                 Log::error("请检查代理设置是否正确以及代理服务器是否可用: " . $proxy);
             }
             return false;
         } catch (\Exception $e) {
-            Log::error("处理 Emby 账号删除时发生异常 (用户名: {$embyUsername}): " . $e->getMessage());
+            Log::error("处理 Emby 账号{$actionText}时发生异常 (用户名: {$embyUsername}): " . $e->getMessage());
             return false;
         }
     }
+
+    /**
+     * 调用上游 API 删除 Emby 账号
+     * 注意：此方法已弃用，保留用于紧急情况
+     *
+     * @param string $embyUsername 要删除的 Emby 用户名
+     * @return bool 成功返回 true，失败返回 false
+     */
+    // public function deleteAccount(string $embyUsername): bool
+    // {
+    //     if ($this->apiKey === 'YOUR_DEFAULT_API_KEY' || empty($this->apiKey)) {
+    //         Log::error('无法删除 Emby 账号：API Key 未配置');
+    //         return false;
+    //     }
+    //     if (empty($this->apiUrl)) {
+    //         Log::error('无法删除 Emby 账号：API URL 未配置');
+    //         return false;
+    //     }
+
+    //     // 1. 准备 API 请求数据
+    //     $requestData = [
+    //         'type' => 'delete',
+    //         'api_key' => $this->apiKey,
+    //         'name' => $embyUsername,
+    //     ];
+    //     Log::info("准备调用 Emby API 删除账号", ['username' => $embyUsername]);
+
+    //     // 2. 获取代理配置
+    //     $proxy = config('v2board.proxy_server', null); // << 确认这里使用了你配置的正确键名
+
+    //     // 3. 准备 HTTP 客户端选项
+    //     $httpOptions = [];
+    //     if (!empty($proxy)) {
+    //         $httpOptions['proxy'] = $proxy;
+    //         Log::info('Emby API 删除请求将使用代理', ['proxy_host' => parse_url($proxy, PHP_URL_HOST)]);
+    //     }
+
+    //     // 4. 发送 HTTP POST 请求
+    //     try {
+    //         $response = Http::asForm()
+    //             ->withOptions($httpOptions)
+    //             ->post($this->apiUrl, $requestData);
+
+    //         // 5. 处理响应
+    //         $responseData = $response->json();
+    //         // 假设删除成功的 code 也是 200，如果不是需要根据 API 文档调整
+    //         if ($response->successful() && isset($responseData['code']) && $responseData['code'] == 200) {
+    //             Log::info("成功删除 Emby 账号: {$embyUsername}");
+    //             return true;
+    //         } else {
+    //             Log::error("删除 Emby 账号失败: {$embyUsername}。API 状态码: " . $response->status() . ", 响应: " . $response->body());
+    //             return false;
+    //         }
+    //     } catch (\Illuminate\Http\Client\RequestException $e) {
+    //         Log::error("调用 Emby API 删除账号时发生连接或请求异常 (用户名: {$embyUsername}): " . $e->getMessage());
+    //         if (!empty($proxy) && str_contains($e->getMessage(), 'Failed to connect to')) {
+    //             Log::error("请检查代理设置是否正确以及代理服务器是否可用: " . $proxy);
+    //         }
+    //         return false;
+    //     } catch (\Exception $e) {
+    //         Log::error("处理 Emby 账号删除时发生异常 (用户名: {$embyUsername}): " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
 
 
     /**

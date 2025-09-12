@@ -60,7 +60,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('customFunction:sendTrafficStatisticsToGroup')->dailyAt('0:13'); //推送流量排行到用户群
         $schedule->command('ipdb:download')->weeklyOn(1, '03:00');// 每周一 03:00 执行下载任务
         $schedule->command('emby:check-expiration')->dailyAt('03:00'); //检查 emby 过期，则删除用户
-        $schedule->command('emby:check-availability')->everyTenMinutes(); //检查 emby 过期，则删除用户
+        $schedule->command('emby:check-availability')->everyTenMinutes(); //检查 emby 上游 API 有效性
 
         //delete user token request more than 3 days ago
         $schedule->call(function () {
