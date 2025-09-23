@@ -250,6 +250,7 @@ class OrderService
                 $user->emby_status = 'active';
 
                 if (!$user->save()) {
+                    Log::error("未能保存用户的 emby 信息");
                     throw new \Exception('更新用户 Emby 信息失败');
                 }
 
