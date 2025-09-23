@@ -51,71 +51,69 @@ class EmbyService
     public function isApiAvailable(): bool
     {
         if (empty($this->apiUrl) || empty($this->apiKey)) {
-            Log::error('Emby API check failed: URL or API Key not configured.');
+            Log::error('Emby API 检查失败: Emby 服务地址 (URL) 或 API 密钥 (API Key) 未配置。');
             return false;
         }
 
-        // 确认使用正确的代理配置键
-        $proxy = config('v2board.proxy_server', config('v2board.proxy_server', null));
-        $httpOptions = [];
+        // 定义 HTTP 客户端选项
+        $httpOptions = [
+            'timeout' => 5,         // 总超时
+            'connect_timeout' => 3, // 连接超时
+        ];
+        // 动态添加代理配置
+        $proxy = config('v2board.proxy_server');
         if (!empty($proxy)) {
             $httpOptions['proxy'] = $proxy;
         }
-        $httpOptions['timeout'] = 5;
-        $httpOptions['connect_timeout'] = 3;
 
         try {
-            Log::debug('Checking Emby API availability...', ['url' => $this->apiUrl, 'options' => $httpOptions]);
+
             $response = Http::asForm()
                 ->withOptions($httpOptions)
                 ->post($this->apiUrl, [
                     'api_key' => $this->apiKey,
-                    'type' => 'availability_check' . Str::random(5) // 使用随机 type
+                    // 使用随机参数防止可能的服务器端缓存
+                    'type' => 'availability_check' . Str::random(5)
                 ]);
 
-            // --- 开始修正判断 ---
-            $statusCode = $response->status(); // 获取状态码
+            $statusCode = $response->status();
 
-            // 1. 检查 404 Not Found
-            if ($statusCode == 404) { // << --- 使用 status() == 404 替代 notFound()
-                Log::warning('Emby API availability check failed: Endpoint not found (404).');
+            // 1. 5xx 服务器端错误 -> 不可用
+            if ($response->serverError()) {
+                Log::warning('Emby API 检查失败: Emby 服务器返回了一个错误 (5xx)。', ['status' => $statusCode]);
                 return false;
             }
-            // 2. 检查 5xx Server Error
-            if ($response->serverError()) { // status >= 500 (这个方法是存在的)
-                Log::warning('Emby API availability check failed: Server error encountered.', ['status' => $statusCode]);
-                return false; // 将 5xx 视为不可用
-            }
-            // 3. 如果是 4xx 客户端错误 (非 404)，我们认为服务是在线的
-            if ($response->clientError()) { // status 400-499 (这个方法是存在的)
-                Log::info('Emby API availability check: Client error response received, assuming API service is running.', ['status' => $statusCode]);
-                return true; // API 服务在线
-            }
-            // 4. 如果是 2xx 成功响应
-            if ($response->successful()) { // status 200-299 (这个方法是存在的)
-                Log::info('Emby API availability check: Successful response received.', ['status' => $statusCode]);
-                return true; // API 服务在线
-            }
-            // --- 结束修正判断 ---
 
-            // 其他非预期状态码
-            Log::warning('Emby API availability check: Received unexpected status code.', ['status' => $statusCode]);
-            return false; // 其他情况视为不可靠
+            // 2. 404 Not Found -> 端点错误，不可用
+            if ($statusCode == 404) {
+                Log::warning('Emby API 检查失败: 请求的端点未找到 (404)，请检查 Emby URL 配置。');
+                return false;
+            }
 
+            // 3. 2xx (成功) 或其他 4xx (客户端错误，如 401/403) -> 均表示服务在线，这是“成功”状态，无需记录日志
+            if ($response->successful() || $response->clientError()) {
+                return true; // API 服务在线，静默返回 true
+            }
+
+            // 4. 其他所有未预期的状态码 -> 视为不可靠，记录日志
+            Log::warning('Emby API 检查失败: 收到未预期的 HTTP 状态码。', ['status' => $statusCode]);
+            return false;
 
         } catch (ConnectionException $e) {
-            Log::warning('Emby API availability check failed: Connection Exception.', ['message' => $e->getMessage()]);
+            // 连接异常 (DNS解析失败, 连接被拒绝等) -> 不可用
+            Log::warning('Emby API 检查失败: 无法连接到 Emby 服务器。', ['message' => $e->getMessage()]);
             return false;
         } catch (RequestException $e) {
-            // 检查是否是超时错误
+            // 请求异常，重点是超时
             if (Str::contains($e->getMessage(), ['timed out', 'timeout'])) {
-                Log::warning('Emby API availability check failed: Timeout.', ['message' => $e->getMessage()]);
+                Log::warning('Emby API 检查失败: 连接 Emby 服务器超时。', ['message' => $e->getMessage()]);
             } else {
-                Log::warning('Emby API availability check failed: Request Exception.', ['message' => $e->getMessage()]);
+                Log::warning('Emby API 检查失败: 发生请求异常。', ['message' => $e->getMessage()]);
             }
             return false;
         } catch (\Exception $e) {
-            Log::error('Emby API availability check failed: Unexpected Exception.', ['message' => $e->getMessage()]);
+            // 捕获其他任何意外的异常，这可能是代码或环境问题
+            Log::error('Emby API 检查时发生意外的严重异常。', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return false;
         }
     }
