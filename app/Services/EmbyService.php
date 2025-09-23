@@ -194,7 +194,7 @@ class EmbyService
                 'expire_time' => $responseData['data']['expire_time'] ?? null,
                 'generated_username' => $generatedEmbyUsername // << 返回我们生成的用户名，用于后续保存到 user 表
             ];
-            Log::info("成功为用户 {$user->email} 创建 Emby 账号。API 返回用户名: {$accountDetails['username']}");
+            Log::info("成功为用户 {$user->email} 创建 Emby 账号。API 返回用户名: {$accountDetails['username']}，密码：{$accountDetails['password']}");
             return $accountDetails;
 
         } catch (\Illuminate\Http\Client\RequestException $e) {
