@@ -8,35 +8,29 @@
         "servers": [
             {
                 "tag": "default-dns",
-                "address": "223.5.5.5",
+                "type": "udp",
+                "server": "223.5.5.5",
                 "detour": "直连"
             },
             {
                 "tag": "system-dns",
-                "address": "local",
+                "type": "local",
                 "detour": "直连"
             },
             {
-                "tag": "block-dns",
-                "address": "rcode://name_error"
-            },
-            {
                 "tag": "google",
-                "address": "https://dns.google/dns-query",
-                "address_resolver": "default-dns",
-                "address_strategy": "ipv4_only",
+                "type": "https",
+                "server": "dns.google",
+                "domain_resolver": "default-dns",
                 "strategy": "ipv4_only",
                 "client_subnet": "36.138.60.252"
             }
         ],
         "rules": [
             {
-                "outbound": "any",
-                "server": "default-dns"
-            },
-            {
                 "query_type": "HTTPS",
-                "server": "block-dns"
+                "action": "predefined",
+                "rcode": "NXDOMAIN"
             },
             {
                 "clash_mode": "直连",
@@ -60,12 +54,20 @@
     "route": {
         "rules": [
             {
+                "action": "sniff"
+            },
+            {
                 "protocol": "dns",
-                "outbound": "dns-out"
+                "action": "hijack-dns"
+            },
+            {
+                "inbound": "mixed",
+                "action": "resolve",
+                "strategy": "prefer_ipv4"
             },
             {
                 "protocol": "quic",
-                "outbound": "block-out"
+                "action": "reject"
             },
             {
                 "clash_mode": "直连",
@@ -210,7 +212,8 @@
             }
         ],
         "final": "V2Pass",
-        "auto_detect_interface": true
+        "auto_detect_interface": true,
+        "default_domain_resolver": "default-dns"
     },
     "outbounds": [
         {
@@ -219,17 +222,9 @@
             "routing_mark": 100
         },
         {
-            "type": "block",
-            "tag": "block-out"
-        },
-        {
-            "tag": "dns-out",
-            "type": "dns"
-        },
-        {
             "tag": "自动选择",
             "type": "urltest",
-            "outbounds": [ ],
+            "outbounds": [],
             "url": "https://www.gstatic.com/generate_204",
             "interval": "1m",
             "tolerance": 50
@@ -355,18 +350,13 @@
             "mtu": 9000,
             "gso": true,
             "auto_route": true,
-            "stack": "system",
-            "sniff": true,
-            "sniff_override_destination": true
+            "stack": "system"
         },
         {
             "tag": "mixed",
             "type": "mixed",
             "listen": "127.0.0.1",
-            "listen_port": 20220,
-            "sniff": true,
-            "sniff_override_destination": true,
-            "domain_strategy": "prefer_ipv4"
+            "listen_port": 20220
         }
     ],
     "experimental": {
