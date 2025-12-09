@@ -7,41 +7,41 @@
     "dns": {
         "servers": [
             {
-                "tag": "default-dns",
                 "type": "udp",
-                "server": "223.5.5.5",
-                "detour": "直连"
+                "tag": "default-dns",
+                "server": "223.5.5.5"
             },
             {
-                "tag": "system-dns",
                 "type": "local",
-                "detour": "直连"
+                "tag": "system-dns"
             },
             {
-                "tag": "google",
                 "type": "https",
+                "tag": "google",
                 "server": "dns.google",
-                "domain_resolver": "default-dns",
+                "domain_resolver": {
+                    "server": "default-dns"
+                },
                 "strategy": "ipv4_only",
                 "client_subnet": "36.138.60.252"
             }
         ],
         "rules": [
             {
-                "query_type": "HTTPS",
-                "action": "predefined",
-                "rcode": "NXDOMAIN"
-            },
-            {
                 "clash_mode": "直连",
+                "action": "route",
                 "server": "default-dns"
             },
             {
                 "clash_mode": "全局",
+                "action": "route",
                 "server": "google"
             },
             {
-                "rule_set": "geosite-cn",
+                "rule_set": [
+                    "geosite-cn"
+                ],
+                "action": "route",
                 "server": "default-dns"
             }
         ],
@@ -61,20 +61,17 @@
                 "action": "hijack-dns"
             },
             {
-                "inbound": "mixed",
-                "action": "resolve",
-                "strategy": "prefer_ipv4"
-            },
-            {
                 "protocol": "quic",
                 "action": "reject"
             },
             {
                 "clash_mode": "直连",
+                "action": "route",
                 "outbound": "直连"
             },
             {
                 "clash_mode": "全局",
+                "action": "route",
                 "outbound": "全局"
             },
             {
@@ -82,46 +79,77 @@
                     "geoip-cn",
                     "geosite-cn"
                 ],
+                "action": "route",
                 "outbound": "国内服务"
             },
             {
-                "rule_set": "geosite-google",
+                "rule_set": [
+                    "geosite-google"
+                ],
+                "action": "route",
                 "outbound": "谷歌系"
             },
             {
-                "rule_set": "geosite-openai",
+                "rule_set": [
+                    "geosite-openai"
+                ],
+                "action": "route",
                 "outbound": "OpenAI"
             },
             {
-                "rule_set": "geosite-bahamut",
+                "rule_set": [
+                    "geosite-bahamut"
+                ],
+                "action": "route",
                 "outbound": "动画疯"
             },
             {
-                "rule_set": "geosite-instagram",
+                "rule_set": [
+                    "geosite-instagram"
+                ],
+                "action": "route",
                 "outbound": "Instagram"
             },
             {
-                "rule_set": "geosite-twitch",
+                "rule_set": [
+                    "geosite-twitch"
+                ],
+                "action": "route",
                 "outbound": "Twitch"
             },
             {
-                "rule_set": "geosite-spotify",
+                "rule_set": [
+                    "geosite-spotify"
+                ],
+                "action": "route",
                 "outbound": "Spotify"
             },
             {
-                "rule_set": "geosite-netflix",
+                "rule_set": [
+                    "geosite-netflix"
+                ],
+                "action": "route",
                 "outbound": "Netflix"
             },
             {
-                "rule_set": "geosite-disney",
+                "rule_set": [
+                    "geosite-disney"
+                ],
+                "action": "route",
                 "outbound": "Disney"
             },
             {
-                "rule_set": "geosite-hbo",
+                "rule_set": [
+                    "geosite-hbo"
+                ],
+                "action": "route",
                 "outbound": "HBO"
             },
             {
-                "rule_set": "geosite-geolocation-!cn",
+                "rule_set": [
+                    "geosite-geolocation-!cn"
+                ],
+                "action": "route",
                 "outbound": "V2Pass"
             }
         ],
@@ -213,13 +241,18 @@
         ],
         "final": "V2Pass",
         "auto_detect_interface": true,
-        "default_domain_resolver": "default-dns"
+        "default_domain_resolver": {
+            "server": "google"
+        }
     },
     "outbounds": [
         {
             "type": "direct",
             "tag": "直连",
-            "routing_mark": 100
+            "routing_mark": 100,
+            "domain_resolver": {
+                "server": "system-dns"
+            }
         },
         {
             "tag": "自动选择",
