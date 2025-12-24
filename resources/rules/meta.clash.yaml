@@ -249,7 +249,7 @@ rule-providers:
   gemini:
     type: http
     behavior: classical
-    url: "https://ghfast.top/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml"
+    url: "https://ghfast.top/https://github.com/blackmatrix7/ios_rule_script/blob/5ad04fab096f94224879c77c4bf50ace8a393fb0/rule/Clash/Gemini/Gemini.list"
     path: ./ruleset/gemini.yaml
     interval: 86400
 
@@ -782,7 +782,37 @@ rules:
   #OpenAI
   - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
   # Gemini
-  - 'RULE-SET,gemini,🤖Gemini,no-resolve'
+  # - 'RULE-SET,gemini,🤖Gemini,no-resolve'
+  - 'DOMAIN-SUFFIX,googleusercontent.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,www.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,ssl.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,fonts.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,play.google.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,ogs.google.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,apis.google.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,jnn-pa.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,robinfrontend-pa.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,i.ytimg.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,yt3.ggpht.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,lh3.googleusercontent.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,maps.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,lh3.google.com,🤖Gemini,no-resolve'
+  - 'DOMAIN-SUFFIX,clients6.google.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,csp.withgoogle.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,www.googletagmanager.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,fonts.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,maps.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,www.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,gemini.google.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,optimizationguide-pa.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,encrypted-tbn0.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,encrypted-tbn1.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,encrypted-tbn2.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,encrypted-tbn3.gstatic.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,streetviewpixels-pa.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,content-autofill.googleapis.com,🤖Gemini,no-resolve'
+  - 'DOMAIN-SUFFIX,google-analytics.com,🤖Gemini,no-resolve'
+  - 'DOMAIN,analytics.google.com,🤖Gemini,no-resolve'
   # Anthropic
   - 'RULE-SET,Anthropic,🤖Anthropic,no-resolve'
   #Twitch
