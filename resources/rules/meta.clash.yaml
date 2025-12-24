@@ -775,12 +775,6 @@ rules:
   - 'RULE-SET,icloud,DIRECT,no-resolve'
   #apple
   - 'RULE-SET,apple,DIRECT,no-resolve'
-  #Youtube
-  - 'RULE-SET,YouTube,🌎谷歌系,no-resolve'
-  #Google 可直连服务
-  - 'RULE-SET,google,🌎谷歌系,no-resolve'
-  #OpenAI
-  - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
   # Gemini
   # - 'RULE-SET,gemini,🤖Gemini,no-resolve'
   - 'DOMAIN-SUFFIX,googleusercontent.com,🤖Gemini,no-resolve'
@@ -813,6 +807,12 @@ rules:
   - 'DOMAIN,content-autofill.googleapis.com,🤖Gemini,no-resolve'
   - 'DOMAIN-SUFFIX,google-analytics.com,🤖Gemini,no-resolve'
   - 'DOMAIN,analytics.google.com,🤖Gemini,no-resolve'
+  #Youtube
+  - 'RULE-SET,YouTube,🌎谷歌系,no-resolve'
+  #Google 可直连服务
+  - 'RULE-SET,google,🌎谷歌系,no-resolve'
+  #OpenAI
+  - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
   # Anthropic
   - 'RULE-SET,Anthropic,🤖Anthropic,no-resolve'
   #Twitch
