@@ -52,6 +52,7 @@ class EPay {
             $rate = $this->get_usd_to_cny_rate();
             $rate = $rate ?? config('v2board.default_usd_to_cny_rate', 7.05); // api 出错后，默认7.05
             // 上浮 3毛5
+            //重要：如果更改了数值，记得手动重启PHP！！！ 否则有缓存，新值不生效
             $money = round($money * ($rate + 0.35), 2);
         }
 
@@ -108,10 +109,10 @@ class EPay {
                 $response = $this->client->get($url);
                 $data = json_decode($response->getBody()->getContents(), true);
 
-                // 获取第一个卖家的汇率价格 (sell-0)
-                if (isset($data['data']['sell'][0]['price'])) {
-                    $rate = $data['data']['sell'][0]['price'];
-                    Cache::put($cacheKey, $rate, 60); // 缓存汇率
+                // 获取第一个卖家的汇率价格 (sell-1) sell-0 表示第一个商家，为了避免商家出低价，选择第二个，即 sell-1
+                if (isset($data['data']['sell'][1]['price'])) {
+                    $rate = $data['data']['sell'][1]['price'];
+                    Cache::put($cacheKey, $rate, 15); // 缓存汇率
                 } else {
                     \Log::error("Failed to retrieve USD to CNY rate from the API response.");
                     return null;
