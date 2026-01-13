@@ -37,10 +37,10 @@ class EmbyService
             Log::warning('Emby API Key 未在配置中设置或仍为默认占位符，请在 config/v2board.php 或 .env 中配置 v2board.emby_api_key / V2BOARD_EMBY_API_KEY');
             // throw new \Exception('Emby API Key 未配置'); // 如果需要强制配置
         }
-        if (empty($this->apiUrl) || empty($this->serverUrl)) {
-            Log::error('Emby API URL 或 Server URL 未配置。');
-            throw new \Exception('Emby API URL 或 Server URL 未配置');
-        }
+//        if (empty($this->apiUrl) || empty($this->serverUrl)) {
+//            Log::error('Emby API URL 或 Server URL 未配置。');
+//            throw new \Exception('Emby API URL 或 Server URL 未配置');
+//        }
     }
 
     /**
