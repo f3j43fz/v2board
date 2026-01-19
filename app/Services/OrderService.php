@@ -9,8 +9,6 @@ use App\Models\User;
 use App\Utils\CacheKey;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use App\Services\MailService;
-use App\Services\EmbyService;
 use Illuminate\Support\Facades\Log;
 
 class OrderService
@@ -25,9 +23,6 @@ class OrderService
     ];
     public $order;
     public $user;
-
-    protected $embyService; // 声明依赖属性
-    protected $mailService; // 声明依赖属性
 
     public function __construct(Order $order)
     {
@@ -153,12 +148,9 @@ class OrderService
         $rechargeAmountGotten = ($rechargeAmount >= $discountThreshold)? $rechargeAmount * (1 + $discount) : $rechargeAmount;
         $this->user->balance = $this->user->balance + $rechargeAmountGotten;
 
-        //如果是 pay as you go 套餐的用户在余额用完后继续充值，那么：自动重置流量 + 重新分配可用流量
+        // 【动态重算逻辑】充值导致余额增加，PAGO 用户需重算流量
         if($this->user->is_PAGO == 1){
-            $plan = Plan::find($this->user->plan_id);
-            $this->buyByResetTraffic();
-            $this->user->expired_at = NULL;
-            $this->user->transfer_enable = round($this->user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
+            $this->recalculatePagoTraffic($this->user);
         }
 
         if (!$this->user->save()) {
@@ -299,6 +291,14 @@ class OrderService
                 throw new \Exception('更新订单状态失败');
             }
 
+            // 【重点优化】处理 Pay As You Go 用户余额被消耗后的流量重算
+            if ($user->is_PAGO == 1) {
+                $this->recalculatePagoTraffic($user);
+                if (!$user->save()) {
+                    throw new \Exception('更新 Pay As You Go 流量失败');
+                }
+            }
+
             // 提交事务
             DB::commit();
 
@@ -306,6 +306,29 @@ class OrderService
             DB::rollBack();
             Log::error("处理 Emby 订单失败：订单号 {$order->trade_no}，错误: " . $e->getMessage());
         }
+    }
+
+    /**
+     * 【核心方法】PAGO 用户的流量重算逻辑
+     * 注意：此方法只负责修改 User 对象内存中的属性，不执行 save() 操作。
+     * 调用方需要在调用此方法后，自行执行 $user->save() 进行持久化。
+     */
+    private function recalculatePagoTraffic(User $user)
+    {
+        $plan = Plan::find($user->plan_id);
+        // 确保套餐存在且单价配置正确（避免除以零）
+        if (!$plan || !$plan->transfer_unit_price) return;
+
+        // 1. 重置已用流量 (因为余额已经作为新的一笔资金来计算了)
+        $user->u = 0;
+        $user->d = 0;
+
+        // 2. 重新计算总流量限制： 余额(分) / 单价(分/G) = GB -> Bytes
+        $user->transfer_enable = round($user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
+
+        // 3. 重置过期时间 (随用随付无过期时间)
+        $user->expired_at = NULL;
+
     }
 
     /**
@@ -488,6 +511,13 @@ class OrderService
                 DB::rollBack();
                 return false;
             }
+
+            // 【重点优化】如果是 PAGO 用户取消订单（如 Emby），余额退回后，需要重新计算流量上限
+            $user = User::find($order->user_id); // 重新获取以获得最新余额
+            if ($user && $user->is_PAGO == 1) {
+                $this->recalculatePagoTraffic($user);
+                $user->save();
+            }
         }
         DB::commit();
         return true;
@@ -546,6 +576,7 @@ class OrderService
     private function buyByPayAsYouGo(Plan $plan, User $user)
     {
         $this->buyByResetTraffic();
+        // 初始购买时，根据当前余额计算
         $this->user->transfer_enable = round($user->balance / $plan->transfer_unit_price) * 1024 * 1024 * 1024;
         $this->user->plan_id = $plan->id;
         $this->user->group_id = $plan->group_id;
@@ -590,7 +621,4 @@ class OrderService
         //如果 $this->user->has_Purchased_Plan_Before 的值为 0，它会将其设置为 1；如果已经是 1，则保持不变。
         $this->user->has_Purchased_Plan_Before |= 1;
     }
-
-
-
 }

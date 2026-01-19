@@ -40,22 +40,23 @@ class OrderHandleJob implements ShouldQueue
         if (!$this->order) return;
         $orderService = new OrderService($this->order);
         switch ($this->order->status) {
-            // cancel
+            // 取消订单
             case 0:
                 if ($this->order->created_at <= (time() - 3600 * 2)) {
                     $orderService->cancel();
                 }
                 break;
+            //开通订单
             case 1:
-
+                // Emby 套餐 ID 为 10
                 if ($this->order->plan_id == 10) {
-                    // 调用 OrderService 处理 Emby 订单的方法
+                    // 调用 OrderService 处理 Emby 订单
                     $orderService->handleEmbyOrder();
                 } elseif ($this->order->plan_id == 100) {
                     // 充值余额
                     $orderService->recharge();
                 } else {
-                    // 正常购买套餐
+                    // 正常购买/续费 VPN 套餐
                     $this->handlePurchase($this->order, $orderService);
                 }
                 break;
@@ -65,7 +66,7 @@ class OrderHandleJob implements ShouldQueue
 
     private function handlePurchase(Order $order, OrderService $orderService)
     {
-
+        // 动态判断：只要周期类型是 setup_price，就视为 Pay As You Go 套餐
         if ($order->period == "setup_price") {
             // 开通【随用随付】
             $orderService->openPayAsYouGo();
@@ -77,7 +78,4 @@ class OrderHandleJob implements ShouldQueue
             $orderService->open();
         }
     }
-
-
-
 }

@@ -84,7 +84,6 @@ class OrderController extends Controller
         }
 
         $planService = new PlanService($request->input('plan_id'));
-
         $plan = $planService->plan;
         $user = User::find($request->user['id']);
 
@@ -96,7 +95,6 @@ class OrderController extends Controller
         if ($plan->setup_price > 0 && $user->is_PAGO == 1) {
             abort(500, __('This plan does not require repeated purchases; just maintain a sufficient balance'));
         }
-
 
         if ($user->plan_id !== $plan->id && !$planService->haveCapacity() && $request->input('period') !== 'reset_price') {
             abort(500, __('Current product is sold out'));
@@ -121,7 +119,6 @@ class OrderController extends Controller
         if (!$plan->renew && $user->plan_id == $plan->id && $request->input('period') !== 'reset_price') {
             abort(500, __('This subscription cannot be renewed, please change to another subscription'));
         }
-
 
         if (!$plan->show && $plan->renew && !$userService->isAvailable($user)) {
             abort(500, __('This subscription has expired, please change to another subscription'));
@@ -280,7 +277,7 @@ class OrderController extends Controller
         if (!$order) {
             abort(500, __('Order does not exist or has been paid'));
         }
-        // free process
+        // 余额比订单价格大 直接用余额支付全部款项
         if ($order->total_amount <= 0) {
             $orderService = new OrderService($order);
             if (!$orderService->paid($order->trade_no)) abort(500, '');
@@ -427,7 +424,6 @@ class OrderController extends Controller
         $getAmount = 0; // 本次佣金
         $anotherInfo = "邀请人：该用户不存在邀请人";
 
-
         // 获取货币单位
         $currency = config('v2board.currency') == 'USD' ? "美元" : "元";
 
@@ -443,7 +439,6 @@ class OrderController extends Controller
                 } else {
                     $inviterCommissionBalance = $inviter->commission_balance / 100 + $getAmount; // 总佣金 （允许提现）
                     $anotherInfo = "邀请人总佣金：" . $inviterCommissionBalance. " $currency";
-
                 }
             }
         }
