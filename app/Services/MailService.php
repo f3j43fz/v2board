@@ -262,6 +262,41 @@ class MailService
     }
 
     /**
+     * 发送系统补偿通知 (支持延迟队列)
+     *
+     * @param User $user 用户对象
+     * @param string $type 补偿类型 'time' 或 'traffic'
+     * @param int $value 补偿数值
+     * @param int $delaySeconds 延迟发送秒数
+     */
+    public function sendCompensationNotice(User $user, $type, $value, $delaySeconds = 0)
+    {
+        $userName = explode('@', $user->email)[0];
+        $appName = config('v2board.app_name', 'V2Board');
+
+        // 构建文案
+        if ($type === 'time') {
+            $content = "由于近期的网络波动影响了您的使用体验，我们深表歉意。\n\n作为补偿，系统已自动为您的当前订阅 **延长了 {$value} 天** 的有效期。\n\n更新后的到期时间为：" . date('Y-m-d H:i:s', $user->expired_at);
+        } else {
+            $currentTrafficGB = round($user->transfer_enable / (1024*1024*1024), 2);
+            $content = "由于近期的网络波动影响了您的使用体验，我们深表歉意。\n\n作为补偿，系统已自动为您的当前订阅 **增加了 {$value} GB** 的高速流量。\n\n当前可用总流量为：" . $currentTrafficGB . " GB";
+        }
+
+        // 分发到 'send_email_mass' 队列，并设置延迟
+        SendEmailJob::dispatch([
+            'email' => $user->email,
+            'subject' => "系统补偿通知 | {$appName}",
+            'template_name' => 'notifyCompensation',
+            'template_value' => [
+                'name' => $appName,
+                'url' => config('v2board.app_url'),
+                'userName' => $userName,
+                'content' => $content
+            ]
+        ])->onQueue('send_email_mass')->delay(now()->addSeconds($delaySeconds));
+    }
+
+    /**
      * 提醒 Emby 服务即将到期
      * @param User $user
      * @param int $remindBeforeDays 提前几天提醒，默认为 3 天
@@ -340,13 +375,13 @@ class MailService
     public function sendEmbyRenewalNotice(User $user, $order)
     {
         $userName = explode('@', $user->email)[0];
-        
+
         // 获取 Emby 服务器地址
         $embyServerUrl = config('v2board.emby_server_url', 'http://emby.yourdomain.com:8096');
-        
+
         // 格式化到期时间
         $expireTime = $user->emby_expired_at ? date('Y-m-d H:i:s', $user->emby_expired_at) : '未知';
-        
+
         SendEmailJob::dispatch([
             'email' => $user->email,
             'subject' => __('Emby 服务续费成功 - :app_name', [
@@ -372,10 +407,10 @@ class MailService
     public function sendEmbyExpirationNotice(User $user)
     {
         $userName = explode('@', $user->email)[0];
-        
+
         // 格式化过期时间
         $expireDate = $user->emby_expired_at ? date('Y-m-d H:i:s', $user->emby_expired_at) : '未知';
-        
+
         SendEmailJob::dispatch([
             'email' => $user->email,
             'subject' => __('Emby 服务已过期 - :app_name', [
