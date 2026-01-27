@@ -678,6 +678,8 @@ rules:
   - 'RULE-SET,icloud,DIRECT'
   # Apple 在中国大陆可直连的域名
   - 'RULE-SET,apple,DIRECT'
+  # 代理域名
+  - 'RULE-SET,proxy,$app_name,no-resolve'
   # 直连域名
   - 'RULE-SET,direct,DIRECT'
   # 局域网 IP 及保留 IP 地址
@@ -717,6 +719,7 @@ rules:
   - 'DOMAIN-SUFFIX,engagelab.cc,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,theengagelab.com,☁️azure,no-resolve'
   # Gemini
+  - 'RULE-SET,google,🌎谷歌系,no-resolve'
   - 'RULE-SET,gemini,🌎谷歌系,no-resolve'
   #Youtube
   - 'RULE-SET,YouTube,🌎谷歌系,no-resolve'
@@ -742,6 +745,4 @@ rules:
   - 'RULE-SET,HBO,🎞️HBO,no-resolve'
   - 'GEOIP,LAN,DIRECT'
   - 'GEOIP,CN,DIRECT'
-  # 代理域名
-  - 'RULE-SET,proxy,$app_name,no-resolve'
   - 'MATCH,$app_name,no-resolve'
