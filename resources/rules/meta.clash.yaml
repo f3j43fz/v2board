@@ -671,6 +671,9 @@ rules:
   - 'RULE-SET,private,DIRECT'
   # 广告域名
   - 'RULE-SET,reject,REJECT'
+  - 'DOMAIN-SUFFIX, www.google-analytics.com,REJECT'
+  - 'DOMAIN, analytics.google.com,REJECT'
+  - 'DOMAIN-SUFFIX, doubleclick.net,REJECT'
   # iCloud 域名
   - 'RULE-SET,icloud,DIRECT'
   # Apple 在中国大陆可直连的域名
