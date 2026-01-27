@@ -678,6 +678,8 @@ rules:
   - 'RULE-SET,icloud,DIRECT'
   # Apple 在中国大陆可直连的域名
   - 'RULE-SET,apple,DIRECT'
+  # 直连域名
+  - 'RULE-SET,direct,DIRECT'
   # 局域网 IP 及保留 IP 地址
   - 'RULE-SET,lancidr,DIRECT,no-resolve'
   # 中国大陆 IP 地址
@@ -715,40 +717,9 @@ rules:
   - 'DOMAIN-SUFFIX,engagelab.cc,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,theengagelab.com,☁️azure,no-resolve'
   # Gemini
-  - 'DOMAIN-SUFFIX,googleusercontent.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,www.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,ssl.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,fonts.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,play.google.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,ogs.google.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,apis.google.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,jnn-pa.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,robinfrontend-pa.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,i.ytimg.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,yt3.ggpht.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,lh3.googleusercontent.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,maps.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,lh3.google.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN-SUFFIX,clients6.google.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,csp.withgoogle.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,www.googletagmanager.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,fonts.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,maps.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,www.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,gemini.google.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,optimizationguide-pa.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,encrypted-tbn0.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,encrypted-tbn1.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,encrypted-tbn2.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,encrypted-tbn3.gstatic.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,streetviewpixels-pa.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,content-autofill.googleapis.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN-SUFFIX,google-analytics.com,🌎谷歌系,no-resolve'
-  - 'DOMAIN,analytics.google.com,🌎谷歌系,no-resolve'
+  - 'RULE-SET,gemini,🌎谷歌系,no-resolve'
   #Youtube
   - 'RULE-SET,YouTube,🌎谷歌系,no-resolve'
-  # 直连域名
-  - 'RULE-SET,direct,DIRECT'
   #OpenAI
   - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
   # Anthropic
