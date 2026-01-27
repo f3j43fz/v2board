@@ -161,25 +161,11 @@ proxy-groups:
   - { name: "故障转移", type: fallback, proxies: [/^(?!.*专线).*$/], url: 'https://www.gstatic.com/generate_204', interval: 1200 }
 rule-providers:
 
-  ad_reject:
-    type: http
-    behavior: classical
-    url: "https://ghfast.top/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising_Classical.yaml"
-    path: ./ruleset/ad_reject.yaml
-    interval: 86400
-
-  proxy:
-    type: http
-    behavior: classical
-    url: "https://ghfast.top/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Proxy/Proxy_Classical.yaml"
-    path: ./ruleset/proxy.yaml
-    interval: 86400
-
-  direct:
+  reject:
     type: http
     behavior: domain
-    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
-    path: ./ruleset/direct.yaml
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt"
+    path: ./ruleset/reject.yaml
     interval: 86400
 
   icloud:
@@ -194,6 +180,55 @@ rule-providers:
     behavior: domain
     url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/apple.txt"
     path: ./ruleset/apple.yaml
+    interval: 86400
+
+  proxy:
+    type: http
+    behavior: domain
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/proxy.txt"
+    path: ./ruleset/proxy.yaml
+    interval: 86400
+
+  direct:
+    type: http
+    behavior: domain
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
+    path: ./ruleset/direct.yaml
+    interval: 86400
+
+  private:
+    type: http
+    behavior: domain
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/private.txt"
+    path: ./ruleset/private.yaml
+    interval: 86400
+
+  telegramcidr:
+    type: http
+    behavior: ipcidr
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/telegramcidr.txt"
+    path: ./ruleset/telegramcidr.yaml
+    interval: 86400
+
+  cncidr:
+    type: http
+    behavior: ipcidr
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt"
+    path: ./ruleset/cncidr.yaml
+    interval: 86400
+
+  lancidr:
+    type: http
+    behavior: ipcidr
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/lancidr.txt"
+    path: ./ruleset/lancidr.yaml
+    interval: 86400
+
+  applications:
+    type: http
+    behavior: classical
+    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/applications.txt"
+    path: ./ruleset/applications.yaml
     interval: 86400
 
   YouTube:
@@ -271,27 +306,6 @@ rule-providers:
     behavior: classical
     url: "https://ghfast.top/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Bahamut/Bahamut.yaml"
     path: ./ruleset/Bahamut.yaml
-    interval: 86400
-
-  private:
-    type: http
-    behavior: domain
-    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/private.txt"
-    path: ./ruleset/private.yaml
-    interval: 86400
-
-  telegram:
-    type: http
-    behavior: classical
-    url: "https://ghfast.top/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.yaml"
-    path: ./ruleset/telegram.yaml
-    interval: 86400
-
-  cncidr:
-    type: http
-    behavior: ipcidr
-    url: "https://ghfast.top/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt"
-    path: ./ruleset/cncidr.yaml
     interval: 86400
 
   google:
@@ -534,6 +548,7 @@ rules:
   - 'DOMAIN-SUFFIX,alibabacloud.com.my,$app_name'
   - 'DOMAIN-SUFFIX,alibabacloud.com.sg,$app_name'
   - 'DOMAIN-SUFFIX,alibabacloud.com.tw,$app_name'
+  - 'DOMAIN-SUFFIX,alicloud.com,$app_name'
   # speedtest
   - 'DOMAIN,cdnst.net,DIRECT'
   - 'DOMAIN,cellmaps.com,DIRECT'
@@ -581,95 +596,6 @@ rules:
   - 'DOMAIN-SUFFIX,adobelogin.com,DIRECT'
   - 'DOMAIN-SUFFIX,adobeconnect.com,DIRECT'
   - 'DOMAIN-SUFFIX,adobestock.com,DIRECT'
-  # Applicatons 进程白名单
-  - 'PROCESS-NAME,hysteria,DIRECT'
-  - 'PROCESS-NAME,hysteria.exe,DIRECT'
-  - 'PROCESS-NAME,leaf,DIRECT'
-  - 'PROCESS-NAME,leaf.exe,DIRECT'
-  - 'PROCESS-NAME,naive,DIRECT'
-  - 'PROCESS-NAME,naive.exe,DIRECT'
-  - 'PROCESS-NAME,privoxy,DIRECT'
-  - 'PROCESS-NAME,privoxy.exe,DIRECT'
-  - 'PROCESS-NAME,proxifier,DIRECT'
-  - 'PROCESS-NAME,proxifier,DIRECT'
-  - 'PROCESS-NAME,shadowsocks,DIRECT'
-  - 'PROCESS-NAME,shadowsocks.exe,DIRECT'
-  - 'PROCESS-NAME,shadowsocksr,DIRECT'
-  - 'PROCESS-NAME,shadowsocksr.exe,DIRECT'
-  - 'PROCESS-NAME,sing-box,DIRECT'
-  - 'PROCESS-NAME,sing-box.exe,DIRECT'
-  - 'PROCESS-NAME,speeder,DIRECT'
-  - 'PROCESS-NAME,speeder.exe,DIRECT'
-  - 'PROCESS-NAME,speederv2,DIRECT'
-  - 'PROCESS-NAME,speederv2.exe,DIRECT'
-  - 'PROCESS-NAME,ss-local,DIRECT'
-  - 'PROCESS-NAME,ss-local.exe,DIRECT'
-  - 'PROCESS-NAME,sslocal,DIRECT'
-  - 'PROCESS-NAME,sslocal.exe,DIRECT'
-  - 'PROCESS-NAME,tinyvpn,DIRECT'
-  - 'PROCESS-NAME,tinyvpn.exe,DIRECT'
-  - 'PROCESS-NAME,trojan,DIRECT'
-  - 'PROCESS-NAME,trojan.exe,DIRECT'
-  - 'PROCESS-NAME,trojan-go,DIRECT'
-  - 'PROCESS-NAME,trojan-go.exe,DIRECT'
-  - 'PROCESS-NAME,tuic,DIRECT'
-  - 'PROCESS-NAME,tuic.exe,DIRECT'
-  - 'PROCESS-NAME,tuic-client,DIRECT'
-  - 'PROCESS-NAME,tuic-client.exe,DIRECT'
-  - 'PROCESS-NAME,udp2raw,DIRECT'
-  - 'PROCESS-NAME,udp2raw.exe,DIRECT'
-  - 'PROCESS-NAME,udp2raw_mp,DIRECT'
-  - 'PROCESS-NAME,udp2raw_mp.exe,DIRECT'
-  - 'PROCESS-NAME,v2ray,DIRECT'
-  - 'PROCESS-NAME,v2ray.exe,DIRECT'
-  - 'PROCESS-NAME,xray,DIRECT'
-  - 'PROCESS-NAME,xray.exe,DIRECT'
-  - 'PROCESS-NAME,Surge,DIRECT'
-  - 'PROCESS-NAME,Surge 2,DIRECT'
-  - 'PROCESS-NAME,Surge 3,DIRECT'
-  - 'PROCESS-NAME,Surge 4,DIRECT'
-  - 'PROCESS-NAME,Surge%202,DIRECT'
-  - 'PROCESS-NAME,Surge%203,DIRECT'
-  - 'PROCESS-NAME,Surge%204,DIRECT'
-  - 'PROCESS-NAME,BitComet,DIRECT'
-  - 'PROCESS-NAME,BitComet.exe,DIRECT'
-  - 'PROCESS-NAME,DownloadService,DIRECT'
-  - 'PROCESS-NAME,Folx,DIRECT'
-  - 'PROCESS-NAME,NeatDM,DIRECT'
-  - 'PROCESS-NAME,NeatDM.exe,DIRECT'
-  - 'PROCESS-NAME,NetTransport,DIRECT'
-  - 'PROCESS-NAME,NetTransport.exe,DIRECT'
-  - 'PROCESS-NAME,Thunder,DIRECT'
-  - 'PROCESS-NAME,Thunder.exe,DIRECT'
-  - 'PROCESS-NAME,ThunderVIP.exe,DIRECT'
-  - 'PROCESS-NAME,Transmission,DIRECT'
-  - 'PROCESS-NAME,WebTorrent,DIRECT'
-  - 'PROCESS-NAME,WebTorrent.exe,DIRECT'
-  - 'PROCESS-NAME,aria2,DIRECT'
-  - 'PROCESS-NAME,aria2.exe,DIRECT'
-  - 'PROCESS-NAME,aria2c,DIRECT'
-  - 'PROCESS-NAME,aria2c.exe,DIRECT'
-  - 'PROCESS-NAME,fdm,DIRECT'
-  - 'PROCESS-NAME,fdm.exe,DIRECT'
-  - 'PROCESS-NAME,qBittorrent,DIRECT'
-  - 'PROCESS-NAME,qbittorrent.exe,DIRECT'
-  - 'PROCESS-NAME,transmission-daemon.exe,DIRECT'
-  - 'PROCESS-NAME,transmission-qt.exe,DIRECT'
-  - 'PROCESS-NAME,uTorrent,DIRECT'
-  - 'PROCESS-NAME,uTorrent.exe,DIRECT'
-  - 'PROCESS-NAME,xdm,DIRECT'
-  - 'PROCESS-NAME,xdm.exe,DIRECT'
-  - 'PROCESS-NAME,xdman,DIRECT'
-  - 'PROCESS-NAME,xdman.exe,DIRECT'
-  # 先于去广告的白名单
-  #- 'RULE-SET,DirectBypassAd,DIRECT,no-resolve'
-  # Dashboard 白名单
-  - 'DOMAIN,clash.razord.top,DIRECT'
-  - 'DOMAIN,yacd.haishan.me,DIRECT'
-  #本地私有地址
-  - 'RULE-SET,private,DIRECT,no-resolve'
-  # qq
-  - 'DOMAIN,zyx.qq.com,REJECT'
   #黑黑黑名单
   - 'DOMAIN-SUFFIX,tly.llc,REJECT'
   - 'DOMAIN-SUFFIX,tly.bet,REJECT'
@@ -736,10 +662,27 @@ rules:
   - 'DOMAIN-SUFFIX,feijicloud.com,REJECT'
   - 'DOMAIN-SUFFIX,cute-cloud.top,REJECT'
   - 'DOMAIN-SUFFIX,jifeng3267.xyz,REJECT'
-#  #去广告
-#  - 'RULE-SET,ad_reject,REJECT,no-resolve'
-  #国内网站
-  - 'RULE-SET,direct,DIRECT,no-resolve'
+  # 常见直连应用
+  - 'RULE-SET,applications,DIRECT'
+  # 面板
+  - 'DOMAIN,clash.razord.top,DIRECT'
+  - 'DOMAIN,yacd.haishan.me,DIRECT'
+  # 私有网络专用域名
+  - 'RULE-SET,private,DIRECT'
+  # 广告域名
+  - 'RULE-SET,reject,REJECT'
+  # iCloud 域名
+  - 'RULE-SET,icloud,DIRECT'
+  # Apple 在中国大陆可直连的域名
+  - 'RULE-SET,apple,DIRECT'
+  # 直连域名
+  - 'RULE-SET,direct,DIRECT'
+  # 局域网 IP 及保留 IP 地址
+  - 'RULE-SET,lancidr,DIRECT,no-resolve'
+  # 中国大陆 IP 地址
+  - 'RULE-SET,cncidr,DIRECT,no-resolve'
+  # tg
+  - 'RULE-SET,telegramcidr,$app_name,no-resolve'
   # SSH
   - 'DST-PORT,22,🧱SSH'
   - 'DST-PORT,3536,🧱SSH'
@@ -770,12 +713,7 @@ rules:
   - 'DOMAIN-SUFFIX,mexc.com,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,engagelab.cc,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,theengagelab.com,☁️azure,no-resolve'
-  #icloud
-  - 'RULE-SET,icloud,DIRECT,no-resolve'
-  #apple
-  - 'RULE-SET,apple,DIRECT,no-resolve'
   # Gemini
-  # - 'RULE-SET,gemini,🌎谷歌系,no-resolve'
   - 'DOMAIN-SUFFIX,googleusercontent.com,🌎谷歌系,no-resolve'
   - 'DOMAIN,www.googleapis.com,🌎谷歌系,no-resolve'
   - 'DOMAIN,ssl.gstatic.com,🌎谷歌系,no-resolve'
@@ -808,8 +746,6 @@ rules:
   - 'DOMAIN,analytics.google.com,🌎谷歌系,no-resolve'
   #Youtube
   - 'RULE-SET,YouTube,🌎谷歌系,no-resolve'
-  #Google 可直连服务
-  - 'RULE-SET,google,🌎谷歌系,no-resolve'
   #OpenAI
   - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
   # Anthropic
@@ -830,29 +766,8 @@ rules:
   - 'RULE-SET,Spotify,🎧Spotify,no-resolve'
   #HBO
   - 'RULE-SET,HBO,🎞️HBO,no-resolve'
-  #TG
-  - 'RULE-SET,telegram,$app_name,no-resolve'
-  #国外网站
+  - 'GEOIP,LAN,DIRECT'
+  - 'GEOIP,CN,DIRECT'
+  # 代理域名
   - 'RULE-SET,proxy,$app_name,no-resolve'
-  #lancidr
-  - 'IP-CIDR,0.0.0.0/8,DIRECT,no-resolve'
-  - 'IP-CIDR,10.0.0.0/8,DIRECT,no-resolve'
-  - 'IP-CIDR,100.64.0.0/10,DIRECT,no-resolve'
-  - 'IP-CIDR,127.0.0.0/8,DIRECT,no-resolve'
-  - 'IP-CIDR,169.254.0.0/16,DIRECT,no-resolve'
-  - 'IP-CIDR,172.16.0.0/12,DIRECT,no-resolve'
-  - 'IP-CIDR,192.0.0.0/24,DIRECT,no-resolve'
-  - 'IP-CIDR,192.0.2.0/24,DIRECT,no-resolve'
-  - 'IP-CIDR,192.88.99.0/24,DIRECT,no-resolve'
-  - 'IP-CIDR,192.168.0.0/16,DIRECT,no-resolve'
-  - 'IP-CIDR,198.18.0.0/15,DIRECT,no-resolve'
-  - 'IP-CIDR,198.51.100.0/24,DIRECT,no-resolve'
-  - 'IP-CIDR,203.0.113.0/24,DIRECT,no-resolve'
-  - 'IP-CIDR,224.0.0.0/3,DIRECT,no-resolve'
-  - 'IP-CIDR,::1/128,DIRECT,no-resolve'
-  - 'IP-CIDR,fc00::/7,DIRECT,no-resolve'
-  - 'IP-CIDR,fe80::/10,DIRECT,no-resolve'
-  - 'RULE-SET,cncidr,DIRECT,no-resolve'
-  - 'GEOIP,LAN,DIRECT,no-resolve'
-  - 'GEOIP,CN,DIRECT,no-resolve'
-  - 'MATCH,$app_name'
+  - 'MATCH,$app_name,no-resolve'
