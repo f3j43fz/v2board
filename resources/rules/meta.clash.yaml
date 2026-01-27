@@ -743,6 +743,6 @@ rules:
   - 'RULE-SET,Spotify,🎧Spotify,no-resolve'
   #HBO
   - 'RULE-SET,HBO,🎞️HBO,no-resolve'
-  - 'GEOIP,LAN,DIRECT'
-  - 'GEOIP,CN,DIRECT'
-  - 'MATCH,$app_name,no-resolve'
+  - 'GEOIP,LAN,DIRECT,no-resolve'
+  - 'GEOIP,CN,DIRECT,no-resolve'
+  - 'MATCH,$app_name'
