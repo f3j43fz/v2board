@@ -724,6 +724,8 @@ rules:
   #OpenAI
   - 'RULE-SET,OpenAI,🤖OpenAI,no-resolve'
   # Anthropic
+  - 'DOMAIN-SUFFIX,claude.com,🤖Anthropic,no-resolve'
+  - 'DOMAIN,cdn.usefathom.com,🤖Anthropic,no-resolve'
   - 'RULE-SET,Anthropic,🤖Anthropic,no-resolve'
   #Twitch
   - 'RULE-SET,Twitch,🎮Twitch,no-resolve'
