@@ -152,6 +152,32 @@ class Helper
         return strtr(rawurlencode($str), $revert);
     }
 
+    /**
+     * 从配置中随机获取一个 socks5 代理
+     * @return string|null 返回代理地址或 null
+     */
+    private static function getProxyConfig(): ?string
+    {
+        // 从配置文件获取代理服务器配置
+        $proxyConfig = config('v2board.proxy_server');
+
+        // 如果配置为空，返回 null
+        if (empty($proxyConfig)) {
+            return null;
+        }
+
+        // 用分号分割多个代理配置
+        $proxies = array_filter(explode(';', $proxyConfig));
+
+        // 如果没有可用的代理，返回 null
+        if (empty($proxies)) {
+            return null;
+        }
+
+        // 随机选择一个代理返回（兼容只有一个代理的情况）
+        return trim($proxies[array_rand($proxies)]);
+    }
+
     public static function getUserISP($userIP): string
     {
         // 判断地址是否为 IPv6
@@ -192,11 +218,18 @@ class Helper
         // IP.SB API的URL
         $apiUrl = "https://api.ip.sb/geoip/{$userIP}";
 
-        // 使用GuzzleHttp或其他HTTP库进行GET请求
-        $client = new Client();
+        // 获取随机代理配置
+        $proxy = self::getProxyConfig();
+
+        // 创建 HTTP 客户端，如果有代理配置则使用代理
+        $clientOptions = [];
+        if ($proxy) {
+            $clientOptions['proxy'] = $proxy;
+        }
+        $client = new Client($clientOptions);
 
         try {
-            // 发起请求
+            // 通过代理发起请求（如果配置了代理）
             $response = $client->request('GET', $apiUrl);
             $responseBody = json_decode($response->getBody(), true);
 
@@ -222,11 +255,18 @@ class Helper
         // 接口 URL
         $apiUrl = "https://api.vore.top/api/IPv6?v6={$userIP}";
 
-        // 使用GuzzleHttp或其他HTTP库进行GET请求
-        $client = new Client();
+        // 获取随机代理配置
+        $proxy = self::getProxyConfig();
+
+        // 创建 HTTP 客户端，如果有代理配置则使用代理
+        $clientOptions = [];
+        if ($proxy) {
+            $clientOptions['proxy'] = $proxy;
+        }
+        $client = new Client($clientOptions);
 
         try {
-            // 发起请求
+            // 通过代理发起请求（如果配置了代理）
             $response = $client->request('GET', $apiUrl);
             $responseBody = json_decode($response->getBody(), true);
 
