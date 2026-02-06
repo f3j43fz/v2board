@@ -6,6 +6,8 @@
 /public/*.htaccess
 /storage/*.key
 /vendor
+.claude
+CLAUDE.md
 .env
 .env.backup
 .phpunit.result.cache
