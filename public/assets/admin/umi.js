@@ -4586,7 +4586,7 @@
                     type: "text",
                     className: "form-control",
                     placeholder: "admin",
-                    defaultValue: _.emby_api_url,
+                    defaultValue: _.ipinfo_token,
                     onChange: e => this.set("safe", "ipinfo_token", e.target.value)
                 })), f.a.createElement(m, {
                     title: "\u4e0a\u6e38\u0020\u0065\u006d\u0062\u0079\u0020\u0041\u0050\u0049\u0020\u63a5\u53e3",
