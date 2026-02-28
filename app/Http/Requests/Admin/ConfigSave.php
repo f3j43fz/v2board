@@ -90,6 +90,7 @@ class ConfigSave extends FormRequest
         'register_limit_count' => 'integer',
         'register_limit_expire' => 'integer',
         'secure_path' => 'min:8|regex:/^[\w-]*$/',
+        'ipinfo_token' => '',
         'emby_api_url' => '',
         'emby_api_key' => '',
         'emby_server_url' => '',
