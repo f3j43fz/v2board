@@ -110,9 +110,9 @@ class ClientController extends Controller
             $bufferKey = 'ip_sentinel_records_buffer';
             Redis::rpush($bufferKey, $record);
             $bufferLen = Redis::llen($bufferKey);
-            if ($bufferLen >= 100) {
-                $items = Redis::lrange($bufferKey, 0, 99);
-                Redis::ltrim($bufferKey, 100, -1);
+            if ($bufferLen >= 50) {
+                $items = Redis::lrange($bufferKey, 0, 49);
+                Redis::ltrim($bufferKey, 50, -1);
                 $records = array_map(function ($item) {
                     return json_decode($item, true);
                 }, $items);
