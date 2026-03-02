@@ -36,6 +36,7 @@ class CacheKey
         'BLACKLISTED_SESSIONS' => '黑名单会话',
         'USD_TO_CNY_RATE' => '美元兑人民币汇率',
         'LAST_SEND_EMAIL_REMIND_EMBY_EXPIRE' => '最后发送 Emby 到期邮件提醒',
+        'IP_SENTINEL_BLACKLIST' => 'IP哨兵黑名单缓存',
     ];
 
     public static function get(string $key, $uniqueValue)

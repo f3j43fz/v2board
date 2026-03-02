@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\V1\Client;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\UploadSubscribeRecordsJob;
 use App\Models\Tokenrequest;
 use App\Protocols\General;
 use App\Services\ServerService;
 use App\Services\UserService;
+use App\Utils\CacheKey;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 use Ip2Region;
 use GeoIp2\Database\Reader;
 
@@ -34,6 +38,36 @@ class ClientController extends Controller
         $servers = [];
         $user = $request->user;
         $userService = new UserService();
+
+        // === IP Sentinel: 黑名单检查 (暂时禁用，先测试记录上传功能) ===
+        // if (!$user->is_admin) {
+        //     $sentinelUrl = config('v2board.ip_sentinel_url');
+        //     $sentinelKey = config('v2board.ip_sentinel_api_key');
+        //     if ($sentinelUrl && $sentinelKey) {
+        //         $blacklistCacheKey = CacheKey::get('IP_SENTINEL_BLACKLIST', $client_ip);
+        //         $cachedResult = Cache::get($blacklistCacheKey);
+        //
+        //         if ($cachedResult === null) {
+        //             try {
+        //                 $httpClient = new \GuzzleHttp\Client(['timeout' => 3]);
+        //                 $resp = $httpClient->get(rtrim($sentinelUrl, '/') . '/api/check/' . $client_ip, [
+        //                     'headers' => ['X-API-Key' => $sentinelKey],
+        //                 ]);
+        //                 $result = json_decode($resp->getBody(), true);
+        //                 $isBlacklisted = $result['blacklisted'] ?? false;
+        //                 Cache::put($blacklistCacheKey, $isBlacklisted ? '1' : '0', 300);
+        //                 if ($isBlacklisted) {
+        //                     return redirect('https://bilibili.com');
+        //                 }
+        //             } catch (\Exception $e) {
+        //                 // 失败开放: ip-sentinel 不可达时放行, 短 TTL
+        //                 Cache::put($blacklistCacheKey, '0', 60);
+        //             }
+        //         } elseif ($cachedResult === '1') {
+        //             return redirect('https://bilibili.com');
+        //         }
+        //     }
+        // }
 
         // UA过滤
         $ua = $this->antiXss->xss_clean($request->header('User-Agent'));
@@ -62,6 +96,27 @@ class ClientController extends Controller
                     'error' => '您的请求IP过多，已暂时禁止您更新订阅'
                 ];
                 return response()->json($response, Response::HTTP_FORBIDDEN);
+            }
+        }
+
+        // === IP Sentinel: 记录缓冲上传 ===
+        if (config('v2board.ip_sentinel_url')) {
+            $record = json_encode([
+                'timestamp' => time(),
+                'email' => $user->email,
+                'ip' => $client_ip,
+                'user_agent' => $ua,
+            ]);
+            $bufferKey = 'ip_sentinel_records_buffer';
+            Redis::rpush($bufferKey, $record);
+            $bufferLen = Redis::llen($bufferKey);
+            if ($bufferLen >= 100) {
+                $items = Redis::lrange($bufferKey, 0, 99);
+                Redis::ltrim($bufferKey, 100, -1);
+                $records = array_map(function ($item) {
+                    return json_decode($item, true);
+                }, $items);
+                UploadSubscribeRecordsJob::dispatch($records);
             }
         }
 

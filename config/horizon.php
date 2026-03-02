@@ -179,6 +179,7 @@ return [
                     'send_email',
                     'send_email_mass',
                     'send_telegram',
+                    'ip_sentinel',
                 ],
                 'balance' => 'auto',
                 'minProcesses' => 1,
