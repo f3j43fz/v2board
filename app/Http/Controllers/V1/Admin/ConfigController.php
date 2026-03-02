@@ -150,6 +150,8 @@ class ConfigController extends Controller
                 'email_verify' => (int)config('v2board.email_verify', 0),
                 'safe_mode_enable' => (int)config('v2board.safe_mode_enable', 0),
                 'secure_path' => config('v2board.secure_path', config('v2board.frontend_admin_path', hash('crc32b', config('app.key')))),
+                'ip_sentinel_url' => config('v2board.ip_sentinel_url'),
+                'ip_sentinel_api_key' => config('v2board.ip_sentinel_api_key'),
                 'ipinfo_token' => config('v2board.ipinfo_token'),
                 'emby_api_url' => config('v2board.emby_api_url'),
                 'emby_api_key' => config('v2board.emby_api_key'),

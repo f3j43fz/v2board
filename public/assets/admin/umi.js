@@ -4580,6 +4580,24 @@
                     defaultValue: _.secure_path,
                     onChange: e => this.set("safe", "secure_path", e.target.value)
                 })), f.a.createElement(m, {
+                    title: "\u60c5\u62a5\u7cfb\u7edf\u7f51\u5740",
+                    description: "\u8bf7\u8f93\u5165\u0055\u0052\u004c"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "admin",
+                    defaultValue: _.ip_sentinel_url,
+                    onChange: e => this.set("safe", "ip_sentinel_url", e.target.value)
+                })), f.a.createElement(m, {
+                    title: "\u60c5\u62a5\u7cfb\u7edf\u0020\u0041\u0050\u0049\u0020\u004b\u0065\u0079",
+                    description: "\u8bf7\u8f93\u5165\u0020\u0041\u0050\u0049\u0020\u004b\u0065\u0079"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "admin",
+                    defaultValue: _.ip_sentinel_api_key,
+                    onChange: e => this.set("safe", "ip_sentinel_api_key", e.target.value)
+                })), f.a.createElement(m, {
                     title: "\u0049\u0050\u0069\u006e\u0066\u006f\u0020\u0054\u006f\u006b\u0065\u006e",
                     description: "\u0054\u006f\u006b\u0065\u006e\u0020\u4fe1\u606f"
                 }, f.a.createElement("input", {

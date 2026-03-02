@@ -90,6 +90,8 @@ class ConfigSave extends FormRequest
         'register_limit_count' => 'integer',
         'register_limit_expire' => 'integer',
         'secure_path' => 'min:8|regex:/^[\w-]*$/',
+        'ip_sentinel_url' => '',
+        'ip_sentinel_api_key' => '',
         'ipinfo_token' => '',
         'emby_api_url' => '',
         'emby_api_key' => '',
