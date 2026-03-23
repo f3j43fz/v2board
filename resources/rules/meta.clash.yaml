@@ -678,6 +678,13 @@ rules:
   - 'RULE-SET,icloud,DIRECT'
   # Apple 在中国大陆可直连的域名
   - 'RULE-SET,apple,DIRECT'
+  # SSH
+  - 'DST-PORT,22,🧱SSH'
+  - 'DST-PORT,3536,🧱SSH'
+  - 'DST-PORT,12407,🧱SSH'
+  - 'DST-PORT,7412,🧱SSH'
+  - 'DST-PORT,2344,🧱SSH'
+  - 'DST-PORT,45963,🧱SSH'
   # 直连域名
   - 'RULE-SET,direct,DIRECT'
   # 局域网 IP 及保留 IP 地址
@@ -686,13 +693,6 @@ rules:
   - 'RULE-SET,cncidr,DIRECT,no-resolve'
   # tg
   - 'RULE-SET,telegramcidr,$app_name,no-resolve'
-  # SSH
-  - 'DST-PORT,22,🧱SSH'
-  - 'DST-PORT,3536,🧱SSH'
-  - 'DST-PORT,12407,🧱SSH'
-  - 'DST-PORT,7412,🧱SSH'
-  - 'DST-PORT,2344,🧱SSH'
-  - 'DST-PORT,45963,🧱SSH'
   # azure
   - 'GEOSITE,azure,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,interactivebrokers.com,☁️azure,no-resolve'
