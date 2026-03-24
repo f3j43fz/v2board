@@ -283,7 +283,7 @@ rule-providers:
   gemini:
     type: http
     behavior: classical
-    url: "https://ghfast.top/https://github.com/blackmatrix7/ios_rule_script/blob/5ad04fab096f94224879c77c4bf50ace8a393fb0/rule/Clash/Gemini/Gemini.list"
+    url: "https://ghfast.top/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Gemini/Gemini.yaml"
     path: ./ruleset/gemini.yaml
     interval: 86400
 
