@@ -82,13 +82,19 @@ class EPay {
 
     public function notify($params)
     {
+        // 仅处理支付成功的回调，防止未完成订单被错误入账
+        $tradeStatus = $params['trade_status'] ?? '';
+        if ($tradeStatus !== 'TRADE_SUCCESS') {
+            return false;
+        }
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['sign_type']);
         ksort($params);
         reset($params);
         $str = stripslashes(urldecode(http_build_query($params))) . $this->config['key'];
-        if ($sign !== md5($str)) {
+        $generateSignature = md5($str);
+        if (!hash_equals($generateSignature, $sign)) {
             return false;
         }
         return [

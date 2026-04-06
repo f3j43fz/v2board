@@ -92,7 +92,7 @@ class EPUSDT {
     {
         $sign = $params['signature'];
         $md5 = $this->epusdtSign($params, $this->config['pid']);
-        if ($sign !== $md5) {
+        if (!hash_equals($md5, $sign)) {
             return false;
         }
         return [
