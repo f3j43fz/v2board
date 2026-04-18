@@ -118,6 +118,7 @@ class UniProxyController extends Controller
                 $response = [
                     'host' => $this->nodeInfo->host,
                     'server_port' => $this->nodeInfo->server_port,
+                    'port' => $this->nodeInfo->port,
                     'server_name' => $this->nodeInfo->server_name,
                     'up_mbps' => $this->nodeInfo->up_mbps,
                     'down_mbps' => $this->nodeInfo->down_mbps,
