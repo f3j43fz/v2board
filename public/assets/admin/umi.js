@@ -10256,9 +10256,7 @@
                     value: "ws"
                 }, "WebSocket"), d.a.createElement(a["a"].Option, {
                     value: "grpc"
-                }, "gRPC"), d.a.createElement(a["a"].Option, {
-                    value: "xhttp"
-                }, "XHTTP")))), d.a.createElement("div", {
+                }, "gRPC")))), d.a.createElement("div", {
                     className: "form-group"
                 }, d.a.createElement("label", null, d.a.createElement(o["a"], {
                     placement: "top"
@@ -83056,7 +83054,9 @@
                     value: "ws"
                 }, "WebSocket"), y.a.createElement(N["a"].Option, {
                     value: "grpc"
-                }, "gRPC")))), y.a.createElement("div", {
+                }, "gRPC"), y.a.createElement(N["a"].Option, {
+                    value: "xhttp"
+                }, "XHTTP")))), y.a.createElement("div", {
                     className: "row"
                 }, y.a.createElement("div", {
                     className: "form-group col-md-12 col-xs-12"
