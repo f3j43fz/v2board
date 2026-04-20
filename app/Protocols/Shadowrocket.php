@@ -194,6 +194,18 @@ class Shadowrocket
                 $config['host'] = $server['host'];
             }
         }
+        if ($server['network'] === 'xhttp') {
+            $config['obfs'] = "xhttp";
+            if ($server['network_settings']) {
+                $xhttpSettings = $server['network_settings'];
+                if (isset($xhttpSettings['path']) && !empty($xhttpSettings['path']))
+                    $config['path'] = $xhttpSettings['path'];
+                if (isset($xhttpSettings['host']) && !empty($xhttpSettings['host']))
+                    $config['host'] = $xhttpSettings['host'];
+                if (isset($xhttpSettings['mode']) && !empty($xhttpSettings['mode']))
+                    $config['mode'] = $xhttpSettings['mode'];
+            }
+        }
 
         $query = http_build_query($config, '', '&', PHP_QUERY_RFC3986);
         $uri = "vless://{$userinfo}?{$query}";

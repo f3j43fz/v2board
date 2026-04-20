@@ -10256,7 +10256,9 @@
                     value: "ws"
                 }, "WebSocket"), d.a.createElement(a["a"].Option, {
                     value: "grpc"
-                }, "gRPC")))), d.a.createElement("div", {
+                }, "gRPC"), d.a.createElement(a["a"].Option, {
+                    value: "xhttp"
+                }, "XHTTP")))), d.a.createElement("div", {
                     className: "form-group"
                 }, d.a.createElement("label", null, d.a.createElement(o["a"], {
                     placement: "top"

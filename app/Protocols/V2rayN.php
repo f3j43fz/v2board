@@ -176,6 +176,14 @@ class V2rayN
             if (isset($grpcSettings['multiMode'])) $config['mode'] = $grpcSettings['multiMode'] ? "multi" : "gun";
             $output .= "&serviceName={$config['serviceName']}" . "&mode={$config['mode']}";
         }
+        if ((string)$server['network'] === 'xhttp') {
+            $xhttpSettings = $server['network_settings'] ?? [];
+            if (isset($xhttpSettings['path'])) $config['path'] = Helper::encodeURIComponent($xhttpSettings['path']);
+            if (isset($xhttpSettings['host'])) $config['host'] = Helper::encodeURIComponent($xhttpSettings['host']);
+            $xhttpMode = isset($xhttpSettings['mode']) ? Helper::encodeURIComponent($xhttpSettings['mode']) : '';
+            $output .= "&path={$config['path']}" . "&host={$config['host']}";
+            if (!empty($xhttpMode)) $output .= "&mode={$xhttpMode}";
+        }
 
         $output .= "&fp={$config['fp']}" . "#" . $config['name'];
 

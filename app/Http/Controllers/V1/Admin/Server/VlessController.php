@@ -24,7 +24,7 @@ class VlessController extends Controller
             'tls' => 'required|in:0,1,2',
             'tls_settings' => 'nullable|array',
             'flow' => 'nullable|in:xtls-rprx-vision',
-            'network' => 'required',
+            'network' => 'required|in:tcp,ws,grpc,xhttp',
             'network_settings' => 'nullable|array',
             'tags' => 'nullable|array',
             'rate' => 'required',

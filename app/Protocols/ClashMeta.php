@@ -239,6 +239,19 @@ class ClashMeta
                 }
             }
         }
+        if ($server['network'] === 'xhttp') {
+            $array['network'] = 'xhttp';
+            if ($server['network_settings']) {
+                $xhttpSettings = $server['network_settings'];
+                $array['xhttp-opts'] = [];
+                if (isset($xhttpSettings['path']) && !empty($xhttpSettings['path']))
+                    $array['xhttp-opts']['path'] = $xhttpSettings['path'];
+                if (isset($xhttpSettings['host']) && !empty($xhttpSettings['host']))
+                    $array['xhttp-opts']['host'] = $xhttpSettings['host'];
+                if (isset($xhttpSettings['mode']) && !empty($xhttpSettings['mode']))
+                    $array['xhttp-opts']['mode'] = $xhttpSettings['mode'];
+            }
+        }
         return $array;
     }
 
