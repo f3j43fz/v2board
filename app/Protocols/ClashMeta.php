@@ -241,6 +241,9 @@ class ClashMeta
         }
         if ($server['network'] === 'xhttp') {
             $array['network'] = 'xhttp';
+            // Mihomo 的 xhttp transport 要求显式 alpn=[h2]，否则客户端不走 HTTP/2
+            // 服务端（Xray splithttp）会默默把请求当异常关掉。
+            $array['alpn'] = ['h2'];
             if ($server['network_settings']) {
                 $xhttpSettings = $server['network_settings'];
                 $array['xhttp-opts'] = [];
