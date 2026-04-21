@@ -9,6 +9,7 @@ use App\Utils\CacheKey;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class UniProxyController extends Controller
 {
@@ -141,5 +142,75 @@ class UniProxyController extends Controller
         }
 
         return response($response)->header('ETag', "\"{$eTag}\"");
+    }
+
+    // 后端上报每节点的活跃 IP 并获取集群合并后的 IP 列表（用于跨机 IP 数量限制去重）
+    // 请求体: [{"Uid": 123, "Ips": ["1.2.3.4", ...]}, ...]
+    // 响应体: 相同形状，但 Ips 是集群所有节点对该 user 的并集
+    public function alivelist(Request $request)
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($data)) {
+            $data = [];
+        }
+
+        $nodeRef = strtolower($this->nodeType) . '_' . $this->nodeId;
+        // TTL 至少 120s，也可覆盖 pull_interval 的 3 倍，容忍节点短暂下线
+        $pullInterval = (int)config('v2board.server_pull_interval', 60);
+        $ttl = max(120, $pullInterval * 3);
+
+        $result = [];
+
+        foreach ($data as $entry) {
+            $uid = (int)($entry['Uid'] ?? 0);
+            if ($uid <= 0) {
+                continue;
+            }
+            $ips = $entry['Ips'] ?? [];
+            if (!is_array($ips)) {
+                $ips = [];
+            }
+
+            // Key 命名走 CacheKey 中心化注册；Value 层面仍用 Redis 原生集合操作，
+            // 因为多节点并发上报时需要 SADD/SMEMBERS 的原子语义（Cache::put
+            // 只能单键原子读写，做集合合并会有丢数据的竞态）。
+            $nodeKey = CacheKey::get('ALIVE_IP_USER_NODE', "{$uid}_{$nodeRef}");
+            $nodesKey = CacheKey::get('ALIVE_IP_USER_NODES', $uid);
+
+            // 1) 替换本节点对该用户的 IP 报告（旧的先删，避免污染）
+            Redis::del($nodeKey);
+            if (count($ips) > 0) {
+                Redis::sadd($nodeKey, ...$ips);
+                Redis::expire($nodeKey, $ttl);
+            }
+
+            // 2) 把本节点登记到该用户的"节点集合"里，供其他节点读取时发现
+            Redis::sadd($nodesKey, $nodeRef);
+            Redis::expire($nodesKey, $ttl);
+
+            // 3) 聚合：遍历该用户登记过的所有节点，union 未过期的 IP 集合
+            $allNodes = Redis::smembers($nodesKey);
+            $merged = [];
+            foreach ($allNodes as $otherNodeRef) {
+                $otherKey = CacheKey::get('ALIVE_IP_USER_NODE', "{$uid}_{$otherNodeRef}");
+                if (Redis::exists($otherKey)) {
+                    $nodeIps = Redis::smembers($otherKey);
+                    if (is_array($nodeIps) && count($nodeIps) > 0) {
+                        $merged = array_merge($merged, $nodeIps);
+                    }
+                } else {
+                    // 节点的 IP 集合已过期 → 从用户的 nodes 集合里剔除，避免无限增长
+                    Redis::srem($nodesKey, $otherNodeRef);
+                }
+            }
+            $merged = array_values(array_unique($merged));
+
+            $result[] = [
+                'Uid' => $uid,
+                'Ips' => $merged,
+            ];
+        }
+
+        return response()->json($result);
     }
 }
