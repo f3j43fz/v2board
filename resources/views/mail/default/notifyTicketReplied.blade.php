@@ -17,7 +17,7 @@
                                 尊敬的用户 {{$userName}} ，
                                 <br />
                                 <br />
-                                {!! nl2br($content) !!}
+                                {!! nl2br(e($content)) !!}
                                 <br />
                                 <br />
                                 {{$name}} 团队敬上 祝您生活愉快
