@@ -117,12 +117,12 @@ class CouponService
             abort(500, __('This coupon has expired'));
         }
         if ($this->coupon->limit_plan_ids && $this->planId) {
-            if (!in_array($this->planId, $this->coupon->limit_plan_ids)) {
+            if (!in_array($this->planId, $this->coupon->limit_plan_ids, true)) {
                 abort(500, __('The coupon code cannot be used for this subscription'));
             }
         }
         if ($this->coupon->limit_period && $this->period) {
-            if (!in_array($this->period, $this->coupon->limit_period)) {
+            if (!in_array($this->period, $this->coupon->limit_period, true)) {
                 abort(500, __('The coupon code cannot be used for this period'));
             }
         }
@@ -145,7 +145,7 @@ class CouponService
             if(empty($this->userInviterId)){
                 abort(500, __('由于您没有邀请人，无法判断您是否有资格使用本优惠券'));
             }
-            if (!in_array($this->userInviterId, $inviterIds)) {
+            if (!in_array((string)$this->userInviterId, $inviterIds, true)) {
                 abort(500, __('您没有资格使用该邀请人的优惠券'));
             }
         }
