@@ -138,8 +138,9 @@ class OrderService
 
         // 门槛： 50 美元   不够 50 则没有优惠，即充多少是多少。
         $discountThreshold = config('v2board.discount_threshold', 50 * 100);
-        // 优惠比例： 10%
-        $discount = config('v2board.recharge_discount', 10) * 0.01;
+        // 优惠比例： 10% — 代码层硬上限 50%，防止配置失误或后台被入侵导致超额赠送
+        $discount = min((float)config('v2board.recharge_discount', 10) * 0.01, 0.5);
+        if ($discount < 0) $discount = 0;
 
 
         $order = $this->order;
@@ -498,8 +499,12 @@ class OrderService
 
     public function cancel(): bool
     {
-        $order = $this->order;
         DB::beginTransaction();
+        $order = Order::where('id', $this->order->id)->lockForUpdate()->first();
+        if (!$order || $order->status !== 0) {
+            DB::rollBack();
+            return false;
+        }
         $order->status = 2;
         if (!$order->save()) {
             DB::rollBack();
@@ -512,8 +517,7 @@ class OrderService
                 return false;
             }
 
-            // 【重点优化】如果是 PAGO 用户取消订单（如 Emby），余额退回后，需要重新计算流量上限
-            $user = User::find($order->user_id); // 重新获取以获得最新余额
+            $user = User::find($order->user_id);
             if ($user && $user->is_PAGO == 1) {
                 $this->recalculatePagoTraffic($user);
                 $user->save();

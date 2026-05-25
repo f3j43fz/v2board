@@ -16,6 +16,7 @@ use App\Utils\CacheKey;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -206,18 +207,24 @@ class UserController extends Controller
 
     public function transfer(UserTransfer $request)
     {
-        $user = User::find($request->user['id']);
+        DB::beginTransaction();
+        $user = User::where('id', $request->user['id'])->lockForUpdate()->first();
         if (!$user) {
+            DB::rollBack();
             abort(500, __('The user does not exist'));
         }
-        if ($request->input('transfer_amount') > $user->commission_balance) {
+        $transferAmount = (int)$request->input('transfer_amount');
+        if ($transferAmount > $user->commission_balance) {
+            DB::rollBack();
             abort(500, __('Insufficient commission balance'));
         }
-        $user->commission_balance = $user->commission_balance - $request->input('transfer_amount');
-        $user->balance = $user->balance + $request->input('transfer_amount');
+        $user->commission_balance = $user->commission_balance - $transferAmount;
+        $user->balance = $user->balance + $transferAmount;
         if (!$user->save()) {
+            DB::rollBack();
             abort(500, __('Transfer failed'));
         }
+        DB::commit();
         return response([
             'data' => true
         ]);

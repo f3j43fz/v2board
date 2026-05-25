@@ -67,31 +67,28 @@ class CheckCommission extends Command
             ->where('invite_user_id', '!=', NULL)
             ->get();
 
-        // 一次性获取所有订单的【邀请人】和【下单用户】的ID
-        $inviteUserIds = $orders->pluck('invite_user_id')->toArray();
-        $userIds = $orders->pluck('user_id')->toArray();
+        if ($orders->isEmpty()) return;
 
-        // 一次性获取所有订单的订阅IP信息
-        // 【邀请人】的订阅IP记录
-        $requestedIPs = Tokenrequest::whereIn('user_id', $inviteUserIds)
-            ->orderBy('id', 'desc')
-            ->take(5)
-            ->pluck('ip', 'user_id')
-            ->toArray();
-        // 【下单用户】的订阅IP记录
-        $userRequestedIPs = Tokenrequest::whereIn('user_id', $userIds)
-            ->orderBy('id', 'desc')
-            ->take(5)
-            ->pluck('ip', 'user_id')
-            ->toArray();
+        // 去重，避免同一用户被重复查询
+        $inviteUserIds = $orders->pluck('invite_user_id')->unique()->values()->toArray();
+        $userIds       = $orders->pluck('user_id')->unique()->values()->toArray();
+
+        // 按 user_id 分桶，每人最多 5 条最近订阅 IP（仅 30 天内）
+        $sinceTimestamp   = strtotime('-30 days');
+        $inviterIpsByUser = $this->loadRecentIpsByUser($inviteUserIds, $sinceTimestamp);
+        $invitedIpsByUser = $this->loadRecentIpsByUser($userIds,       $sinceTimestamp);
 
         foreach ($orders as $order) {
             DB::beginTransaction();
 
             $inviteUserId = $order->invite_user_id;
-            $orderIp = $order->user_ip;
+            $orderIp      = $order->user_ip;
 
-            $invalidInvite = $this->checkIPs($requestedIPs, $userRequestedIPs, $orderIp);
+            // 只比对【本订单】的邀请人 vs 下单用户，不与批次内其他订单串场
+            $inviterIps = $inviterIpsByUser[$inviteUserId] ?? [];
+            $invitedIps = $invitedIpsByUser[$order->user_id] ?? [];
+
+            $invalidInvite = $this->checkIPs($inviterIps, $invitedIps, $orderIp);
 
             if ($invalidInvite) {
                 $order->commission_status = 3;
@@ -113,33 +110,51 @@ class CheckCommission extends Command
         }
     }
 
-    private function checkIPs($requestedIPs, $userRequestedIPs, $orderIp): bool
+    /**
+     * 拉取每个 user_id 的最近 5 条订阅 IP（30 天内），按 id 降序
+     * 返回 [user_id => [ip1, ip2, ip3, ip4, ip5]]
+     */
+    private function loadRecentIpsByUser(array $userIds, int $sinceTimestamp): array
     {
-        $invalidInvite = false;
+        if (empty($userIds)) return [];
 
-        foreach ($requestedIPs as $userId => $requestedIP) {
-            if ($requestedIP === $orderIp && $this->isFromChina($requestedIP)) {
-                $invalidInvite = true;
-                break;
+        $records = Tokenrequest::whereIn('user_id', $userIds)
+            ->where('requested_at', '>=', $sinceTimestamp)
+            ->orderBy('user_id')
+            ->orderBy('id', 'desc')
+            ->get(['user_id', 'ip']);
+
+        $result = [];
+        foreach ($records as $rec) {
+            if (!isset($result[$rec->user_id])) {
+                $result[$rec->user_id] = [];
+            }
+            if (count($result[$rec->user_id]) < 5) {
+                $result[$rec->user_id][] = $rec->ip;
             }
         }
+        return $result;
+    }
 
-        if (!$invalidInvite) {
-
-            $allRequestedIPs = array_reduce($requestedIPs, function ($carry, $ips) {
-                $ipArray = explode(' ', $ips); // 将IP地址字符串转换为数组
-                return array_merge($carry, $ipArray);
-            }, []);
-
-            foreach ($userRequestedIPs as $userId => $userRequestedIP) {
-                if (in_array($userRequestedIP, $allRequestedIPs) && $this->isFromChina($userRequestedIP)) {
-                    $invalidInvite = true;
-                    break;
+    private function checkIPs(array $inviterIps, array $invitedIps, $orderIp): bool
+    {
+        // 1) 下单 IP 与【该订单邀请人】最近订阅 IP 重合（同一人下单 + 拉订阅）
+        if (!empty($orderIp)) {
+            foreach ($inviterIps as $ip) {
+                if ($ip === $orderIp && $this->isFromChina($ip)) {
+                    return true;
                 }
             }
         }
 
-        return $invalidInvite;
+        // 2) 【该订单下单用户】订阅 IP 与【该订单邀请人】订阅 IP 重合
+        foreach ($invitedIps as $ip) {
+            if (in_array($ip, $inviterIps, true) && $this->isFromChina($ip)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function isFromChina($ip): bool
