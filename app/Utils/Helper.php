@@ -19,10 +19,7 @@ class Helper
 
     public static function guid($format = false)
     {
-        if (function_exists('com_create_guid') === true) {
-            return md5(trim(com_create_guid(), '{}'));
-        }
-        $data = openssl_random_pseudo_bytes(16);
+        $data = random_bytes(16);
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
         if ($format) {
@@ -33,8 +30,8 @@ class Helper
 
     public static function generateOrderNo(): string
     {
-        $randomChar = mt_rand(10000, 99999);
-        return date('YmdHms') . substr(microtime(), 2, 6) . $randomChar;
+        $randomChar = random_int(10000, 99999);
+        return date('YmdHms') . substr(microtime(), 2, 6) . $randomChar . bin2hex(random_bytes(4));
     }
 
     public static function exchange($from, $to)
@@ -67,7 +64,7 @@ class Helper
         shuffle($chars);
         $str = '';
         for ($i = 0; $i < $len; $i++) {
-            $str .= $chars[mt_rand(0, $charsLen)];
+            $str .= $chars[random_int(0, $charsLen)];
         }
         return $str;
     }
