@@ -346,7 +346,12 @@ class AuthController extends Controller
         $code = Helper::guid();
         $key = CacheKey::get('TEMP_TOKEN', $code);
         Cache::put($key, $user['id'], 60);
-        $redirect = '/#/login?verify=' . $code . '&redirect=' . ($request->input('redirect') ? $request->input('redirect') : 'dashboard');
+        // 与 token2Login 一致：redirect 必须为相对路径，拒绝带 scheme 或 // 的绝对 URL
+        $userRedirect = (string)($request->input('redirect') ?: 'dashboard');
+        if (preg_match('#^(?:[a-z][a-z0-9+\-.]*:)?//#i', $userRedirect)) {
+            $userRedirect = 'dashboard';
+        }
+        $redirect = '/#/login?verify=' . $code . '&redirect=' . $userRedirect;
         if (config('v2board.app_url')) {
             $url = config('v2board.app_url') . $redirect;
         } else {
