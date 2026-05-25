@@ -119,6 +119,18 @@ class CommController extends Controller
 
     public function pv(Request $request)
     {
+        // 每 IP 每日最多 100 次 pv，防止脚本污染邀请码统计（throttle:10/min/IP 是同步保护，这里加日上限做纵深防御）
+        $clientIp = $request->ip();
+        if ($clientIp) {
+            $dailyKey = CacheKey::get('PV_DAILY_LIMIT_IP', $clientIp);
+            $dailyCount = (int)Cache::get($dailyKey, 0);
+            if ($dailyCount >= 100) {
+                // 静默丢弃，不告知攻击者上限存在
+                return response(['data' => true]);
+            }
+            Cache::put($dailyKey, $dailyCount + 1, 86400);
+        }
+
         $invite_code = $this->antiXss->xss_clean($request->input('invite_code'));
         $inviteCode = InviteCode::where('code', $invite_code)->first();
         if ($inviteCode) {
