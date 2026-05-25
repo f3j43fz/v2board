@@ -83,24 +83,48 @@ class EPay {
     public function notify($params)
     {
         // 仅处理支付成功的回调，防止未完成订单被错误入账
-        $tradeStatus = $params['trade_status'] ?? '';
-        if ($tradeStatus !== 'TRADE_SUCCESS') {
+        if (($params['trade_status'] ?? '') !== 'TRADE_SUCCESS') {
             return false;
         }
+
+        // 签名校验
         $sign = $params['sign'];
         unset($params['sign']);
         unset($params['sign_type']);
         ksort($params);
         reset($params);
         $str = stripslashes(urldecode(http_build_query($params))) . $this->config['key'];
-        $generateSignature = md5($str);
-        if (!hash_equals($generateSignature, $sign)) {
+        if (!hash_equals(md5($str), $sign)) {
             return false;
         }
+
+        // 防 partial-pay：把订单"应付人民币"重算一遍，与 EPay 上报金额对比（都是 CNY 元）
+        $expectedYuan = $this->calcYuan($params['out_trade_no']);
+        $reportedYuan = isset($params['money']) ? (float)$params['money'] : 0.0;
+        if ($expectedYuan === null || $reportedYuan + 0.05 < $expectedYuan) {
+            return false;
+        }
+
         return [
             'trade_no' => $params['out_trade_no'],
             'callback_no' => $params['trade_no']
         ];
+    }
+
+    /**
+     * 重算订单应付给 EPay 的人民币金额（与 pay() 同一份转换逻辑）
+     * 返回元（含小数），找不到订单返回 null
+     */
+    private function calcYuan(string $tradeNo)
+    {
+        $order = \App\Models\Order::where('trade_no', $tradeNo)->first();
+        if (!$order) return null;
+        $yuan = $order->total_amount / 100;
+        if (config('v2board.currency') === 'USD') {
+            $rate = $this->get_usd_to_cny_rate() ?? config('v2board.default_usd_to_cny_rate', 7.15);
+            $yuan = round($yuan * ($rate + 0.35), 2);
+        }
+        return $yuan;
     }
 
     private function get_usd_to_cny_rate()
