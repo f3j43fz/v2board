@@ -62,21 +62,14 @@ class CommController extends Controller
 
         $isforget = $request->input('isforget');
         $email_exists = User::where('email', $email)->exists();
+        // 决定是否真正发邮件；不发也返回 200，防止账号枚举（注册/找回的 oracle 失效）
+        $shouldSend = true;
         if (isset($isforget)) {
-            // 重复注册
-            if ($isforget == 0 && $email_exists) {
-                abort(500, __('Fuck you'));
-            }
-            // 忘记密码，恶意刷验证码
-            if ($isforget == 1 && !$email_exists) {
-                abort(500, __('Fuck you'));
-            }
+            if ($isforget == 0 && $email_exists) $shouldSend = false;  // 注册场景：邮箱已注册 → 静默跳过
+            if ($isforget == 1 && !$email_exists) $shouldSend = false; // 找回场景：邮箱不存在 → 静默跳过
         }
 
-        if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
-            abort(500, __('Email verification code has been sent, please request again later'));
-        }
-        // 防邮件轰炸/spam relay：按 IP 限速
+        // 防邮件轰炸/spam relay：按 IP 限速（不论是否真发，先扣 IP 配额，防枚举者用"无效邮箱"绕过限速）
         $clientIp = $request->ip();
         if ($clientIp) {
             if (Cache::get(CacheKey::get('EMAIL_VERIFY_IP_RATE_LIMIT', $clientIp))) {
@@ -87,6 +80,19 @@ class CommController extends Controller
             if ($dailyCount >= 20) {
                 abort(500, __('Email verification code has been sent, please request again later'));
             }
+            // 即使后面不真发邮件，也立即记一次 IP 配额
+            Cache::put(CacheKey::get('EMAIL_VERIFY_IP_RATE_LIMIT', $clientIp), time(), 10);
+            Cache::put($dailyKey, $dailyCount + 1, 86400);
+        }
+
+        // 静默成功（攻击者无法通过响应区分邮箱是否注册）
+        if (!$shouldSend) {
+            return response(['data' => true]);
+        }
+
+        // 真发邮件路径
+        if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
+            abort(500, __('Email verification code has been sent, please request again later'));
         }
         $code = random_int(100000, 999999);
         $subject = '您的'. config('v2board.app_name', 'V2Board') . __('Email verification code') . '： ' . $code;
@@ -105,10 +111,7 @@ class CommController extends Controller
 
         Cache::put(CacheKey::get('EMAIL_VERIFY_CODE', $email), $code, 300);
         Cache::put(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email), time(), 60);
-        if ($clientIp) {
-            Cache::put(CacheKey::get('EMAIL_VERIFY_IP_RATE_LIMIT', $clientIp), time(), 10);
-            Cache::put(CacheKey::get('EMAIL_VERIFY_IP_DAILY_COUNT', $clientIp), $dailyCount + 1, 86400);
-        }
+        // 注意：IP 配额在函数前部已写入，不在此处重复
         return response([
             'data' => true
         ]);
