@@ -30,7 +30,10 @@ class UserController extends Controller
     public function update(UserUpdate $request)
     {
         $params = $request->validated();
-        $user = User::find($request->input('id'));
+        $user = User::where('id', $request->input('id'))
+            ->where('is_admin', 0)
+            ->where('is_staff', 0)
+            ->first();
         if (!$user) {
             abort(500, '用户不存在');
         }
@@ -65,7 +68,9 @@ class UserController extends Controller
     {
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
         $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
-        $builder = User::orderBy($sort, $sortType);
+        $builder = User::where('is_admin', 0)
+            ->where('is_staff', 0)
+            ->orderBy($sort, $sortType);
         $this->filter($request, $builder);
         $users = $builder->get();
         foreach ($users as $user) {
@@ -92,7 +97,9 @@ class UserController extends Controller
     {
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
         $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
-        $builder = User::orderBy($sort, $sortType);
+        $builder = User::where('is_admin', 0)
+            ->where('is_staff', 0)
+            ->orderBy($sort, $sortType);
         $this->filter($request, $builder);
         try {
             $builder->update([
