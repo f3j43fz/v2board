@@ -39,6 +39,8 @@ class CacheKey
         'IP_SENTINEL_BLACKLIST' => 'IP哨兵黑名单缓存',
         'ALIVE_IP_USER_NODE' => '某节点对某用户报告的活跃IP集合（跨机IP去重）',
         'ALIVE_IP_USER_NODES' => '某用户当前被哪些节点报告过活跃IP（跨机IP去重索引）',
+        'EMAIL_VERIFY_IP_RATE_LIMIT' => '邮箱验证码-按IP冷却（10秒）',
+        'EMAIL_VERIFY_IP_DAILY_COUNT' => '邮箱验证码-按IP每日上限计数',
     ];
 
     public static function get(string $key, $uniqueValue)

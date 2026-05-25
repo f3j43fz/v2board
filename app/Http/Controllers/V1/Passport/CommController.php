@@ -76,7 +76,19 @@ class CommController extends Controller
         if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
             abort(500, __('Email verification code has been sent, please request again later'));
         }
-        $code = rand(100000, 999999);
+        // 防邮件轰炸/spam relay：按 IP 限速
+        $clientIp = $request->ip();
+        if ($clientIp) {
+            if (Cache::get(CacheKey::get('EMAIL_VERIFY_IP_RATE_LIMIT', $clientIp))) {
+                abort(500, __('Email verification code has been sent, please request again later'));
+            }
+            $dailyKey = CacheKey::get('EMAIL_VERIFY_IP_DAILY_COUNT', $clientIp);
+            $dailyCount = (int)Cache::get($dailyKey, 0);
+            if ($dailyCount >= 20) {
+                abort(500, __('Email verification code has been sent, please request again later'));
+            }
+        }
+        $code = random_int(100000, 999999);
         $subject = '您的'. config('v2board.app_name', 'V2Board') . __('Email verification code') . '： ' . $code;
         $userName = explode('@', $email)[0];
         SendEmailJob::dispatch([
@@ -93,6 +105,10 @@ class CommController extends Controller
 
         Cache::put(CacheKey::get('EMAIL_VERIFY_CODE', $email), $code, 300);
         Cache::put(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email), time(), 60);
+        if ($clientIp) {
+            Cache::put(CacheKey::get('EMAIL_VERIFY_IP_RATE_LIMIT', $clientIp), time(), 10);
+            Cache::put(CacheKey::get('EMAIL_VERIFY_IP_DAILY_COUNT', $clientIp), $dailyCount + 1, 86400);
+        }
         return response([
             'data' => true
         ]);
