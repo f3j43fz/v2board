@@ -148,10 +148,6 @@ class OrderController extends Controller
         $order->user_id = $request->user['id'];
         //记录下单IP
         $client_ip = $request->ip();
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $client_ip = trim($ips[0]);  // 获取列表中的第一个 IP 地址
-        }
         if(!$user->is_admin) $order->user_ip = $client_ip;
 
         $order->plan_id = $plan->id;
@@ -297,8 +293,9 @@ class OrderController extends Controller
         $order->payment_id = $method;
         if (!$order->save()) abort(500, __('Request failed, please try again later'));
 
-        // origin site
-        $origin = $request->headers->get('origin');
+        // origin site — 自动用当前请求的 Host，即用户在哪个域名下单就跳回哪个域名
+        // 安全性依赖：nginx server_name 限定合法域名 + HTTPS 证书阻止任意 Host
+        $origin = $request->getSchemeAndHttpHost();
 
         $result = $paymentService->pay([
             'trade_no' => $tradeNo,

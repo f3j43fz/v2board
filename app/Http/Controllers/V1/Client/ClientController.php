@@ -23,10 +23,6 @@ class ClientController extends Controller
     {
 
         $client_ip = $request->ip();
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $client_ip = trim($ips[0]);  // 获取列表中的第一个 IP 地址
-        }
 
         if (!filter_var($client_ip, FILTER_VALIDATE_IP)) {
             $response = [
