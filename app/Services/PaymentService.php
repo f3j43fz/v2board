@@ -15,6 +15,16 @@ class PaymentService
     public function __construct($method, $id = NULL, $uuid = NULL)
     {
         $this->method = $method;
+        if (!is_string($method) || !preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $method)) {
+            abort(500, 'gate is not found');
+        }
+        $allowed = array_map(
+            function ($f) { return basename($f, '.php'); },
+            glob(app_path('Payments') . '/*.php')
+        );
+        if (!in_array($method, $allowed, true)) {
+            abort(500, 'gate is not found');
+        }
         $this->class = '\\App\\Payments\\' . $this->method;
         if (!class_exists($this->class)) abort(500, 'gate is not found');
         if ($id) $payment = Payment::find($id)->toArray();
