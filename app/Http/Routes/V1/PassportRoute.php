@@ -10,15 +10,15 @@ class PassportRoute
         $router->group([
             'prefix' => 'passport'
         ], function ($router) {
-            // Auth
-            $router->post('/auth/register', 'V1\\Passport\\AuthController@register');
-            $router->post('/auth/login', 'V1\\Passport\\AuthController@login');
-            $router->get ('/auth/token2Login', 'V1\\Passport\\AuthController@token2Login');
-            $router->post('/auth/forget', 'V1\\Passport\\AuthController@forget');
-            $router->post('/auth/getQuickLoginUrl', 'V1\\Passport\\AuthController@getQuickLoginUrl');
+            // Auth — 限速防止暴力破解 / spam
+            $router->post('/auth/register',         ['middleware' => 'throttle:5,1',  'uses' => 'V1\\Passport\\AuthController@register']);
+            $router->post('/auth/login',            ['middleware' => 'throttle:10,1', 'uses' => 'V1\\Passport\\AuthController@login']);
+            $router->get ('/auth/token2Login',      ['middleware' => 'throttle:20,1', 'uses' => 'V1\\Passport\\AuthController@token2Login']);
+            $router->post('/auth/forget',           ['middleware' => 'throttle:5,1',  'uses' => 'V1\\Passport\\AuthController@forget']);
+            $router->post('/auth/getQuickLoginUrl', ['middleware' => 'throttle:30,1', 'uses' => 'V1\\Passport\\AuthController@getQuickLoginUrl']);
             // Comm
-            $router->post('/comm/sendEmailVerify', 'V1\\Passport\\CommController@sendEmailVerify');
-            $router->post('/comm/pv', 'V1\\Passport\\CommController@pv');
+            $router->post('/comm/sendEmailVerify',  ['middleware' => 'throttle:3,1',  'uses' => 'V1\\Passport\\CommController@sendEmailVerify']);
+            $router->post('/comm/pv',               ['middleware' => 'throttle:10,1', 'uses' => 'V1\\Passport\\CommController@pv']);
         });
     }
 }
