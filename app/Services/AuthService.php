@@ -53,9 +53,11 @@ class AuthService
                 'id',
                 'email',
                 'is_admin',
-                'is_staff'
+                'is_staff',
+                'banned'
             ])->find($data['id']);
             if (!$user) return false;
+            if ($user->banned) return false;
 
             Cache::put($jwt, $user->toArray(), 3600); // 重新缓存用户信息，延长JWT的有效性
             return Cache::get($jwt);
