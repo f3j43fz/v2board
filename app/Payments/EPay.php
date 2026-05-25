@@ -101,7 +101,15 @@ class EPay {
         // 防 partial-pay：把订单"应付人民币"重算一遍，与 EPay 上报金额对比（都是 CNY 元）
         $expectedYuan = $this->calcYuan($params['out_trade_no']);
         $reportedYuan = isset($params['money']) ? (float)$params['money'] : 0.0;
-        if ($expectedYuan === null || $reportedYuan + 0.05 < $expectedYuan) {
+        if ($expectedYuan === null) {
+            return false;
+        }
+        // 容差：CNY 面板 0.01 元兜底浮点；USD 面板汇率在 pay/notify 之间可能波动，给 1% 容差
+        $tolerance = 0.01;
+        if (config('v2board.currency') === 'USD') {
+            $tolerance = max(0.01, $expectedYuan * 0.01);
+        }
+        if ($reportedYuan + $tolerance < $expectedYuan) {
             return false;
         }
 
