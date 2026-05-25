@@ -203,8 +203,9 @@ class AuthController extends Controller
         $email = $this->antiXss->xss_clean($request->input('email'));
         $password = $request->input('password');
 
+        $passwordLimitKey = $email . '#' . $request->ip();
         if ((int)config('v2board.password_limit_enable', 1)) {
-            $passwordErrorCount = (int)Cache::get(CacheKey::get('PASSWORD_ERROR_LIMIT', $email), 0);
+            $passwordErrorCount = (int)Cache::get(CacheKey::get('PASSWORD_ERROR_LIMIT', $passwordLimitKey), 0);
             if ($passwordErrorCount >= (int)config('v2board.password_limit_count', 5)) {
                 abort(500, __('There are too many password errors, please try again after :minute minutes.', [
                     'minute' => config('v2board.password_limit_expire', 60)
@@ -224,7 +225,7 @@ class AuthController extends Controller
         ) {
             if ((int)config('v2board.password_limit_enable')) {
                 Cache::put(
-                    CacheKey::get('PASSWORD_ERROR_LIMIT', $email),
+                    CacheKey::get('PASSWORD_ERROR_LIMIT', $passwordLimitKey),
                     (int)$passwordErrorCount + 1,
                     60 * (int)config('v2board.password_limit_expire', 60)
                 );
@@ -331,7 +332,7 @@ class AuthController extends Controller
 
     public function getQuickLoginUrl(Request $request)
     {
-        $authorization = $request->input('auth_data') ?? $request->header('authorization');
+        $authorization = $request->header('authorization');
         if (!$authorization) abort(403, '未登录或登陆已过期');
 
         $user = AuthService::decryptAuthData($authorization);
@@ -353,34 +354,46 @@ class AuthController extends Controller
 
     public function forget(AuthForget $request)
     {
-        $email = $this->antiXss->xss_clean($request->input('email'));
-        $email_code = $this->antiXss->xss_clean($request->input('email_code'));
-        $forgetRequestLimitKey = CacheKey::get('FORGET_REQUEST_LIMIT', $email);
-        $forgetRequestLimit = (int)Cache::get($forgetRequestLimitKey);
-        if ($forgetRequestLimit >= 3) abort(500, __('Reset failed, Please try again later'));
-        if ((string)Cache::get(CacheKey::get('EMAIL_VERIFY_CODE', $email)) !== (string)$email_code) {
-            Cache::put($forgetRequestLimitKey, $forgetRequestLimit ? $forgetRequestLimit + 1 : 1, 300);
+        $email     = trim((string)$request->input('email'));
+        $inputCode = (string)$request->input('email_code');
+        $password  = (string)$request->input('password');
+
+        // 纵深防御：即使验证层被绕过，控制器层再校验一次格式
+        if (!preg_match('/^\d{6}$/', $inputCode)) {
             abort(500, __('Incorrect email verification code'));
         }
+
+        $forgetRequestLimitKey = CacheKey::get('FORGET_REQUEST_LIMIT', $email);
+        $forgetRequestLimit    = (int)Cache::get($forgetRequestLimitKey);
+        if ($forgetRequestLimit >= 3) {
+            abort(500, __('Reset failed, Please try again later'));
+        }
+
+        $cachedCode = Cache::get(CacheKey::get('EMAIL_VERIFY_CODE', $email));
+        // 明确拒绝 cache miss（null/空）情形，防止 hash_equals('', '') 旁路；hash_equals 常量时间比较防时序攻击
+        if ($cachedCode === null || $cachedCode === '' || !hash_equals((string)$cachedCode, $inputCode)) {
+            Cache::put($forgetRequestLimitKey, $forgetRequestLimit + 1, 300);
+            abort(500, __('Incorrect email verification code'));
+        }
+
         $user = User::where('email', $email)->first();
         if (!$user) {
             abort(500, __('This email is not registered in the system'));
         }
-        $user->password = password_hash($request->input('password'), PASSWORD_DEFAULT);
-        $user->password_algo = NULL;
-        $user->password_salt = NULL;
+
+        $user->password      = password_hash($password, PASSWORD_DEFAULT);
+        $user->password_algo = null;
+        $user->password_salt = null;
         if (!$user->save()) {
             abort(500, __('Reset failed'));
         }
+
         Cache::forget(CacheKey::get('EMAIL_VERIFY_CODE', $email));
 
         // 登出其他设备
-        $authService = new AuthService($user);
-        $authService->removeAllSession();
+        (new AuthService($user))->removeAllSession();
 
-        return response([
-            'data' => true
-        ]);
+        return response(['data' => true]);
     }
 
     private function getUserISP($userIP){
