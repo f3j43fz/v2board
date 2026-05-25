@@ -373,11 +373,12 @@ class AuthController extends Controller
         if ($forgetRequestLimit >= 3) {
             abort(500, __('Reset failed, Please try again later'));
         }
+        // 入口立即 +1，无论后续成功/失败都计数，防"已知 valid code 无限并发"的踢人 + CPU DoS
+        Cache::put($forgetRequestLimitKey, $forgetRequestLimit + 1, 300);
 
         $cachedCode = Cache::get(CacheKey::get('EMAIL_VERIFY_CODE', $email));
         // 明确拒绝 cache miss（null/空）情形，防止 hash_equals('', '') 旁路；hash_equals 常量时间比较防时序攻击
         if ($cachedCode === null || $cachedCode === '' || !hash_equals((string)$cachedCode, $inputCode)) {
-            Cache::put($forgetRequestLimitKey, $forgetRequestLimit + 1, 300);
             abort(500, __('Incorrect email verification code'));
         }
 
