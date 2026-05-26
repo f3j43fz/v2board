@@ -79,34 +79,42 @@ class CheckCommission extends Command
         $invitedIpsByUser = $this->loadRecentIpsByUser($userIds,       $sinceTimestamp);
 
         foreach ($orders as $order) {
-            DB::beginTransaction();
+            // 每单独立 try-catch：任意异常（TG 通知/邮件/DB 等）只跳过该单并回滚，绝不拖垮整批佣金发放
+            try {
+                DB::beginTransaction();
 
-            $inviteUserId = $order->invite_user_id;
-            $orderIp      = $order->user_ip;
+                $inviteUserId = $order->invite_user_id;
+                $orderIp      = $order->user_ip;
 
-            // 只比对【本订单】的邀请人 vs 下单用户，不与批次内其他订单串场
-            $inviterIps = $inviterIpsByUser[$inviteUserId] ?? [];
-            $invitedIps = $invitedIpsByUser[$order->user_id] ?? [];
+                // 只比对【本订单】的邀请人 vs 下单用户，不与批次内其他订单串场
+                $inviterIps = $inviterIpsByUser[$inviteUserId] ?? [];
+                $invitedIps = $invitedIpsByUser[$order->user_id] ?? [];
 
-            $invalidInvite = $this->checkIPs($inviterIps, $invitedIps, $orderIp);
+                $invalidInvite = $this->checkIPs($inviterIps, $invitedIps, $orderIp);
 
-            if ($invalidInvite) {
-                $order->commission_status = 3;
-            } else {
-                $order->commission_status = 2;
+                if ($invalidInvite) {
+                    $order->commission_status = 3;
+                } else {
+                    $order->commission_status = 2;
 
-                if (!$this->payHandle($inviteUserId, $order)) {
+                    if (!$this->payHandle($inviteUserId, $order)) {
+                        DB::rollBack();
+                        continue;
+                    }
+                }
+
+                if (!$order->save()) {
                     DB::rollBack();
                     continue;
                 }
-            }
 
-            if (!$order->save()) {
+                DB::commit();
+            } catch (\Throwable $e) {
+                // Laravel 8 的 DB::rollBack() 在事务层级为 0 时是 no-op，故与 payHandle 内部已有的 rollBack 不冲突
                 DB::rollBack();
+                \Log::error('CheckCommission 单订单处理失败 trade_no=' . $order->trade_no . ' : ' . $e->getMessage());
                 continue;
             }
-
-            DB::commit();
         }
     }
 
@@ -159,24 +167,16 @@ class CheckCommission extends Command
 
     private function isFromChina($ip): bool
     {
-        // 创建一个Reader对象，用于查询IP地址的地理位置
-        $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
-
+        // 用 \Throwable 兜住一切异常：GeoIP 库文件缺失、IP 不在库中、IP 格式非法、Reader 构造失败等，
+        // 一律视为"非中国 IP"。地理位置查询失败绝不能拖垮整个佣金发放流程。
+        // 注意：new Reader 必须放在 try 内（库文件缺失会在构造时抛异常）；
+        //       原代码 catch 写成 GeoIp2\Exception\...（缺前导反斜杠）会被解析成
+        //       App\Console\Commands\GeoIp2\Exception\... 不存在的类，根本抓不住真实异常。
         try {
-            // 查询IP地址的地理位置信息
+            $reader = new Reader(storage_path('app/geoip/GeoLite2-Country.mmdb'));
             $record = $reader->country($ip);
-
-            // 判断是否来自中国
-            if ($record->country->isoCode === 'CN') {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (GeoIp2\Exception\AddressNotFoundException $e) {
-            // 处理IP地址未找到的情况
-            return false;
-        } catch (GeoIp2\Exception\GeoIp2Exception $e) {
-            // 处理其他异常
+            return isset($record->country->isoCode) && $record->country->isoCode === 'CN';
+        } catch (\Throwable $e) {
             return false;
         }
     }
