@@ -139,7 +139,7 @@ class OrderService
         // 门槛： 50 美元   不够 50 则没有优惠，即充多少是多少。
         $discountThreshold = config('v2board.discount_threshold', 50 * 100);
         // 优惠比例： 10% — 代码层硬上限 50%，防止配置失误或后台被入侵导致超额赠送
-        $discount = min((float)config('v2board.recharge_discount', 10) * 0.01, 0.5);
+        $discount = min((float)config('v2board.recharge_discount', 15) * 0.01, 0.5);
         if ($discount < 0) $discount = 0;
 
 
