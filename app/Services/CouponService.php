@@ -117,12 +117,18 @@ class CouponService
             abort(500, __('This coupon has expired'));
         }
         if ($this->coupon->limit_plan_ids && $this->planId) {
-            if (!in_array($this->planId, $this->coupon->limit_plan_ids, true)) {
+            // 双向转 int 再严格比较：admin UI 保存的 limit_plan_ids 可能是字符串数组（["2","5"]）
+            // 而 $this->planId 来自 Order::plan_id 是 int；严格比较 5 !== "5" 会错杀。
+            // cast 后再 strict：既不让 false/数组等类型混淆绕过，又允许合法 int/string 匹配。
+            $allowedPlanIds = array_map('intval', $this->coupon->limit_plan_ids);
+            if (!in_array((int)$this->planId, $allowedPlanIds, true)) {
                 abort(500, __('The coupon code cannot be used for this subscription'));
             }
         }
         if ($this->coupon->limit_period && $this->period) {
-            if (!in_array($this->period, $this->coupon->limit_period, true)) {
+            // 同款防御：双向转 string 后严格比较
+            $allowedPeriods = array_map('strval', $this->coupon->limit_period);
+            if (!in_array((string)$this->period, $allowedPeriods, true)) {
                 abort(500, __('The coupon code cannot be used for this period'));
             }
         }
