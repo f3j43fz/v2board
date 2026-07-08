@@ -598,6 +598,7 @@ rules:
   - 'DOMAIN-SUFFIX,sciencedirectassets.com,DIRECT'
   - 'DOMAIN-SUFFIX,oreilly.com,DIRECT'
   - 'DOMAIN-SUFFIX,proquest.com,DIRECT'
+  - 'DOMAIN-SUFFIX,msftconnecttest.com,DIRECT'
   # adobe
   - 'DOMAIN-SUFFIX,adobe.io,DIRECT'
   - 'DOMAIN-SUFFIX,adobe.com,DIRECT'
