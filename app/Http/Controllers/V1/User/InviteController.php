@@ -15,8 +15,13 @@ class InviteController extends Controller
 {
     public function save(Request $request)
     {
-        if (User::where('id', $request->user['id'])->value('plan_id') < 2) {
+        $user = User::find($request->user['id']);
+        if (!$user || $user->plan_id < 2) {
             abort(500, __("仅付费用户可以生成邀请码！"));
+        }
+
+        if ($user->expired_at !== NULL && $user->expired_at < time()) {
+            abort(500, __("套餐已过期，无法生成邀请码！"));
         }
 
         if (InviteCode::where('user_id', $request->user['id'])->where('status', 0)->count() >= config('v2board.invite_gen_limit', 5)) {
