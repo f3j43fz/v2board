@@ -67,6 +67,15 @@ class AutoRenewPlan extends Command
                     continue;
                 }
 
+                //跳过【已关闭续费】的套餐
+                //与 OrderController::save() 里的手动续费拦截保持一致：
+                //  if (!$plan->renew && $user->plan_id == $plan->id && period !== 'reset_price') -> 禁止续费
+                //自动续费天然满足 $user->plan_id == $plan->id 且 period 恒为 month_price，
+                //故此处只需判断 renew。套餐一旦关闭续费，任何路径都不得再为其下单扣款。
+                if (!$plan->renew) {
+                    continue;
+                }
+
                 // 【按周期】套餐过期 且 余额大于月付价格
                 if ($user->expired_at != NULL && $user->expired_at < time()) {
                     if ($plan->month_price > 0 && $user->balance >= $plan->month_price) {
