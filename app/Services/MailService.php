@@ -265,23 +265,14 @@ class MailService
      * 发送系统补偿通知 (支持延迟队列)
      *
      * @param User $user 用户对象
-     * @param string $type 补偿类型 'time' 或 'traffic'
-     * @param int $value 补偿数值
+     * @param string $content 邮件正文，完全由调用方撰写（模板按纯文本转义输出，不支持 HTML/Markdown，\n 转为换行）
      * @param int $delaySeconds 延迟发送秒数
      */
-    public function sendCompensationNotice(User $user, $type, $value, $delaySeconds = 0)
+    public function sendCompensationNotice(User $user, $content, $delaySeconds = 0)
     {
         $userName = explode('@', $user->email)[0];
         $appName = config('v2board.app_name', 'V2Board');
-
-        // 构建文案
-        if ($type === 'time') {
-            $content = "由于近期的网络波动影响了您的使用体验，我们深表歉意。\n\n作为补偿，系统已自动为您的当前订阅 **延长了 {$value} 天** 的有效期。\n\n更新后的到期时间为：" . date('Y-m-d H:i:s', $user->expired_at);
-        } else {
-            // 将 Byte 转换为 GB 并保留两位小数
-            $currentTrafficGB = round($user->transfer_enable / (1024*1024*1024), 2);
-            $content = "由于近期的网络波动影响了您的使用体验，我们深表歉意。\n\n作为补偿，系统已自动为您的当前订阅 **增加了 {$value} GB** 的高速流量。\n\n当前可用总流量为：" . $currentTrafficGB . " GB";
-        }
+        $content = trim((string) $content);
 
         // 分发到 'send_email_mass' 队列，并设置延迟
         SendEmailJob::dispatch([

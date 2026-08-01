@@ -12,7 +12,7 @@ class Compensate extends Command
     /**
      * 命令名称和参数
      */
-    protected $signature = 'customFunction:Compensate {days : 补偿天数} {traffic : 补偿流量(GB)}';
+    protected $signature = 'customFunction:Compensate {days : 补偿天数} {traffic : 补偿流量(GB)} {reason : 补偿原因，作为邮件正文原样发送，必填}';
 
     /**
      * 命令描述
@@ -31,6 +31,12 @@ class Compensate extends Command
         // 1. 获取参数并取绝对值，防止手误输入负数导致扣除资产
         $days = abs((int) $this->argument('days'));
         $trafficGB = abs((int) $this->argument('traffic'));
+        $reason = trim((string) $this->argument('reason'));
+
+        if ($reason === '') {
+            $this->error('补偿原因不能为空：请在第三个参数中提供本次补偿的邮件正文。');
+            return 1;
+        }
 
         // 基础参数计算
         $addTimeSeconds = $days * 86400;
@@ -57,6 +63,7 @@ class Compensate extends Command
         $this->info("2. 💾 流量套餐用户: 流量增加 {$trafficGB} GB");
         $this->info("----------------------------------------");
         $this->info("📧 邮件策略: 每 {$batchSize} 封为一批，批次间隔 {$delayMinutes} 分钟");
+        $this->info("📝 邮件正文(原样发送): {$reason}");
 
         if (!$this->confirm('请核对上述信息，确认立即执行吗？(yes/no)')) {
             $this->warn('操作已取消。');
@@ -125,8 +132,7 @@ class Compensate extends Command
 
                     // 发送邮件 (放在 try-catch 中，避免邮件服务挂掉影响主流程)
                     try {
-                        $value = ($actionType === 'time') ? $days : $trafficGB;
-                        $mailService->sendCompensationNotice($user, $actionType, $value, $delaySeconds);
+                        $mailService->sendCompensationNotice($user, $reason, $delaySeconds);
                     } catch (\Exception $e) {
                         // 仅记录错误，不回滚数据库
                         $this->error("   ⚠ 邮件入队失败 ID:{$user->id}: " . $e->getMessage());
