@@ -87,19 +87,20 @@ class Compensate extends Command
             try {
                 // --- 逻辑判断核心区域 ---
 
-                // 规则 1: 按周期套餐 (month_price > 0) 或者 year_price >0
-                // 且在有效期内 (expired_at > 当前时间)
-                if ($plan->month_price > 0 or $plan->year_price > 0) {
-                    if ($user->expired_at > time()) {
+                // 规则 1: 按周期套餐 (月/季/半年/年/两年/三年任一周期价格 > 0)
+                // 且在有效期内 (expired_at > 当前时间)；days 传 0 时该类用户整体跳过（不落库、不发邮件）
+                if ($plan->month_price > 0 || $plan->quarter_price > 0 || $plan->half_year_price > 0
+                    || $plan->year_price > 0 || $plan->two_year_price > 0 || $plan->three_year_price > 0) {
+                    if ($days > 0 && $user->expired_at > time()) {
                         $user->expired_at += $addTimeSeconds;
                         $actionType = 'time';
                         $logDetail = "有效期 +{$days}天";
                     }
                 }
                 // 规则 2: 按流量套餐 (onetime_price > 0)
-                // 且流量未用完 (u + d < transfer_enable)
+                // 且流量未用完 (u + d < transfer_enable)；traffic 传 0 时该类用户整体跳过（不落库、不发邮件）
                 elseif ($plan->onetime_price > 0) {
-                    if (($user->u + $user->d) < $user->transfer_enable) {
+                    if ($trafficGB > 0 && ($user->u + $user->d) < $user->transfer_enable) {
                         $user->transfer_enable += $addTrafficBytes;
                         $actionType = 'traffic';
                         $logDetail = "流量 +{$trafficGB}GB";
