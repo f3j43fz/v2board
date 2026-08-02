@@ -29,6 +29,14 @@ class CheckCommission extends Command
     protected $description = '返佣服务';
 
     /**
+     * 本单待发送的佣金通知。累积起来，等 DB::commit() 之后再统一发送，
+     * 避免把同步阻塞的 Telegram / 邮件调用留在事务内拉长持锁时间。
+     *
+     * @var array
+     */
+    private $pendingNotifications = [];
+
+    /**
      * Create a new command instance.
      *
      * @return void
@@ -79,7 +87,9 @@ class CheckCommission extends Command
         $invitedIpsByUser = $this->loadRecentIpsByUser($userIds,       $sinceTimestamp);
 
         foreach ($orders as $order) {
-            // 每单独立 try-catch：任意异常（TG 通知/邮件/DB 等）只跳过该单并回滚，绝不拖垮整批佣金发放
+            // 每单独立 try-catch：任意异常只跳过该单并回滚，绝不拖垮整批佣金发放。
+            // 通知已移出事务，因此不会再出现"TG 挂了导致佣金回滚、下一轮重算"的情况。
+            $this->pendingNotifications = [];
             try {
                 DB::beginTransaction();
 
@@ -109,6 +119,11 @@ class CheckCommission extends Command
                 }
 
                 DB::commit();
+
+                // 通知必须在 commit 之后发：TelegramService 用 \Curl\Curl 同步阻塞请求
+                // api.telegram.org 且未设超时，留在事务内会让邀请人那一行的写窗口跨越
+                // 一次境外 HTTP 调用（可达数秒）。
+                $this->flushNotifications();
             } catch (\Throwable $e) {
                 // Laravel 8 的 DB::rollBack() 在事务层级为 0 时是 no-op，故与 payHandle 内部已有的 rollBack 不冲突
                 DB::rollBack();
@@ -203,22 +218,27 @@ class CheckCommission extends Command
             if (!isset($commissionShareLevels[$l])) continue;
             $commissionBalance = $order->commission_balance * ($commissionShareLevels[$l] / 100);
             if (!$commissionBalance) continue;
-            if ((int)config('v2board.withdraw_close_enable', 0)) {
-                $inviter->balance = $inviter->balance + $commissionBalance;
-            } else {
-                $inviter->commission_balance = $inviter->commission_balance + $commissionBalance;
-                //TG通知
-                if(!$inviter->is_admin){
-                    $this->notify($inviteUserId,$commissionBalance/100);
-                }
-                //发邮件给 inviter //blance是余额 commission_balance是佣金
-                $mailService = new MailService();
-                $mailService->remindCommissionGotten($inviter,$commissionBalance/100);
+
+            // 原子自增：`SET col = col + ?` 交给数据库算，不存在"先读旧值再写回"的丢失更新。
+            // 旧写法在 User::find() 与 save() 之间还夹着一次同步 Telegram 调用和一封邮件，
+            // 读写窗口可达数秒；邀请人只要在这期间并发调用 /user/transfer 把佣金转成余额，
+            // 这里的写回就会用陈旧快照把已经转走的佣金整笔复活。
+            //
+            // 用带显式 where 的查询构造器形式，而不是 $inviter->increment()：
+            // 后者在模型 exists 为 false 时会退化成不带 where 的全表自增。
+            $column = (int)config('v2board.withdraw_close_enable', 0) ? 'balance' : 'commission_balance';
+            User::where('id', $inviter->id)->increment($column, $commissionBalance);
+
+            // 只有走佣金（可提现）这条路才通知，与原逻辑一致；实际发送推迟到事务提交后
+            if ($column === 'commission_balance') {
+                $this->pendingNotifications[] = [
+                    'invite_user_id' => $inviteUserId,
+                    'inviter' => $inviter,
+                    'amount' => $commissionBalance / 100,
+                    'is_admin' => (bool)$inviter->is_admin
+                ];
             }
-            if (!$inviter->save()) {
-                DB::rollBack();
-                return false;
-            }
+
             if (!CommissionLog::create([
                 'invite_user_id' => $inviteUserId,
                 'user_id' => $order->user_id,
@@ -234,6 +254,28 @@ class CheckCommission extends Command
             $order->actual_commission_balance = $order->actual_commission_balance + $commissionBalance;
         }
         return true;
+    }
+
+    /**
+     * 发送本单积压的佣金通知。只应在 DB::commit() 之后调用。
+     *
+     * 佣金此时已经落库，通知失败不能影响已发放的结果，因此逐条兜住异常仅记录日志
+     * —— 这与旧行为相反：旧代码里 TG 超时会把整单佣金一起回滚。
+     */
+    private function flushNotifications()
+    {
+        foreach ($this->pendingNotifications as $item) {
+            try {
+                if (!$item['is_admin']) {
+                    $this->notify($item['invite_user_id'], $item['amount']);
+                }
+                $mailService = new MailService();
+                $mailService->remindCommissionGotten($item['inviter'], $item['amount']);
+            } catch (\Throwable $e) {
+                \Log::error('CheckCommission 佣金通知发送失败 invite_user_id=' . $item['invite_user_id'] . ' : ' . $e->getMessage());
+            }
+        }
+        $this->pendingNotifications = [];
     }
 
     private function notify($userID,$commissionBalance){

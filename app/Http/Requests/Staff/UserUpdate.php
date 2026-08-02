@@ -13,6 +13,10 @@ class UserUpdate extends FormRequest
      */
     public function rules()
     {
+        // 注意：'balance' / 'commission_balance' 已从白名单移除，请勿加回。
+        // Staff\UserController::update() 直接把 validated() 交给 $user->update()，
+        // 留在这里等于给客服角色开了一个无审计日志、无下限（原先连 min:0 都没有）的造币口子，
+        // 客服号被钓鱼即等同金库失守。余额调整走管理员后台。
         return [
             'email' => 'required|string|email:strict|max:64',
             'password' => 'nullable|string|min:8|max:64',
@@ -23,9 +27,7 @@ class UserUpdate extends FormRequest
             'commission_rate' => 'nullable|integer|min:0|max:100',
             'discount' => 'nullable|integer|min:0|max:100',
             'u' => 'integer',
-            'd' => 'integer',
-            'balance' => 'integer',
-            'commission_balance' => 'integer'
+            'd' => 'integer'
         ];
     }
 
@@ -48,9 +50,7 @@ class UserUpdate extends FormRequest
             'discount.min' => '专属折扣比例最小为0',
             'discount.max' => '专属折扣比例最大为100',
             'u.integer' => '上行流量格式不正确',
-            'd.integer' => '下行流量格式不正确',
-            'balance.integer' => '余额格式不正确',
-            'commission_balance.integer' => '佣金格式不正确'
+            'd.integer' => '下行流量格式不正确'
         ];
     }
 }

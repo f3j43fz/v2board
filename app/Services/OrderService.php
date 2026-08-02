@@ -144,7 +144,15 @@ class OrderService
 
 
         $order = $this->order;
-        $this->user = User::find($order->user_id);
+        // 余额是读-改-写，必须在事务内锁行读。
+        // 全站的扣款都走 UserService::addBalance()（自带 lockForUpdate），但充值入账原先不参与那把锁，
+        // 单边持锁等于没有锁：用陈旧余额写回会把这期间已提交的扣款整笔抹掉，
+        // 用户可以一边充值一边用余额下单，白得套餐还保住余额。
+        $this->user = User::where('id', $order->user_id)->lockForUpdate()->first();
+        if (!$this->user) {
+            DB::rollBack();
+            abort(500, '充值失败');
+        }
         $rechargeAmount = $order->total_amount;
         $rechargeAmountGotten = ($rechargeAmount >= $discountThreshold)? $rechargeAmount * (1 + $discount) : $rechargeAmount;
         $this->user->balance = $this->user->balance + $rechargeAmountGotten;
@@ -484,11 +492,41 @@ class OrderService
     public function paid(string $callbackNo)
     {
         $order = $this->order;
-        if ($order->status !== 0) return true;
+        // 「待支付 → 开通中」必须是原子状态迁移，交给数据库的条件更新来做。
+        //
+        // 旧写法先判断内存里的 status 再 save()，而 Eloquent 的 save() 生成的是
+        // `UPDATE ... WHERE id = ?`，不带任何状态前置条件，于是：
+        //   1) 两个并发 checkout 都能通过判断，各自 dispatch 一次开通任务，套餐被重复开通；
+        //   2) 更严重的是 cancel() 已经把订单置为 2 并退还余额之后，持有陈旧对象的请求仍会把
+        //      status 无条件覆写回 1 并开通套餐 —— 用户既拿回余额又拿到套餐，且可无限重复。
+        //      InnoDB 的行锁在这里帮的是倒忙：本请求的 UPDATE 会排队等 cancel 提交完退款，
+        //      解除阻塞后才覆写，反而让攻击时序变得稳定可复现。
+        $affected = Order::where('id', $order->id)
+            ->where('status', 0)
+            ->update([
+                'status' => 1,
+                'paid_at' => time(),
+                'callback_no' => $callbackNo
+            ]);
+        if (!$affected) {
+            // 订单已不在待支付状态。重复回调按幂等处理并返回成功，避免支付网关无限重试；
+            // 但若它既不是「开通中」也不是「已完成」，说明订单已被取消却仍收到支付成功回调，
+            // 属于必须人工介入的异常（可能要退款或补开通），留痕。
+            // 这里不硬编码「状态 2」：status=4 目前不可达，但不该把这个前提焊进安全日志。
+            $status = (int)Order::where('id', $order->id)->value('status');
+            if ($status !== 1 && $status !== 3) {
+                Log::error("订单 {$order->trade_no} 当前状态为 {$status}，却收到支付成功回调 callback_no={$callbackNo}，请人工核对是否需要退款或补开通");
+            }
+            return true;
+        }
+        // 只有真正完成 0 → 1 迁移的调用才会走到这里。
+        // 同步内存对象后立刻 syncOriginal()，把模型标记为「干净」：
+        // 否则调用方之后若再 save() 一次，又会变成一条无条件的 status=1 写入，
+        // 把已经开通完成（status=3）的订单打回开通中，正是本次要根除的那类问题。
         $order->status = 1;
         $order->paid_at = time();
         $order->callback_no = $callbackNo;
-        if (!$order->save()) return false;
+        $order->syncOriginal();
         try {
             OrderHandleJob::dispatchNow($order->trade_no);
         } catch (\Exception $e) {
