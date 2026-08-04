@@ -695,12 +695,6 @@ rules:
   - 'DST-PORT,7412,🧱SSH'
   - 'DST-PORT,2344,🧱SSH'
   - 'DST-PORT,45963,🧱SSH'
-  # 直连域名
-  - 'RULE-SET,direct,DIRECT'
-  # 局域网 IP 及保留 IP 地址
-  - 'RULE-SET,lancidr,DIRECT,no-resolve'
-  # 中国大陆 IP 地址
-  - 'RULE-SET,cncidr,DIRECT,no-resolve'
   # tg
   - 'RULE-SET,telegramcidr,$app_name,no-resolve'
   # azure
@@ -726,7 +720,7 @@ rules:
   - 'DOMAIN-SUFFIX,mexc.com,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,engagelab.cc,☁️azure,no-resolve'
   - 'DOMAIN-SUFFIX,theengagelab.com,☁️azure,no-resolve'
-  # Gemini
+  # Gemini（google/gemini 必须在 RULE-SET,direct 之前：direct.txt 含 fonts.gstatic.com 等谷歌字体/静态域名，直连会挂）
   - 'RULE-SET,google,🌎谷歌系,no-resolve'
   - 'RULE-SET,gemini,🌎谷歌系,no-resolve'
   #Youtube
@@ -755,6 +749,12 @@ rules:
   - 'RULE-SET,Spotify,🎧Spotify,no-resolve'
   #HBO
   - 'RULE-SET,HBO,🎞️HBO,no-resolve'
+  # 直连域名
+  - 'RULE-SET,direct,DIRECT'
+  # 局域网 IP 及保留 IP 地址
+  - 'RULE-SET,lancidr,DIRECT,no-resolve'
+  # 中国大陆 IP 地址
+  - 'RULE-SET,cncidr,DIRECT,no-resolve'
   - 'GEOIP,LAN,DIRECT,no-resolve'
   - 'GEOIP,CN,DIRECT,no-resolve'
   # 代理域名
