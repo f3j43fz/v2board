@@ -141,7 +141,8 @@ class EPay {
         $rate = Cache::get($cacheKey);
 
         if (!$rate) {
-            $url = 'https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side=sell&paymentMethod=aliPay&userType=all&receivingAds=false&quoteMinAmountPerOrder=100&t=' . time();
+            // quoteMinAmountPerOrder 语义是"交易额"，取 1000 元档过滤掉小额溢价商家（100 元档普遍高 0.07~0.08）
+            $url = 'https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side=sell&paymentMethod=aliPay&userType=all&receivingAds=false&quoteMinAmountPerOrder=1000&t=' . time();
 
             try {
                 $response = $this->client->get($url);

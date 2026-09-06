@@ -41,7 +41,8 @@ class GetExchangeRate extends Telegram {
         $rate = Cache::get($cacheKey);
 
         if (!$rate) {
-            $url = 'https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side=sell&paymentMethod=aliPay&userType=all&receivingAds=false&quoteMinAmountPerOrder=100&t=' . time();
+            // 与 EPay 共用缓存键 USD_TO_CNY_RATE，筛选条件必须与 EPay.php 保持一致
+            $url = 'https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side=sell&paymentMethod=aliPay&userType=all&receivingAds=false&quoteMinAmountPerOrder=1000&t=' . time();
 
             try {
                 $response = $this->client->get($url);
